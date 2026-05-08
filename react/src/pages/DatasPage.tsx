@@ -3,4 +3,4 @@ const DatasPage = () => {
     <div>DatasPage</div>
   )
 }
-export default DatasPage
+export default DatasPage //datas comemorativas

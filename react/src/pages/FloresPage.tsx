@@ -3,4 +3,4 @@ const FloresPage = () => {
     <div>FloresPage</div>
   )
 }
-export default FloresPage
+export default FloresPage //flor seca 
