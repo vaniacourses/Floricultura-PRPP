@@ -1,14 +1,12 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap");
 
 @theme {
-  --color-rosa-claro: #FFE3F2;
-  --color-rosa-choque: #B83F78;
-  --color-mostarda: #FFA213;
-  --color-azul: #3B5BC4;
-  --color-roxo: #480058;
-
+  --color-rosa-text: #490829;
+  --color-rosa-claro: #ffeef2;
+  --color-rosa-choque: #b03a61;
+  --color-rosa-pastel: #ffc7db;
+  --color-rosa-medio: #ff92c2;
   --font-logo: Fleur De Leah, cursive;
   --font-menu: "Montserrat", sans-serif;
 }
-

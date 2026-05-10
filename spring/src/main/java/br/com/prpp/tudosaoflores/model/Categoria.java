@@ -3,8 +3,11 @@ package br.com.prpp.tudosaoflores.model;
 public enum Categoria {
     FLORES,
     FLORES_SECAS,
-    CARTOES_PERSONALIZADO,
+    CARTOES,
+    CARTOES_PERSONALIZADOS,
     ARRANJOS,
     BUQUES,
-    KITS
+    BUQUES_PERSONALIZADOS,
+    KITS,
+    KITS_PERSONALIZADOS
 }
