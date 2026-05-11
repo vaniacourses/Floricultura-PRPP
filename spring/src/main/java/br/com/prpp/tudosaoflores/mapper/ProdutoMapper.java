@@ -11,7 +11,7 @@ import org.mapstruct.MappingTarget;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface ProdutoMapper {
+public interface    ProdutoMapper {
 
     //Lista de Produtos -> Lista de Dto
     List<ProdutoDto> toProdutosDto(List<Produto> produtos);
