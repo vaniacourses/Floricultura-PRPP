@@ -41,7 +41,7 @@ const Navbar = () => {
             Contato
           </NavLink>
           <NavLink
-            to="/usuario"
+            to="/cliente-login"
             className="flex items-center gap-1 hover:text-rosa-choque transition-colors"
           >
             <User size={20} />

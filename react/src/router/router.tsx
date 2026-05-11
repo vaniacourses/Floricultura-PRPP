@@ -12,9 +12,16 @@ import DatasPage from "../pages/DatasPage";
 import EventosPage from "../pages/EventosPage";
 import AssinaturasPage from "../pages/AssinaturasPage";
 import CarrinhoPage from "../pages/CarrinhoPage";
-import UsuarioPage from "../pages/UsuarioPage";
 import ContatoPage from "../pages/ContatoPage";
-
+import ClientePage from "../pages/ClientePage";
+import ClienteLoginPage from "../pages/ClienteLoginPage";
+import ClienteRegistroPage from "../pages/ClienteRegistroPage";
+import AdminstradorPage from "../pages/AdminstradorPage";
+import AdminstradorLoginPage from "../pages/AdminstradorLoginPage";
+import PerfilAdmin from "../components/admin/PerfilAdmin";
+import Estoque from "../components/admin/Estoque";
+import Promocoes from "../components/admin/Promocoes";
+import Relatorios from "../components/admin/Relatorios";
 //const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -34,7 +41,21 @@ const router = createBrowserRouter([
       { path: "assinaturas", element: <AssinaturasPage /> },
       { path: "carrinho", element: <CarrinhoPage /> },
       { path: "contato", element: <ContatoPage /> },
-      { path: "usuario", element: <UsuarioPage /> },
+      { path: "cliente", element: <ClientePage /> },
+      { path: "cliente-login", element: <ClienteLoginPage /> },
+      { path: "cliente-registro", element: <ClienteRegistroPage /> },
+      {
+        path: "admin",
+        element: <AdminstradorPage />,
+        children: [
+          { index: true, element: <PerfilAdmin /> },
+          { path: "perfil-adm", element: <PerfilAdmin /> },
+          { path: "estoque", element: <Estoque /> },
+          { path: "promocoes", element: <Promocoes /> },
+          { path: "relatorios", element: <Relatorios /> },
+        ],
+      },
+      { path: "admin-login", element: <AdminstradorLoginPage /> },
     ],
   },
 ]);
