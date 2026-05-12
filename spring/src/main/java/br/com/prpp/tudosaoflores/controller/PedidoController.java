@@ -1,4 +1,4 @@
-package br.com.prpp.tudosaoflores.controller;
+/*package br.com.prpp.tudosaoflores.controller;
 
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
@@ -52,4 +52,4 @@ public class PedidoController {
         pedidoService.removerPedido(idPedido);
         return ResponseEntity.noContent().build();
     }
-}
+}*/
