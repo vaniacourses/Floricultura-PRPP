@@ -24,12 +24,16 @@ public class Produto {
 
     private String nome;
     private String descricao;
+    private Integer quantidade; // Quantidade em estoque
+    private String imagem;
 
-    public Produto(Long codigo, BigDecimal preco, Categoria categoria, String nome, String descricao) {
+    public Produto(Long codigo, BigDecimal preco, Categoria categoria, String nome, String descricao, Integer quantidade, String imagem) {
         this.codigo = codigo;
         this.preco = preco;
         this.categoria = categoria;
         this.nome = nome;
         this.descricao = descricao;
+        this.quantidade = quantidade;
+        this.imagem = imagem;
     }
 }
