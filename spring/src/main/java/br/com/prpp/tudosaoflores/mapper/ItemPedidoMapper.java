@@ -1,5 +1,5 @@
 package br.com.prpp.tudosaoflores.mapper;
-
+/*
 import br.com.prpp.tudosaoflores.dto.ItemPedidoDto;
 import br.com.prpp.tudosaoflores.model.ItemPedido;
 import org.mapstruct.Mapper;
@@ -18,3 +18,4 @@ public interface ItemPedidoMapper {
 
     List<ItemPedidoDto> toDtos(List<ItemPedido> itens);
 }
+*/

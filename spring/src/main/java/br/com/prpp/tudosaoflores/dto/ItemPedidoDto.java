@@ -1,5 +1,5 @@
 package br.com.prpp.tudosaoflores.dto;
-
+/*
 import java.math.BigDecimal;
 
 public record ItemPedidoDto (
@@ -10,4 +10,4 @@ public record ItemPedidoDto (
         BigDecimal valorUnitario,
         BigDecimal subtotal
 ){
-}
+}*/

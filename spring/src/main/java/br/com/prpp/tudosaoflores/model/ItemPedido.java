@@ -1,5 +1,5 @@
 package br.com.prpp.tudosaoflores.model;
-
+/*
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,3 +41,4 @@ public class ItemPedido {
 
     }
 }
+*/
