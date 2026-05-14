@@ -62,7 +62,7 @@ const Estoque = () => {
 
   //
   const produtosFiltrados = produtos.filter((produto) =>
-    produto.nome.toLowerCase().includes(busca.toLowerCase()),
+    produto.nome?.toLowerCase().includes(busca.toLowerCase()),
   );
   const handleSubmit = async (e) => {
     e.preventDefault();
