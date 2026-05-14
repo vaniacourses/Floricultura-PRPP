@@ -1,14 +1,37 @@
 import { useNavigate } from "react-router-dom";
+import { auth, googleProvider } from "../config/firebase";
+import { signInWithPopup } from "firebase/auth";
+import { api } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const ClienteLoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const goToRegister = () => navigate("/cliente-registro");
+  const goToRegister = () => navigate("/cliente-registro-google");
   const goToAdmin = () => navigate("/admin-login");
 
-  const handleGoogleLogin = () => {
-    console.log("Fazendo Login com o Google");
-    //colocar aqui lógica de login
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Envia para o back-end
+      const response = await api.post<{ token: string }>("/auth/google", {
+        uid: user.uid,
+        email: user.email,
+        nome: user.displayName,
+      });
+
+      // Chama login do contexto (atualiza estado global)
+      login(response.token);
+
+      // Redireciona para o perfil (ou para registro se for novo)
+      navigate("/cliente/perfil");
+    } catch (error: any) {
+      console.error("Erro na autenticação:", error);
+      alert("Falha ao conectar com o Google.");
+    }
   };
 
   return (
@@ -29,7 +52,6 @@ const ClienteLoginPage = () => {
             alt="Google Logo"
             className="h-5 w-5"
           />
-
           <span className="text-base font-medium text-gray-700">
             Fazer login com o Google
           </span>

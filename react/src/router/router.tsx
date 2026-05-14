@@ -13,15 +13,21 @@ import EventosPage from "../pages/EventosPage";
 import AssinaturasPage from "../pages/AssinaturasPage";
 import CarrinhoPage from "../pages/CarrinhoPage";
 import ContatoPage from "../pages/ContatoPage";
-import ClientePage from "../pages/ClientePage";
+import ClientePage from "../pages/perfil/ClientePage";
 import ClienteLoginPage from "../pages/ClienteLoginPage";
 import ClienteRegistroPage from "../pages/ClienteRegistroPage";
+import ClienteRegistroGooglePage from "../pages/ClienteRegistroGooglePage";
 import AdminstradorPage from "../pages/AdminstradorPage";
 import AdminstradorLoginPage from "../pages/AdminstradorLoginPage";
 import PerfilAdmin from "../components/admin/PerfilAdmin";
 import Estoque from "../components/admin/Estoque";
 import Promocoes from "../components/admin/Promocoes";
 import Relatorios from "../components/admin/Relatorios";
+import PerfilClientePage from "../pages/perfil/PerfilClientePage";
+import PedidosPage from "../pages/perfil/PedidosPage";
+import AvaliacoesPage from "../pages/perfil/AvaliacoesPage";
+import EnderecosPage from "../pages/perfil/EnderecosPage";
+
 //const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -41,9 +47,10 @@ const router = createBrowserRouter([
       { path: "assinaturas", element: <AssinaturasPage /> },
       { path: "carrinho", element: <CarrinhoPage /> },
       { path: "contato", element: <ContatoPage /> },
-      { path: "cliente", element: <ClientePage /> },
       { path: "cliente-login", element: <ClienteLoginPage /> },
       { path: "cliente-registro", element: <ClienteRegistroPage /> },
+      { path: "cliente-registro-google", element: <ClienteRegistroGooglePage /> },
+      
       {
         path: "admin",
         element: <AdminstradorPage />,
@@ -56,6 +63,18 @@ const router = createBrowserRouter([
         ],
       },
       { path: "admin-login", element: <AdminstradorLoginPage /> },
+      {
+        path: "cliente",
+        element: <ClientePage />,
+        children: [
+          { index: true, element: <PerfilClientePage /> }, 
+          
+          { path: "perfil", element: <PerfilClientePage /> },
+          { path: "pedidos", element: <PedidosPage/> },
+          { path: "avaliacoes", element: <AvaliacoesPage/> },
+          { path: "enderecos", element: <EnderecosPage/> },
+        ]
+      }
     ],
   },
 ]);
