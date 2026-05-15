@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Produto, Avaliacao } from "../data/types";
+import type { Produto, Avaliacao } from "../data/types";
 import ProdutoModal from "../components/ProductModal";
 
 export default function BuquesPage() {

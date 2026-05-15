@@ -1,9 +1,8 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import Layout from "./layout";
 import HomePage from "../pages/HomePage";
 import FloresPage from "../pages/FloresPage";
+import FloresSecas from "../pages/FloresSecas";
 import ArranjosPage from "../pages/ArranjosPage";
 import BuquesPage from "../pages/BuquesPage";
 import KitsPage from "../pages/KitsPage";
@@ -20,6 +19,7 @@ import ClienteRegistroGooglePage from "../pages/ClienteRegistroGooglePage";
 import AdminstradorPage from "../pages/AdminstradorPage";
 import AdminstradorLoginPage from "../pages/AdminstradorLoginPage";
 import PerfilAdmin from "../components/admin/PerfilAdmin";
+import Administradores from "../components/admin/Administradores";
 import Estoque from "../components/admin/Estoque";
 import Promocoes from "../components/admin/Promocoes";
 import Relatorios from "../components/admin/Relatorios";
@@ -27,6 +27,7 @@ import PerfilClientePage from "../pages/perfil/PerfilClientePage";
 import PedidosPage from "../pages/perfil/PedidosPage";
 import AvaliacoesPage from "../pages/perfil/AvaliacoesPage";
 import EnderecosPage from "../pages/perfil/EnderecosPage";
+import { createBrowserRouter } from "react-router-dom";
 
 //const queryClient = new QueryClient();
 
