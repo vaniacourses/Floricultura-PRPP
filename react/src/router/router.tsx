@@ -22,6 +22,7 @@ import PerfilAdmin from "../components/admin/PerfilAdmin";
 import Estoque from "../components/admin/Estoque";
 import Promocoes from "../components/admin/Promocoes";
 import Relatorios from "../components/admin/Relatorios";
+import Administradores from "../components/admin/Administradores";
 //const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
           { path: "estoque", element: <Estoque /> },
           { path: "promocoes", element: <Promocoes /> },
           { path: "relatorios", element: <Relatorios /> },
+          { path: "administradores", element: <Administradores /> },
         ],
       },
       { path: "admin-login", element: <AdminstradorLoginPage /> },
