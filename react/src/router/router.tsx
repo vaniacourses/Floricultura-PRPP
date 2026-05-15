@@ -27,6 +27,8 @@ import PerfilClientePage from "../pages/perfil/PerfilClientePage";
 import PedidosPage from "../pages/perfil/PedidosPage";
 import AvaliacoesPage from "../pages/perfil/AvaliacoesPage";
 import EnderecosPage from "../pages/perfil/EnderecosPage";
+import FloresSecas from "../pages/FloresSecas";
+import Administradores from "../components/admin/Administradores";
 
 //const queryClient = new QueryClient();
 
