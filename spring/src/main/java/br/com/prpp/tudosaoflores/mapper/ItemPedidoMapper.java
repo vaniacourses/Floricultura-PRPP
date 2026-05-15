@@ -10,10 +10,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ItemPedidoMapper {
 
-    @Mapping(source = "produto.id", target = "idProduto")
-    @Mapping(source = "usuario.id", target = "idUsuario")
+    @Mapping(source = "produto.codigo", target = "codigo")
+    @Mapping(source = "pedido.usuario.usuarioId", target = "idUsuario")
     @Mapping(source = "precoUnitario", target = "valorUnitario")
-    @Mapping(source = "subtotal", target = "subtotal")
+    @Mapping(target = "subtotal", expression = "java(itemPedido.getPrecoUnitario().multiply(new BigDecimal(itemPedido.getQuantidade())))")
     ItemPedidoDto toItemPedidoDto(ItemPedido itemPedido);
 
     List<ItemPedidoDto> toDtos(List<ItemPedido> itens);

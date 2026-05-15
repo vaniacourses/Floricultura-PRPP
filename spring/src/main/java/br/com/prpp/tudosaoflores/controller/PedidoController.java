@@ -26,7 +26,7 @@ public class PedidoController {
     public ResponseEntity<List<PedidoDto>> recuperarPedidos(){
         // TO-DO: pegar Id do Usario autenticado
         Long idUsuarioLogado = 1L;
-        List<PedidoDto> pedidos = pedidoService.recuperarPedidosPorUsuario(idUsuarioLogado);
+        List<PedidoDto> pedidos = pedidoService.recuperarPedidos(idUsuarioLogado);
         return ResponseEntity.ok(pedidos);
     }
 

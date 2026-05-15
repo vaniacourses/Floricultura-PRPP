@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 
 public record ItemPedidoDto (
         Long id,
-        Long idProduto,
+        Long idUsuario,
+        Long codigo,
         String nomeProduto,
         Integer quantidade,
         BigDecimal valorUnitario,

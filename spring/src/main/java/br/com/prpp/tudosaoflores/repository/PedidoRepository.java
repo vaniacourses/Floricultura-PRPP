@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("SELECT p FROM Pedido p JOIN FETCH p.itens WHERE p.usuario.id = :idUsuario")
-    List<Pedido> findByUsuarioId(Long idUsuario);
+    List<Pedido> findByUsuarioUsuarioId(Long idUsuario);
 }

@@ -20,7 +20,7 @@ public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idProduto;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "PEDIDO_USUARIO_ID_FK"))
