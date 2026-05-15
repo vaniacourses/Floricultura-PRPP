@@ -8,6 +8,8 @@ public record ProdutoCreate(
         BigDecimal preco,
         Categoria categoria,
         String nome,
-        String descricao
+        String descricao,
+        Integer quantidade,
+        String imagem
 ) {
 }
