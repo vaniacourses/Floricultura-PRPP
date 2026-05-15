@@ -62,7 +62,8 @@ const Navbar = () => {
       <div className="flex items-center justify-center gap-10 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
         {[
           { name: "Assinaturas", path: "/assinaturas" },
-          { name: "Flores Secas", path: "/flores" },
+          { name: "Flores", path: "/flores" },
+          { name: "Flores Secas", path: "/flores-secas" },
           { name: "Arranjos", path: "/arranjos" },
           { name: "Buquês", path: "/buques" },
           { name: "Kits", path: "/kits" },

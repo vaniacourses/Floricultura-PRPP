@@ -23,6 +23,7 @@ import Estoque from "../components/admin/Estoque";
 import Promocoes from "../components/admin/Promocoes";
 import Relatorios from "../components/admin/Relatorios";
 import Administradores from "../components/admin/Administradores";
+import FloresSecas from "../pages/FloresSecas";
 //const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "home", element: <HomePage /> },
       { path: "flores", element: <FloresPage /> },
+      { path: "flores-secas", element: <FloresSecas /> },
       { path: "arranjos", element: <ArranjosPage /> },
       { path: "buques", element: <BuquesPage /> },
       { path: "kits", element: <KitsPage /> },
