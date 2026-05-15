@@ -29,8 +29,6 @@ import AvaliacoesPage from "../pages/perfil/AvaliacoesPage";
 import EnderecosPage from "../pages/perfil/EnderecosPage";
 import { createBrowserRouter } from "react-router-dom";
 
-//const queryClient = new QueryClient();
-
 const router = createBrowserRouter([
   {
     path: "/",
