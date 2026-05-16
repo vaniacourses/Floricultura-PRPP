@@ -1,4 +1,4 @@
-/*package br.com.prpp.tudosaoflores.controller;
+package br.com.prpp.tudosaoflores.controller;
 
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
@@ -26,7 +26,7 @@ public class PedidoController {
     public ResponseEntity<List<PedidoDto>> recuperarPedidos(){
         // TO-DO: pegar Id do Usario autenticado
         Long idUsuarioLogado = 1L;
-        List<PedidoDto> pedidos = pedidoService.recuperarPedidosPorUsuario(idUsuarioLogado);
+        List<PedidoDto> pedidos = pedidoService.recuperarPedidos(idUsuarioLogado);
         return ResponseEntity.ok(pedidos);
     }
 
@@ -52,4 +52,4 @@ public class PedidoController {
         pedidoService.removerPedido(idPedido);
         return ResponseEntity.noContent().build();
     }
-}*/
+}

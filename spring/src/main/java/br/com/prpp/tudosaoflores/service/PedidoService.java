@@ -1,5 +1,5 @@
 package br.com.prpp.tudosaoflores.service;
-/*
+
 import br.com.prpp.tudosaoflores.dto.ItemPedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
@@ -7,6 +7,8 @@ import br.com.prpp.tudosaoflores.mapper.PedidoMapper;
 import br.com.prpp.tudosaoflores.model.ItemPedido;
 import br.com.prpp.tudosaoflores.model.Pedido;
 import br.com.prpp.tudosaoflores.model.Produto;
+import br.com.prpp.tudosaoflores.model.Usuario;
+import br.com.prpp.tudosaoflores.repository.ClienteRepository;
 import br.com.prpp.tudosaoflores.repository.PedidoRepository;
 import br.com.prpp.tudosaoflores.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,10 @@ public class PedidoService {
     private ProdutoRepository produtoRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private ClienteRepository usuarioRepository;
 
     public List<PedidoDto> recuperarPedidos(Long idUsuario){
-        List<Pedido> pedidos = pedidoRepository.findByUsuarioId(idUsuario);
+        List<Pedido> pedidos = pedidoRepository.findByUsuarioUsuarioId(idUsuario);
         return pedidoMapper.toPedidosDto(pedidos);
     }
 
@@ -114,4 +116,3 @@ public class PedidoService {
     }
 
 }
-*/

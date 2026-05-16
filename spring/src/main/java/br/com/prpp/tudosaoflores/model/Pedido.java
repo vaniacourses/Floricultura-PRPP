@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-/*
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idProduto;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "PEDIDO_USUARIO_ID_FK"))
@@ -39,4 +39,3 @@ public class Pedido {
         this.status = status;
     }
 }
-*/

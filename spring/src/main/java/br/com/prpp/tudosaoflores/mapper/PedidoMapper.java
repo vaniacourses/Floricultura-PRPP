@@ -1,5 +1,5 @@
 package br.com.prpp.tudosaoflores.mapper;
-/*
+
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
 import br.com.prpp.tudosaoflores.model.ItemPedido;
@@ -15,11 +15,10 @@ public interface PedidoMapper {
 
     List<PedidoDto> toPedidosDto(List<Pedido> pedidos);
 
-    @Mapping(source = "usuario.nome", target = "nomeUsuario")
-    @Mapping(source = "usuario.id", target = "idUsuario")
+
+    @Mapping(source = "usuario.usuarioId", target = "idUsuario")
     PedidoDto toPedidoDto(Pedido pedido);
 
-    @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "itens", ignore = true)
     Pedido toPedido (PedidoDto pedidoDto);
@@ -27,14 +26,11 @@ public interface PedidoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "itens", ignore = true)
     @Mapping(target = "usuario", ignore = true)
-    @Mapping(target = "codigo", ignore = true)
     void updateToPedido(PedidoCreate pedidoCreate, @MappingTarget Pedido pedido);
 
-    @Mapping(target = "codigo", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "itens", ignore = true)
     @Mapping(target = "usuario", ignore = true)
     Pedido toPedido(PedidoCreate pedidoCreate);
 
 }
-*/

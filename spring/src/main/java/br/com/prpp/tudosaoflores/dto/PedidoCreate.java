@@ -1,5 +1,5 @@
 package br.com.prpp.tudosaoflores.dto;
-/*
+
 import br.com.prpp.tudosaoflores.model.ItemPedido;
 
 import java.math.BigDecimal;
@@ -11,4 +11,3 @@ public record PedidoCreate (
     List<ItemPedidoCreate> itens
 ) {
 }
-*/
