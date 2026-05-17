@@ -1,14 +1,19 @@
 package br.com.prpp.tudosaoflores.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "cliente")
-public abstract class Cliente extends Usuario {
+public abstract class Cliente extends Usuario implements UserDetails {
 
     @Column(name = "google_id")
     private String googleId;
+
+    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL)
+    private Carrinho carrinho;
+
 
     public Cliente() {
         super();

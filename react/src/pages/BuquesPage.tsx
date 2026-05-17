@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Produto, Avaliacao } from "../data/types";
 import ProdutoModal from "../components/ProductModal";
+import { useNavigate } from "react-router-dom";
+
 
 export default function BuquesPage() {
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Avaliacao, setAvaliacao] = useState<Avaliacao[]>([]);
   const [buques, setBuques] = useState<Produto[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const carregarBuques = async () => {
@@ -23,6 +26,7 @@ export default function BuquesPage() {
   }, []);
 
   useEffect(() => {
+    
     const carregarAvaliacoes = async () => {
       try {
         const response = await axios.get<Avaliacao[]>("http://localhost:8080/avaliacoes");
@@ -39,6 +43,24 @@ export default function BuquesPage() {
     setSelectedProduto(Produto);
     setIsModalOpen(true);
   };
+
+  const [carrinho, setCarrinho] = useState<Produto[]>([]);
+
+  const handleAdicionarAoCarrinho = (Produto: Produto) => {
+    
+    const produtoExistente = carrinho.find((item) => item.codigo === Produto.codigo);
+
+    if (produtoExistente) {
+      const carrinhoAtualizado = carrinho.map((item) =>
+        item.codigo === Produto.codigo ? { ...item, quantidade: (item.quantidade || 0)+ 1 } : item
+      );
+      setCarrinho(carrinhoAtualizado);
+    } else {
+      const novoProduto = { ...Produto, quantidade: 1 };
+      setCarrinho([...carrinho, novoProduto]);
+    }
+    navigate("/carrinho");
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -67,6 +89,16 @@ export default function BuquesPage() {
               <div className="space-y-3 p-4">
                 <h2 className="text-lg font-semibold line-clamp-2">{Produto.nome}</h2>
                 <p className="text-2xl font-bold text-primary">R$ {Produto.preco.toFixed(2)}</p>
+                <button
+                  type="button"
+                  className="w-full rounded-full border border-slate-300 bg-rosa-choque text-white px-4 py-2 text-sm font-medium transition hover:bg-rosa-text transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAdicionarAoCarrinho(Produto);
+                  }}
+                >
+                  Comprar
+                </button>
                 <button
                   type="button"
                   className="w-full rounded-full border border-slate-300 bg-transparent px-4 py-2 text-sm font-medium transition hover:bg-slate-100"
