@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { api } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 // Tipo usado para carregar dados do perfil vindo do back-end
 type PerfilPF = {
