@@ -62,7 +62,7 @@ const PerfilClientePage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="min-h-screen bg-rosa-claro flex justify-center items-center">
         <Loader2 className="animate-spin text-rosa-choque" size={48} />
       </div>
     );
@@ -70,8 +70,10 @@ const PerfilClientePage = () => {
 
   if (erro || !perfil) {
     return (
-      <div className="text-center text-red-500 font-bold p-10">
-        {erro || "Perfil não encontrado."}
+      <div className="min-h-screen bg-rosa-claro flex items-center justify-center">
+        <div className="text-red-500 font-bold text-lg">
+          {erro || "Perfil não encontrado"}
+        </div>
       </div>
     );
   }
@@ -79,62 +81,101 @@ const PerfilClientePage = () => {
   const dadosExibicao = editando ? form! : perfil;
 
   return (
-    <div className="animate-in fade-in duration-500">
-      <header className="mb-10">
-        <h1 className="font-logo text-7xl text-rosa-choque">meu perfil</h1>
-        <p className="text-rosa-text opacity-70 font-bold uppercase tracking-widest text-xs">
-          Gerencie suas informações pessoais e de contato
-        </p>
-      </header>
+    <div className="min-h-screen bg-rosa-claro p-4 md:p-8 font-menu text-rosa-text">
+      <div className="max-w-5xl mx-auto">
+        {/* Cabeçalho centralizado */}
+        <header className="text-center mb-10">
+          <h1 className="font-logo text-7xl text-rosa-choque mb-2">meu perfil</h1>
+          <p className="uppercase tracking-widest text-sm opacity-80">
+            Gerencie suas informações pessoais e de contato
+          </p>
+        </header>
 
-      <div className="max-w-3xl bg-white rounded-[40px] p-10 shadow-xl border border-rosa-pastel">       
-        <div className="flex justify-between items-center mb-8 border-b border-rosa-claro pb-4">
-          <h3 className="text-rosa-choque font-black uppercase text-lg">Dados da Conta</h3>
-          <button
-            onClick={() => setEditando(!editando)}
-            className="flex items-center gap-2 text-rosa-text hover:text-rosa-choque transition-colors font-bold text-sm"
-          >
-            <Edit3 size={18} /> {editando ? "Cancelar" : "Editar"}
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="space-y-8">
-            <InfoItem icon={<User />} label="Nome Completo" value={dadosExibicao.nome} editando={editando} onChange={(v) => handleChange("nome", v)} />
-            <InfoItem icon={<Mail />} label="E-mail Principal" value={dadosExibicao.email} />
-            <InfoItem icon={<Phone />} label="Telefone / WhatsApp" value={dadosExibicao.telefone} editando={editando} onChange={(v) => handleChange("telefone", v)} />
+        {/* Cartão principal */}
+        <section className="bg-white rounded-3xl shadow-xl p-6 md:p-10 border border-rosa-pastel">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <span className="w-2 h-8 bg-rosa-choque rounded-full"></span>
+              Dados da Conta
+            </h2>
+            <button
+              onClick={() => setEditando(!editando)}
+              className="flex items-center gap-2 text-rosa-text hover:text-rosa-choque transition-colors font-bold"
+            >
+              <Edit3 size={18} />
+              {editando ? "Cancelar" : "Editar"}
+            </button>
           </div>
-          <div className="space-y-8">
-            <InfoItem icon={<User />} label="CPF" value={dadosExibicao.cpf} />
+
+          {/* Grid de informações */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <InfoItem
+              icon={<User />}
+              label="Nome Completo"
+              value={dadosExibicao.nome}
+              editando={editando}
+              onChange={(v) => handleChange("nome", v)}
+            />
+            <InfoItem
+              icon={<Mail />}
+              label="E-mail Principal"
+              value={dadosExibicao.email}
+            />
+            <InfoItem
+              icon={<Phone />}
+              label="Telefone / WhatsApp"
+              value={dadosExibicao.telefone}
+              editando={editando}
+              onChange={(v) => handleChange("telefone", v)}
+            />
+            <InfoItem
+              icon={<User />}
+              label="CPF"
+              value={dadosExibicao.cpf}
+            />
             <InfoItem
               icon={<Calendar />}
               label="Data de Nascimento"
-              value={editando ? dadosExibicao.nascimento : formatarData(dadosExibicao.nascimento)}
+              value={
+                editando
+                  ? dadosExibicao.nascimento
+                  : formatarData(dadosExibicao.nascimento)
+              }
               editando={editando}
               type="date"
               onChange={(v) => handleChange("nascimento", v)}
             />
           </div>
-        </div>
 
-        {editando && (
-          <div className="mt-12 pt-8 border-t border-rosa-claro flex justify-end">
-            <button
-              onClick={handleSalvar}
-              disabled={salvando}
-              className="px-10 py-4 bg-rosa-choque text-white rounded-full font-black text-xs uppercase hover:bg-rosa-text transition-all shadow-lg active:scale-95 disabled:opacity-50 flex items-center gap-2"
-            >
-              {salvando && <Loader2 className="animate-spin" size={16} />}
-              Salvar Alterações
-            </button>
-          </div>
-        )}
+          {/* Botões de ação (apenas quando estiver editando) */}
+          {editando && (
+            <div className="flex gap-4 mt-10">
+              <button
+                onClick={handleSalvar}
+                disabled={salvando}
+                className="bg-rosa-choque text-white px-8 py-3 rounded-full font-bold hover:bg-rosa-text transition-colors shadow-lg active:scale-95 disabled:opacity-50 flex items-center gap-2"
+              >
+                {salvando && <Loader2 className="animate-spin" size={18} />}
+                Salvar Alterações
+              </button>
+              <button
+                onClick={() => {
+                  setEditando(false);
+                  setForm(perfil);
+                }}
+                className="bg-gray-200 text-gray-700 px-8 py-3 rounded-full font-bold hover:bg-gray-300 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
 };
 
-// Componente InfoItem (com suporte a edição)
+// Componente InfoItem adaptado ao estilo do administrador
 interface InfoItemProps {
   icon: React.ReactElement;
   label: string;
@@ -144,24 +185,33 @@ interface InfoItemProps {
   type?: string;
 }
 
-const InfoItem: React.FC<InfoItemProps> = ({ icon, label, value, editando = false, onChange, type = "text" }) => (
-  <div className="flex items-start gap-4">
-    <div className="p-3 bg-rosa-claro rounded-2xl text-rosa-choque shadow-sm shrink-0">
-      {React.cloneElement(icon, { size: 20 } as any)}
-    </div>
-    <div className="flex-1">
-      <p className="text-[10px] uppercase font-black text-rosa-text opacity-40 leading-none mb-1">{label}</p>
-      {editando && onChange ? (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full font-bold text-rosa-text text-lg leading-tight bg-rosa-claro/30 border border-rosa-pastel rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rosa-choque"
-        />
-      ) : (
-        <p className="font-bold text-rosa-text text-lg leading-tight">{value}</p>
-      )}
-    </div>
+const InfoItem: React.FC<InfoItemProps> = ({
+  icon,
+  label,
+  value,
+  editando = false,
+  onChange,
+  type = "text",
+}) => (
+  <div className="flex flex-col">
+    <label className="font-semibold mb-2 flex items-center gap-2">
+      <span className="text-rosa-choque">
+        {React.cloneElement(icon, { size: 18 } as any)}
+      </span>
+      {label}
+    </label>
+    {editando && onChange ? (
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="p-3 border-2 border-rosa-pastel rounded-xl focus:border-rosa-medio outline-none transition-all"
+      />
+    ) : (
+      <div className="p-3 border-2 border-rosa-pastel rounded-xl bg-rosa-claro/30 font-semibold min-h-[52px] flex items-center">
+        {value}
+      </div>
+    )}
   </div>
 );
 
