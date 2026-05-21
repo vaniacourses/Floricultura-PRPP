@@ -26,7 +26,7 @@ public class AdministradorService {
 
     public AdministradorDTO cadastrarAdministrador(AdministradorCreate administradorCreate){
         Administrador admin = administradorMapper.toAdministrador(administradorCreate);
-        admin.setCreatedAt(LocalDate.now());
+        //admin.setCreatedAt(LocalDate.now());
         administradorRespository.save(admin);
         return administradorMapper.toAdministradorDTO(admin);
     }
