@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { auth, googleProvider } from "../config/firebase";
+import { auth, googleProvider } from "../../config/firebase";
 import { signInWithPopup } from "firebase/auth";
-import { api } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { api } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ClienteRegistroGooglePage = () => {
   const navigate = useNavigate();

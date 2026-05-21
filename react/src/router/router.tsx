@@ -12,21 +12,21 @@ import EventosPage from "../pages/EventosPage";
 import AssinaturasPage from "../pages/AssinaturasPage";
 import CarrinhoPage from "../pages/CarrinhoPage";
 import ContatoPage from "../pages/ContatoPage";
-import ClientePage from "../pages/perfil/ClientePage";
-import ClienteLoginPage from "../pages/ClienteLoginPage";
-import ClienteRegistroPage from "../pages/ClienteRegistroPage";
-import ClienteRegistroGooglePage from "../pages/ClienteRegistroGooglePage";
-import AdminstradorPage from "../pages/AdminstradorPage";
-import AdminstradorLoginPage from "../pages/AdminstradorLoginPage";
 import PerfilAdmin from "../components/admin/PerfilAdmin";
-import Administradores from "../components/admin/Administradores";
-import Estoque from "../components/admin/Estoque";
+import Estoque from "../components/admin/estoque/Estoque";
 import Promocoes from "../components/admin/Promocoes";
 import Relatorios from "../components/admin/Relatorios";
-import PerfilClientePage from "../pages/perfil/PerfilClientePage";
-import PedidosPage from "../pages/perfil/PedidosPage";
-import AvaliacoesPage from "../pages/perfil/AvaliacoesPage";
-import EnderecosPage from "../pages/perfil/EnderecosPage";
+import Administradores from "../components/admin/Administradores";
+import ClienteLoginPage from "../pages/cliente/ClienteLoginPage";
+import ClienteRegistroGooglePage from "../pages/cliente/ClienteRegistroGooglePage";
+import ClienteRegistroPage from "../pages/cliente/ClienteRegistroPage";
+import AdminstradorLoginPage from "../pages/admin/AdminstradorLoginPage";
+import AdministradorPage from "../pages/admin/AdminstradorPage";
+import PerfilClientePage from "../pages/cliente/PerfilClientePage";
+import PedidosPage from "../pages/cliente/PedidosPage";
+import AvaliacoesPage from "../pages/cliente/AvaliacoesPage";
+import EnderecosPage from "../pages/cliente/EnderecosPage";
+import ClientePage from "../pages/cliente/ClientePage";
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -49,11 +49,14 @@ const router = createBrowserRouter([
       { path: "contato", element: <ContatoPage /> },
       { path: "cliente-login", element: <ClienteLoginPage /> },
       { path: "cliente-registro", element: <ClienteRegistroPage /> },
-      { path: "cliente-registro-google", element: <ClienteRegistroGooglePage /> },
-      
+      {
+        path: "cliente-registro-google",
+        element: <ClienteRegistroGooglePage />,
+      },
+
       {
         path: "admin",
-        element: <AdminstradorPage />,
+        element: <AdministradorPage />,
         children: [
           { index: true, element: <PerfilAdmin /> },
           { path: "perfil-adm", element: <PerfilAdmin /> },
@@ -68,14 +71,14 @@ const router = createBrowserRouter([
         path: "cliente",
         element: <ClientePage />,
         children: [
-          { index: true, element: <PerfilClientePage /> }, 
-          
+          { index: true, element: <PerfilClientePage /> },
+
           { path: "perfil", element: <PerfilClientePage /> },
-          { path: "pedidos", element: <PedidosPage/> },
-          { path: "avaliacoes", element: <AvaliacoesPage/> },
-          { path: "enderecos", element: <EnderecosPage/> },
-        ]
-      }
+          { path: "pedidos", element: <PedidosPage /> },
+          { path: "avaliacoes", element: <AvaliacoesPage /> },
+          { path: "enderecos", element: <EnderecosPage /> },
+        ],
+      },
     ],
   },
 ]);
