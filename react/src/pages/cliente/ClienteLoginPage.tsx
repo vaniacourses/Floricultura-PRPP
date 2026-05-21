@@ -28,9 +28,15 @@ const ClienteLoginPage = () => {
 
       // Redireciona para o perfil (ou para registro se for novo)
       navigate("/cliente/perfil");
-    } catch (error: any) {
+    } 
+    catch (error: any) {
       console.error("Erro na autenticação:", error);
-      alert("Falha ao conectar com o Google.");
+      if (error.status === 403) {
+        alert("Sua conta Google não está registrada. Por favor, faça o cadastro primeiro.");
+        navigate("/cliente-registro-google");  
+      } else {
+        alert("Falha ao conectar com o Google. Tente novamente.");
+      }
     }
   };
 

@@ -16,7 +16,13 @@ public class AuthController {
 
     @PostMapping("/google")
     public ResponseEntity<AuthResponse> googleLogin(@RequestBody GoogleAuthRequest request) {
-        AuthResponse response = authService.autenticarOuRegistrar(request);
+        AuthResponse response = authService.autenticar(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody GoogleAuthRequest request) {
+        AuthResponse response = authService.registrar(request);
         return ResponseEntity.ok(response);
     }
 

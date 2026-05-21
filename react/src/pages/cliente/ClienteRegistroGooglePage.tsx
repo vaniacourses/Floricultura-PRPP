@@ -13,21 +13,17 @@ const ClienteRegistroGooglePage = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      // Enviar para o back-end
-      const response = await api.post<{ token: string }>("/auth/google", {
+      const response = await api.post<{ token: string }>("/auth/register", {
         uid: user.uid,
         email: user.email,
         nome: user.displayName,
       });
 
-      // Atualiza o contexto de autenticação
       login(response.token);
-
-      // Redirecionar para a página de registro completo
-      navigate("/cliente-registro");
+      navigate("/cliente-registro"); // continua o cadastro completo
     } catch (error: any) {
-      console.error("Erro na autenticação:", error);
-      alert("Falha ao conectar com o Google. Tente novamente.");
+      console.error("Erro no registro:", error);
+      alert("Falha ao registrar. Tente novamente.");
     }
   };
 
