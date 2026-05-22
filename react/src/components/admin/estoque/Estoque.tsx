@@ -5,7 +5,8 @@ import TabelaDeProdutos from "./TabelaDeProdutos";
 import FormularioEstoque from "./FormularioEstoque";
 import HeaderEstoque from "./HeaderEstoque";
 import PesquisaEstoque from "./PesquisaEstoque";
-import FiltroCategoria from "./FiltoCategoria";
+import FiltroCategoria from "./FiltroCategoria";
+import TabelaEstoque from "./TabelaEstoque";
 
 const Estoque = () => {
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
@@ -232,12 +233,15 @@ const Estoque = () => {
           imagensPredefinidas={IMAGENS_PREDEFINIDAS}
         />
         <PesquisaEstoque valor={busca} onBuscaChange={setBusca} />
+        
         <FiltroCategoria
           categoriaAtiva={categoriaFiltro}
           onCategoriaChange={setCategoriaFiltro}
         />
-        <TabelaDeProdutos
+        
+        <TabelaEstoque
           produtos={produtosFiltrados}
+          categoriaAtiva={categoriaFiltro} /* <--- ADICIONE ESTA LINHA */
           onEditar={prepararEdicao}
           onExcluir={excluirProduto}
         />

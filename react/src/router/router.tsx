@@ -8,7 +8,6 @@ import ArranjosPage from "../pages/ArranjosPage";
 import BuquesPage from "../pages/BuquesPage";
 import KitsPage from "../pages/KitsPage";
 import AcessoriosPage from "../pages/AcessoriosPage";
-import DatasPage from "../pages/DatasPage";
 import EventosPage from "../pages/EventosPage";
 import AssinaturasPage from "../pages/AssinaturasPage";
 import CarrinhoPage from "../pages/CarrinhoPage";
@@ -43,7 +42,6 @@ const router = createBrowserRouter([
       { path: "buques", element: <BuquesPage /> },
       { path: "kits", element: <KitsPage /> },
       { path: "acessorios", element: <AcessoriosPage /> },
-      { path: "datas", element: <DatasPage /> },
       { path: "eventos", element: <EventosPage /> },
       { path: "assinaturas", element: <AssinaturasPage /> },
       { path: "carrinho", element: <CarrinhoPage /> },

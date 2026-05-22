@@ -15,11 +15,5 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "produto_codigo")
 public class Kit extends Produto {
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "kit_produtos",
-            joinColumns = @JoinColumn(name = "kit_codigo"),
-            inverseJoinColumns = @JoinColumn(name = "produto_codigo")
-    )
-    private List<Produto> produtos = new ArrayList<>();
+    private String tema;
 }

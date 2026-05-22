@@ -77,7 +77,7 @@ const Navbar = () => {
       </div>
 
     
-      <div className="flex items-center justify-center gap-10 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
+      <div className="flex items-center justify-center gap-16 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
         {[
           { name: "Assinaturas", path: "/assinaturas" },
           { name: "Flores", path: "/flores" },
@@ -86,7 +86,6 @@ const Navbar = () => {
           { name: "Buquês", path: "/buques" },
           { name: "Kits", path: "/kits" },
           { name: "Acessórios", path: "/acessorios" },
-          { name: "Datas Comemorativas", path: "/datas" },
         ].map((item) => (
           <NavLink
             key={item.name}

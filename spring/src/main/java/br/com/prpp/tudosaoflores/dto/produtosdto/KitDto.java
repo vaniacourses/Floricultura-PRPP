@@ -10,6 +10,6 @@ public record KitDto(Long codigo,
                      String descricao,
                      Integer quantidade,
                      String imagem,
-                     List<ProdutoDto> produtos) implements ProdutoDto{
+                     String tema) implements ProdutoDto{
 
 }
