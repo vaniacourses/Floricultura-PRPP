@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
+import { Loader2 } from "lucide-react";
 
-type PerfilPF = {
-  tipo: "PF";
+type PerfilCliente = {
+  tipo: "PF" | "PJ";
   nome: string;
   email: string;
   telefone: string;
-  cpf: string;
-  nascimento: string;
-  cidade: string;
-  membroDesde: string;
-  ativo: boolean;
+  cpf?: string;
+  nascimento?: string;
+  cidade?: string;
+  razaoSocial?: string;
+  cnpj?: string;
 };
 
 interface FormData {
@@ -34,7 +35,7 @@ interface FormData {
 const ClienteRegistroPage: React.FC = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
-  const [tipoPessoa, setTipoPessoa] = useState<"PF" | "PJ">("PF");
+  const [tipoCliente, setTipoCliente] = useState<"PF" | "PJ" | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     nome: "",
@@ -62,14 +63,16 @@ const ClienteRegistroPage: React.FC = () => {
     if (!isAuthenticated) {
       login(token);
     }
-    api.get<PerfilPF>("/clientes/me")
+    api.get<PerfilCliente>("/clientes/me")
       .then(data => {
+        setTipoCliente(data.tipo);
         setFormData(prev => ({
           ...prev,
           nome: data.nome || "",
           email: data.email || "",
           telefone: data.telefone || "",
           cpf: data.cpf || "",
+          cnpj: data.cnpj || "",
           dataNascimento: data.nascimento || "",
           cidade: data.cidade || "",
         }));
@@ -84,20 +87,20 @@ const ClienteRegistroPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (tipoPessoa === "PF" && formData.cpf.length !== 11) return alert("CPF deve ter 11 dígitos");
-    if (tipoPessoa === "PJ" && formData.cnpj.length !== 14) return alert("CNPJ deve ter 14 dígitos");
+    if (tipoCliente === "PF" && formData.cpf.length !== 11) return alert("CPF deve ter 11 dígitos");
+    if (tipoCliente === "PJ" && formData.cnpj.length !== 14) return alert("CNPJ deve ter 14 dígitos");
     if (formData.cep.length !== 8) return alert("CEP deve ter 8 dígitos");
 
     setLoading(true);
     try {
-      // 1. Atualiza perfil
-      const payloadPerfil = tipoPessoa === "PF"
+      // Atualiza perfil com os campos do tipo real
+      const payloadPerfil = tipoCliente === "PF"
         ? { tipo: "PF", nome: formData.nome, email: formData.email, telefone: formData.telefone, cpf: formData.cpf, nascimento: formData.dataNascimento, cidade: formData.cidade }
-        : { tipo: "PJ", nome: formData.nome, email: formData.email, telefone: formData.telefone, cnpj: formData.cnpj };
+        : { tipo: "PJ", nome: formData.nome, email: formData.email, telefone: formData.telefone, razaoSocial: formData.nome, cnpj: formData.cnpj };
 
       await api.put("/clientes/me", payloadPerfil);
 
-      // 2. Cria o endereço principal
+      // Cria o endereço principal
       const enderecoPayload = {
         cep: formData.cep,
         rua: formData.rua,
@@ -120,23 +123,30 @@ const ClienteRegistroPage: React.FC = () => {
     }
   };
 
+  if (!tipoCliente) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-rosa-claro">
+        <Loader2 className="animate-spin text-rosa-choque" size={48} />
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-rosa-claro p-6 py-12 font-menu text-left">
       <section className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl p-8 md:p-12 border border-rosa-pastel">
         <header className="text-center mb-8">
-          <h1 className="font-logo text-7xl text-rosa-choque mb-0">Registro</h1>
-          <p className="uppercase text-[10px] font-bold text-rosa-text opacity-70">Preencha seus dados</p>
+          <h1 className="font-logo text-7xl text-rosa-choque mb-2">registro</h1>
+          <p className="uppercase text-[12px] font-bold text-rosa-text opacity-70">
+            Complete seu cadastro
+          </p>
         </header>
-
-        <div className="flex bg-rosa-claro/50 p-1.5 rounded-2xl mb-8 border border-rosa-pastel">
-          <button type="button" onClick={() => setTipoPessoa("PF")} className={`flex-1 py-2.5 rounded-xl text-[13px] font-black transition-all ${tipoPessoa === "PF" ? "bg-rosa-choque text-white shadow-lg" : "text-rosa-text"}`}>PESSOA FÍSICA</button>
-          <button type="button" onClick={() => setTipoPessoa("PJ")} className={`flex-1 py-2.5 rounded-xl text-[13px] font-black transition-all ${tipoPessoa === "PJ" ? "bg-rosa-choque text-white shadow-lg" : "text-rosa-text"}`}>PESSOA JURÍDICA</button>
-        </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <label className="text-rosa-text font-black text-sm mb-1 ml-1">Nome / Razão Social</label>
+              <label className="text-rosa-text font-black text-sm mb-1 ml-1">
+                {tipoCliente === "PF" ? "Nome Completo" : "Razão Social"}
+              </label>
               <input name="nome" value={formData.nome} onChange={handleChange} required className="p-4 border-2 border-rosa-pastel rounded-2xl bg-gray-50 outline-none focus:border-rosa-medio transition-all" />
             </div>
             <div className="flex flex-col">
@@ -146,15 +156,25 @@ const ClienteRegistroPage: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col">
-              <label className="text-rosa-text font-black text-sm mb-1 ml-1">{tipoPessoa === "PF" ? "CPF" : "CNPJ"}</label>
-              <input name={tipoPessoa === "PF" ? "cpf" : "cnpj"} value={tipoPessoa === "PF" ? formData.cpf : formData.cnpj} onChange={handleChange} maxLength={tipoPessoa === "PF" ? 11 : 14} placeholder="Somente números" required className="p-4 border-2 border-rosa-pastel rounded-2xl outline-none focus:border-rosa-medio transition-all" />
+              <label className="text-rosa-text font-black text-sm mb-1 ml-1">
+                {tipoCliente === "PF" ? "CPF" : "CNPJ"}
+              </label>
+              <input
+                name={tipoCliente === "PF" ? "cpf" : "cnpj"}
+                value={tipoCliente === "PF" ? formData.cpf : formData.cnpj}
+                onChange={handleChange}
+                maxLength={tipoCliente === "PF" ? 11 : 14}
+                placeholder="Somente números"
+                required
+                className="p-4 border-2 border-rosa-pastel rounded-2xl outline-none focus:border-rosa-medio transition-all"
+              />
             </div>
             <div className="flex flex-col">
               <label className="text-rosa-text font-black text-sm mb-1 ml-1">Telefone</label>
               <input name="telefone" value={formData.telefone} onChange={handleChange} maxLength={11} placeholder="DDD + Número" required className="p-4 border-2 border-rosa-pastel rounded-2xl outline-none focus:border-rosa-medio transition-all" />
             </div>
           </div>
-          {tipoPessoa === "PF" && (
+          {tipoCliente === "PF" && (
             <div className="flex flex-col">
               <label className="text-rosa-text font-black text-sm mb-1 ml-1">Data de Nascimento</label>
               <input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} required className="p-4 border-2 border-rosa-pastel rounded-2xl outline-none focus:border-rosa-medio text-gray-500" />
@@ -162,6 +182,7 @@ const ClienteRegistroPage: React.FC = () => {
           )}
           <hr className="border-rosa-pastel/30 my-2" />
           <h3 className="text-rosa-choque font-bold text-sm uppercase ml-1">Endereço Principal</h3>
+          {/* ... (campos de endereço permanecem iguais) ... */}
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col">
               <label className="text-rosa-text font-black text-[12px] mb-1">CEP</label>
@@ -192,7 +213,6 @@ const ClienteRegistroPage: React.FC = () => {
               <input name="uf" value={formData.uf} onChange={handleChange} maxLength={2} placeholder="EX" required className="p-3 border-2 border-rosa-pastel rounded-xl outline-none focus:border-rosa-medio uppercase" />
             </div>
           </div>
-          
           <div className="flex flex-col">
             <label className="text-rosa-text font-black text-sm mb-1 ml-1">Complemento</label>
             <input name="complemento" value={formData.complemento} onChange={handleChange} placeholder="Apto, bloco, etc." className="p-4 border-2 border-rosa-pastel rounded-2xl outline-none focus:border-rosa-medio transition-all" />

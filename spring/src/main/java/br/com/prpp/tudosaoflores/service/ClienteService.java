@@ -77,24 +77,19 @@ public class ClienteService {
         return clienteMapper.toDto(cliente);
     }
 
-    // Atualização manual
     public ClienteDto alterarCliente(Long idCliente, ClienteCreate request) {
         Cliente cliente = clienteRepository.findById(idCliente)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-        if (cliente instanceof PessoaFisica pf && "PF".equalsIgnoreCase(request.getTipo())) {
-            pf.setNome(request.getNome());
-            pf.setTelefone(request.getTelefone());
-            pf.setCpf(request.getCpf());
-            pf.setDataNascimento(request.getNascimento());
-            // email e googleId geralmente não mudam
-        } else if (cliente instanceof PessoaJuridica pj && "PJ".equalsIgnoreCase(request.getTipo())) {
-            pj.setNome(request.getNome());
-            pj.setTelefone(request.getTelefone());
-            pj.setRazaoSocial(request.getRazaoSocial());
-            pj.setCnpj(request.getCnpj());
-        } else {
-            throw new RuntimeException("Tipo de cliente não corresponde ou é inválido.");
+        cliente.setNome(request.getNome());
+        cliente.setTelefone(request.getTelefone());
+
+        if (cliente instanceof PessoaFisica pf) {
+            if (request.getCpf() != null) pf.setCpf(request.getCpf());
+            if (request.getNascimento() != null) pf.setDataNascimento(request.getNascimento());
+        } else if (cliente instanceof PessoaJuridica pj) {
+            if (request.getRazaoSocial() != null) pj.setRazaoSocial(request.getRazaoSocial());
+            if (request.getCnpj() != null) pj.setCnpj(request.getCnpj());
         }
 
         clienteRepository.save(cliente);

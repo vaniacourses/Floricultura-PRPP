@@ -4,6 +4,7 @@ import br.com.prpp.tudosaoflores.dto.GoogleAuthRequest;
 import br.com.prpp.tudosaoflores.dto.AuthResponse;
 import br.com.prpp.tudosaoflores.model.Cliente;
 import br.com.prpp.tudosaoflores.model.PessoaFisica;
+import br.com.prpp.tudosaoflores.model.PessoaJuridica;
 import br.com.prpp.tudosaoflores.repository.ClienteRepository;
 import br.com.prpp.tudosaoflores.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,21 @@ public class AuthService {
 
     @Transactional
     public AuthResponse registrar(GoogleAuthRequest request) {
-        Optional<Cliente> clienteOpt = clienteRepository.findByGoogleId(request.getUid());
+        // Verifica se já existe uma conta com esse Google ID
+        if (clienteRepository.findByGoogleId(request.getUid()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Conta já registrada.");
+        }
+
         Cliente cliente;
-        if (clienteOpt.isPresent()) {
-            cliente = clienteOpt.get();
+        if ("PJ".equalsIgnoreCase(request.getTipo())) {
+            PessoaJuridica pj = new PessoaJuridica();
+            pj.setNome(request.getNome());
+            pj.setEmail(request.getEmail());
+            pj.setTelefone("");
+            pj.setGoogleId(request.getUid());
+            pj.setRazaoSocial("");
+            pj.setCnpj("");
+            cliente = clienteRepository.save(pj);
         } else {
             PessoaFisica pf = new PessoaFisica();
             pf.setNome(request.getNome());
@@ -51,6 +63,7 @@ public class AuthService {
             pf.setDataNascimento(null);
             cliente = clienteRepository.save(pf);
         }
+
         String token = jwtUtil.generateToken(cliente.getEmail(), cliente.getUsuarioId());
         return new AuthResponse(token);
     }
