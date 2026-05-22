@@ -28,9 +28,8 @@ public class AdministradorController {
     private AdministradorService administradorService;
 
     @PostMapping
-    public ResponseEntity<AdministradorDTO> cadastrarAdministrador(@Valid @RequestBody AdministradorCreate adminCreate){
-        AdministradorDTO adminDTO = administradorService.cadastrarAdministrador(adminCreate);
-        return ResponseEntity.status(HttpStatus.CREATED).body(adminDTO);
+    public ResponseEntity<AdministradorDTO> cadastrar(@RequestBody AdministradorCreate request) {
+        return ResponseEntity.ok(administradorService.cadastrarAdministrador(request));
     }
 
     @GetMapping

@@ -29,7 +29,7 @@ public class AuthService {
         Optional<Cliente> clienteOpt = clienteRepository.findByGoogleId(request.getUid());
         if (clienteOpt.isPresent()) {
             Cliente cliente = clienteOpt.get();
-            String token = jwtUtil.generateToken(cliente.getEmail(), cliente.getUsuarioId());
+            String token = jwtUtil.generateToken(cliente.getEmail(), cliente.getUsuarioId(), "CLIENTE");
             return new AuthResponse(token);
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cliente não registrado.");
@@ -38,7 +38,6 @@ public class AuthService {
 
     @Transactional
     public AuthResponse registrar(GoogleAuthRequest request) {
-        // Verifica se já existe uma conta com esse Google ID
         if (clienteRepository.findByGoogleId(request.getUid()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Conta já registrada.");
         }
@@ -64,7 +63,7 @@ public class AuthService {
             cliente = clienteRepository.save(pf);
         }
 
-        String token = jwtUtil.generateToken(cliente.getEmail(), cliente.getUsuarioId());
+        String token = jwtUtil.generateToken(cliente.getEmail(), cliente.getUsuarioId(), "CLIENTE");
         return new AuthResponse(token);
     }
 }

@@ -1,6 +1,6 @@
-import axios from "axios";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { api } from "../../services/api";              
 import { FormAdmin, renderAdministrador } from "./AdminCard";
 
 export interface Administrador {
@@ -21,8 +21,8 @@ const Administradores = () => {
 
   const buscarAdministradores = async () => {
     try {
-      const response = await axios.get<Administrador[]>("http://localhost:8080/administrador");
-      setAdministradores(response.data);
+      const response = await api.get<Administrador[]>("/administrador");
+      setAdministradores(response);   // sem .data
     } catch (error) {
       console.error("Erro ao buscar administradores:", error);
     }
@@ -30,7 +30,7 @@ const Administradores = () => {
 
   const removerAdministrador = async (adminId: number) => {
     try {
-      await axios.delete(`http://localhost:8080/administrador/${adminId}`);
+      await api.delete(`/administrador/${adminId}`);
       buscarAdministradores();
     } catch {
       alert("Erro ao remover administrador");
