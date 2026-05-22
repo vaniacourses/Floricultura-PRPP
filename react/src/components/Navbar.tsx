@@ -1,12 +1,11 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, Search, Flower, Phone, Home, LogOut } from "lucide-react";
+import { ShoppingCart, User, Search, Flower, Phone, Home } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-
 
   const getRole = (): string | null => {
     const token = localStorage.getItem("token");
@@ -28,15 +27,10 @@ const Navbar = () => {
   const contaLink = isAdmin ? "/admin/perfil-adm" : "/cliente/perfil";
   const contaTexto = isAdmin ? "Painel Admin" : "Minha Conta";
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-rosa-claro text-rosa-text shadow-lg">
       <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-
         <NavLink className="flex items-center gap-2 font-bold text-2xl" to="/">
           <Flower size={24} className="mt-2" />
           <span className="text-[38px] font-logo mt-2">tudo são flores</span>
@@ -64,17 +58,10 @@ const Navbar = () => {
           </NavLink>
 
           {isAuthenticated ? (
-            <>
-  
-              <NavLink to={contaLink} className="flex items-center gap-1 hover:text-rosa-choque transition-colors">
-                <User size={20} />
-                {contaTexto}
-              </NavLink>
-              <button onClick={handleLogout} className="flex items-center gap-1 hover:text-red-500 transition-colors cursor-pointer">
-                <LogOut size={20} />
-                Sair
-              </button>
-            </>
+            <NavLink to={contaLink} className="flex items-center gap-1 hover:text-rosa-choque transition-colors">
+              <User size={20} />
+              {contaTexto}
+            </NavLink>
           ) : (
             <NavLink to="/cliente-login" className="flex items-center gap-1 hover:text-rosa-choque transition-colors">
               <User size={20} />
@@ -89,6 +76,7 @@ const Navbar = () => {
         </div>
       </div>
 
+    
       <div className="flex items-center justify-center gap-10 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
         {[
           { name: "Assinaturas", path: "/assinaturas" },

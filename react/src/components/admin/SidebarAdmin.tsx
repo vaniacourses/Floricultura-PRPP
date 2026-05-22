@@ -1,18 +1,25 @@
 import React from "react";
 import { BarChart3, LogOut, Package, Tag, User, ShieldCheck } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const SidebarAdmin = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const admin = JSON.parse(localStorage.getItem("admin") || "{}");
-  console.log("Admin logado:", admin);
-console.log("Nível de acesso:", admin.nivelAcesso);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/admin-login");
+  };
+
   const menuItems = [
     { name: "Meu Perfil", path: "perfil-adm", icon: <User size={20} /> },
     { name: "Estoque", path: "estoque", icon: <Package size={20} /> },
     { name: "Promoções", path: "promocoes", icon: <Tag size={20} /> },
     { name: "Relatórios", path: "relatorios", icon: <BarChart3 size={20} /> },
-    { name: "Administradores", path: "administradores", icon: <ShieldCheck  size={20} /> },
+    { name: "Administradores", path: "administradores", icon: <ShieldCheck size={20} /> },
   ];
 
   return (
@@ -24,12 +31,10 @@ console.log("Nível de acesso:", admin.nivelAcesso);
       </div>
 
       <nav className="flex-1 px-4 space-y-2">
-         {menuItems.map((item) => {
-
-          if ( item.path === "administradores" && admin?.nivelAcesso !== "SUPER_ADMIN") {
+        {menuItems.map((item) => {
+          if (item.path === "administradores" && admin?.nivelAcesso !== "SUPER_ADMIN") {
             return null;
           }
-
           return (
             <NavLink
               key={item.path}
@@ -50,7 +55,8 @@ console.log("Nível de acesso:", admin.nivelAcesso);
       </nav>
 
       <div className="p-4 mt-auto border-t border-rosa-pastel">
-        <button 
+        <button
+          onClick={handleLogout}
           type="button"
           className="flex w-full items-center gap-4 px-4 py-3 text-rosa-text hover:text-rosa-choque hover:bg-white/50 rounded-lg transition-all font-menu font-semibold cursor-pointer"
         >

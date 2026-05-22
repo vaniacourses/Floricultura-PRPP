@@ -60,4 +60,10 @@ public class ClienteController {
         clienteService.removerCliente(idCliente);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> excluirConta() {
+        clienteService.removerMinhaConta();
+        return ResponseEntity.noContent().build();
+    }
 }

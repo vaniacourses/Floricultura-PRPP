@@ -125,4 +125,9 @@ public class ClienteService {
         Cliente cliente = obterClienteAutenticado();
         return alterarCliente(cliente.getUsuarioId(), request);
     }
+
+    public void removerMinhaConta() {
+        Cliente cliente = obterClienteAutenticado();
+        clienteRepository.delete(cliente);
+    }
 }
