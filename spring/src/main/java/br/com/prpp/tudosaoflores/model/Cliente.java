@@ -1,19 +1,20 @@
 package br.com.prpp.tudosaoflores.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "cliente")
-public abstract class Cliente extends Usuario implements UserDetails {
+public abstract class Cliente extends Usuario {
 
     @Column(name = "google_id")
     private String googleId;
 
-    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private Carrinho carrinho;
-
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecos = new ArrayList<>();
 
     public Cliente() {
         super();
@@ -26,4 +27,7 @@ public abstract class Cliente extends Usuario implements UserDetails {
 
     public String getGoogleId() { return googleId; }
     public void setGoogleId(String googleId) { this.googleId = googleId; }
+
+    public List<Endereco> getEnderecos() { return enderecos; }
+    public void setEnderecos(List<Endereco> enderecos) { this.enderecos = enderecos; }
 }

@@ -18,8 +18,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || "Erro na requisição");
+    const errorBody = await response.text();
+    const error = new Error(errorBody || `Erro ${response.status}`);
+    (error as any).status = response.status; 
+    throw error;
   }
 
   if (response.status === 204) return undefined as T;

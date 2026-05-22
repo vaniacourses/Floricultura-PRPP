@@ -10,6 +10,9 @@ public record AvaliacaoDto(
         String texto,
         LocalDate data,
         String imagem,
-        Double nota
+        Double nota,
+        Long produtoId,
+        Long usuarioId,
+        String usuarioNome
 ) {
 }

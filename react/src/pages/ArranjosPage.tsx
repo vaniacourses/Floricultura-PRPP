@@ -1,6 +1,11 @@
-const ArranjosPage = () => {
+import GaleriaPage from "../components/GaleriaPage";
+
+export default function ArranjosPage() {
   return (
-    <div>ArranjosPage</div>
-  )
+    <GaleriaPage 
+      categoria="ARRANJOS" 
+      titulo="Nossos Arranjos" 
+      descricao="Conheça nossos arranjos exclusivos, com flores frescas e design inovador." 
+    />
+  );
 }
-export default ArranjosPage

@@ -28,7 +28,6 @@ public class SecurityConfig {
         this.jwtUtil = jwtUtil;
     }
 
-    //ADIÇÃO DE 2 BEANS PARA FUNCIONAR O PRODUTO E CUPOM, TALVEZ QUANDO TIVER LOGIN, PRECISE SER ALTERADO
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -47,7 +46,11 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/error").permitAll()   // ← ADICIONE /error AQUI
+                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/avaliacoes/**", "/error").permitAll()   // ← ADICIONE /error AQUI
+                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/error").permitAll() 
+                .requestMatchers("/administrador/**").permitAll()
+                .requestMatchers("/admin/**").hasAnyRole("GERENTE", "ATENDENTE", "SUPER_ADMIN")
+                
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -35,7 +35,7 @@ public class CarrinhoController {
         return ResponseEntity.ok(carrinhoDto);
     }
 
-    @PostMapping()
+    @PostMapping("/adicionar")
     public ResponseEntity<CarrinhoDto> adicionarItem(@AuthenticationPrincipal Cliente clienteLogado,
                                                      @RequestBody @Valid ItemCarrinhoCreate itemCarrinhoCreate)
     {
@@ -43,7 +43,7 @@ public class CarrinhoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(carrinhoDto);
     }
 
-    @PutMapping("itens/{itemId}")
+    @PutMapping("/itens/{itemId}")
     public ResponseEntity<CarrinhoDto> atualizarItem(
             @AuthenticationPrincipal Cliente clienteLogado,
             @PathVariable Long itemId,

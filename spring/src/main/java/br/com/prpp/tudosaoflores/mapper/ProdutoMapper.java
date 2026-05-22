@@ -1,32 +1,52 @@
 package br.com.prpp.tudosaoflores.mapper;
 
-
-import br.com.prpp.tudosaoflores.dto.ProdutoCreate;
-import br.com.prpp.tudosaoflores.dto.ProdutoDto;
+import br.com.prpp.tudosaoflores.dto.produtosdto.ProdutoDto;
+import br.com.prpp.tudosaoflores.dto.produtosdto.*;
 import br.com.prpp.tudosaoflores.model.Produto;
+import br.com.prpp.tudosaoflores.model.produtos.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.SubclassMapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface    ProdutoMapper {
+public interface ProdutoMapper {
 
-    //Lista de Produtos -> Lista de Dto
-    List<ProdutoDto> toProdutosDto(List<Produto> produtos);
+    default ProdutoDto toProdutoDto(Produto produto) {
+        if (produto == null) return null;
 
-    ProdutoDto toProdutoDto(Produto produto);
+        if (produto instanceof Flor f) return toFlorDto(f);
+        if (produto instanceof FlorSeca fs) return toFlorSecaDto(fs);
+        if (produto instanceof Buque b) return toBuqueDto(b);
+        if (produto instanceof Arranjo a) return toArranjoDto(a);
+        if (produto instanceof Cartao c) return toCartaoDto(c);
+        if (produto instanceof Kit k) return toKitDto(k);
 
-    //ProdutoDto -> Produto
-    @Mapping(target = "codigo", ignore = true)
-    Produto toProduto(ProdutoDto produtoDto);
+        throw new IllegalArgumentException("Subclasse de produto não mapeada: " + produto.getClass());
+    }
 
-    //ProdutoCreate -> Produto
-    @Mapping(target = "codigo", ignore = true)
-    //Produto toProduto(ProdutoCreate produtoCreate);
-    void updateToProduto(ProdutoCreate produtoCreate, @MappingTarget Produto produto);
+    default List<ProdutoDto> toProdutosDto(List<Produto> produtos) {
+        if (produtos == null) return null;
+        return produtos.stream().map(this::toProdutoDto).collect(Collectors.toList());
+    }
 
-    @Mapping(target = "codigo", ignore = true)
-    Produto toProduto(ProdutoCreate produtoCreate);
+    @Mapping(target = "categoria", expression = "java(\"FLORES\")")
+    FlorDto toFlorDto(Flor flor);
+
+    @Mapping(target = "categoria", expression = "java(\"FLORES_SECAS\")")
+    FlorSecaDto toFlorSecaDto(FlorSeca florSeca);
+
+    @Mapping(target = "categoria", expression = "java(\"BUQUES\")")
+    BuqueDto toBuqueDto(Buque buque);
+
+    @Mapping(target = "categoria", expression = "java(\"ARRANJOS\")")
+    ArranjoDto toArranjoDto(Arranjo arranjo);
+
+    @Mapping(target = "categoria", expression = "java(\"CARTOES\")")
+    CartaoDto toCartaoDto(Cartao cartao);
+
+    @Mapping(target = "categoria", expression = "java(\"KITS\")")
+    KitDto toKitDto(Kit kit);
 }

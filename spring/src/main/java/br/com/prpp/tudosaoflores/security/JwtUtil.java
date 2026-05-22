@@ -14,12 +14,13 @@ public class JwtUtil {
 
     private final String secret = "dGhpcyBpcyBhIHNlY3JldCBrZXkgZm9yIGp3dCB0ZXN0aW5nIHB1cnBvc2Vz";
     private final byte[] keyBytes = Base64.getDecoder().decode(secret);
-    private final long expiration = 86400000L; // 24 horas
+    private final long expiration = 86400000L;
 
-    public String generateToken(String email, Long clienteId) {
+    public String generateToken(String email, Long usuarioId, String role) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("clienteId", clienteId)
+                .claim("usuarioId", usuarioId)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SignatureAlgorithm.HS256, keyBytes)
@@ -27,7 +28,7 @@ public class JwtUtil {
     }
 
     public Claims extractClaims(String token) {
-        return Jwts.parser()                     // ✅ API estável e compatível
+        return Jwts.parser()
                 .setSigningKey(keyBytes)
                 .parseClaimsJws(token)
                 .getBody();
@@ -37,8 +38,8 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
-    public Long extractClienteId(String token) {
-        return extractClaims(token).get("clienteId", Long.class);
+    public Long extractUsuarioId(String token) {
+        return extractClaims(token).get("usuarioId", Long.class);
     }
 
     public boolean isTokenValid(String token) {
