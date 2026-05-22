@@ -5,13 +5,9 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
+
+
 @Entity
 @Table(name = "administrador")
 public class Administrador extends Usuario {
@@ -32,5 +28,31 @@ public class Administrador extends Usuario {
         this.nivelAcesso = nivelAcesso;
         this.firebaseUid = firebaseUid;
         this.createdAt = LocalDate.now();
+    }
+
+    public Administrador(){}
+
+    public NivelAcesso getNivelAcesso() {
+        return nivelAcesso;
+    }
+
+    public void setNivelAcesso(NivelAcesso nivelAcesso) {
+        this.nivelAcesso = nivelAcesso;
+    }
+
+    public String getFirebaseUid() {
+        return firebaseUid;
+    }
+
+    public void setFirebaseUid(String firebaseUid) {
+        this.firebaseUid = firebaseUid;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 }
