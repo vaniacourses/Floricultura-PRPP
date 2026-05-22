@@ -7,7 +7,21 @@ const SidebarAdmin = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const getRole = (): string | null => {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const payloadJson = atob(payloadBase64);
+      const payload = JSON.parse(payloadJson);
+      return payload.role || null;
+    } catch (e) {
+      console.error("Erro ao decodificar token", e);
+      return null;
+    }
+  };
+
+  const role = getRole();
 
   const handleLogout = () => {
     logout();
@@ -32,7 +46,7 @@ const SidebarAdmin = () => {
 
       <nav className="flex-1 px-4 space-y-2">
         {menuItems.map((item) => {
-          if (item.path === "administradores" && admin?.nivelAcesso !== "SUPER_ADMIN") {
+          if (item.path === "administradores" && role !== "SUPER_ADMIN") {
             return null;
           }
           return (
