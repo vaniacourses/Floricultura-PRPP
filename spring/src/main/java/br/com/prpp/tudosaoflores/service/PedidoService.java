@@ -33,6 +33,10 @@ public class PedidoService {
     @Autowired
     private ClienteRepository usuarioRepository;
 
+    @Autowired
+    private ClienteService clienteService;
+
+
     public List<PedidoDto> recuperarPedidos(Long idUsuario){
         List<Pedido> pedidos = pedidoRepository.findByUsuarioUsuarioId(idUsuario);
         return pedidoMapper.toPedidosDto(pedidos);
@@ -46,8 +50,8 @@ public class PedidoService {
 
     @Transactional
     public PedidoDto cadastrarPedido(PedidoCreate request){
-
-        Usuario usuario = usuarioRepository.findById(request.idUsuario())
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        Usuario usuario = usuarioRepository.findById(clienteId)
                 .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
 
         Pedido pedido = new Pedido();

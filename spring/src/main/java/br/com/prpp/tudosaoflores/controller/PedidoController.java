@@ -2,6 +2,7 @@ package br.com.prpp.tudosaoflores.controller;
 
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
+import br.com.prpp.tudosaoflores.service.ClienteService;
 import br.com.prpp.tudosaoflores.service.PedidoService;
 import br.com.prpp.tudosaoflores.service.ProdutoService;
 import jakarta.validation.Valid;
@@ -22,10 +23,12 @@ public class PedidoController {
     @Autowired
     private ProdutoService produtoService;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @GetMapping
     public ResponseEntity<List<PedidoDto>> recuperarPedidos(){
-        // TO-DO: pegar Id do Usario autenticado
-        Long idUsuarioLogado = 1L;
+        Long idUsuarioLogado = clienteService.obterClienteAutenticado().getUsuarioId();
         List<PedidoDto> pedidos = pedidoService.recuperarPedidos(idUsuarioLogado);
         return ResponseEntity.ok(pedidos);
     }
