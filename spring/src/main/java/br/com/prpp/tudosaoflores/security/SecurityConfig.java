@@ -47,7 +47,7 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/error").permitAll()   // ← ADICIONE /error AQUI
+                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/avaliacoes/**", "/error").permitAll()   // ← ADICIONE /error AQUI
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

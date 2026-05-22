@@ -13,5 +13,8 @@ export type Avaliacao = {
   texto: string;
   data: string;          
   imagem: string;        
-  nota: number;          
+  nota: number;
+  produtoId: number;
+  usuarioId: number; 
+  usuarioNome: string;       
 };

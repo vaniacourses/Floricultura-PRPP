@@ -392,5 +392,129 @@ export const IMAGENS_PREDEFINIDAS = [
     "nome": "Jarra de Louça Amarela com Flores da Estação",
     "url": "/assets/imagens-produtos/arranjos/liana-s-7VO-qW8Mnyw-unsplash.jpg",
     "categoria": "ARRANJOS"
+  },
+
+  ////////////////////////////////////// kits
+  {
+    "nome": "Baú dos Sonhos",
+    "url": "/assets/imagens-produtos/kits/Bau-Sonhos.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Carinho com Chocolate",
+    "url": "/assets/imagens-produtos/kits/cesta_carinho_com_chocolate_e_pelucia.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Café da Manhã",
+    "url": "/assets/imagens-produtos/kits/cesta-cafe-da-manha-apaixonado.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Café Completa Flores",
+    "url": "/assets/imagens-produtos/kits/cesta-cafe-da-manha-completo-com-flores-1.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Café Luxo Bom",
+    "url": "/assets/imagens-produtos/kits/cesta-cafe-luxo-bom-dia2.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta de Cerveja",
+    "url": "/assets/imagens-produtos/kits/cesta-cerveja.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Coração a Mil",
+    "url": "/assets/imagens-produtos/kits/Cesta-Coracao-a-Mil.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Café Bom Dia",
+    "url": "/assets/imagens-produtos/kits/cesta-de-caf_-da-manh_-bom-dia-com-bombons.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Duetto de Vinhos",
+    "url": "/assets/imagens-produtos/kits/cesta-duetto-de-vinhos.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Cesta Café Manhã Especial",
+    "url": "/assets/imagens-produtos/kits/cestacafemanhaespecial2.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Meu Love",
+    "url": "/assets/imagens-produtos/kits/Meu-Love.jpg",
+    "categoria": "KITS"
+  },
+  {
+    "nome": "Surpresa Amor Cesta Rosas",
+    "url": "/assets/imagens-produtos/kits/Surpresa-Amor-Cesta-de-Rosas-Ferrero-Rocher-e-Chandon.jpg",
+    "categoria": "KITS"
+  },
+
+  /////////////////////////////////////// cartões
+  {
+    "nome": "Cartão Chá de Bebê",
+    "url": "/assets/imagens-produtos/cartoes/cartao_cha_bebe.png",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão com Carinho",
+    "url": "/assets/imagens-produtos/cartoes/cartao_com_carinho.png",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão de Natal",
+    "url": "/assets/imagens-produtos/cartoes/cartao_natal.png",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão de Parabéns",
+    "url": "/assets/imagens-produtos/cartoes/cartao_parabens.png",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão Comemorativo Cat Style",
+    "url": "/assets/imagens-produtos/cartoes/cartao-comemorativo-cat-style.webp",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão Comemorativo Maior Ferinha",
+    "url": "/assets/imagens-produtos/cartoes/cartao-comemorativo-maior-ferinha.webp",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão Mãe de Coração",
+    "url": "/assets/imagens-produtos/cartoes/cartao-mae-de-coracao.webp",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão Parabéns Pai",
+    "url": "/assets/imagens-produtos/cartoes/cartao-parabens-pai.webp",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão Super Família Mãe",
+    "url": "/assets/imagens-produtos/cartoes/cartao-super-familia-mae.webp",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Mega Cartão Bons Desejos",
+    "url": "/assets/imagens-produtos/cartoes/mega-cartao-bons-desejos-te-amo.webp",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão cachorro com chapeuzinho",
+    "url": "/assets/imagens-produtos/cartoes/cartao-comemorativo-cachorro-chapeuzinho.webp",
+    "categoria": "CARTOES"
+  },
+  {
+    "nome": "Cartão best friends",
+    "url": "/assets/imagens-produtos/cartoes/cartao-comemorativo-best-friend.webp",
+    "categoria": "CARTOES"
   }
 ];

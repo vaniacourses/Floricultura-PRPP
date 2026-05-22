@@ -11,42 +11,48 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/avaliacoes")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AvaliacaoController {
 
     @Autowired
-    private AvaliacaoService AvaliacaoService;
+    private AvaliacaoService avaliacaoService; // Corrigido nomenclatura para minúscula
 
-    // GET - RECUPERAR
+    // GET - Recuperar avaliações de um produto específico (/avaliacoes/produto?codigo=1)
+    @GetMapping("/produto")
+    public ResponseEntity<List<AvaliacaoDto>> recuperarAvaliacoesPorProduto(@RequestParam Long codigo){
+        List<AvaliacaoDto> avaliacoesDto =  avaliacaoService.recuperarAvaliacoesPorProduto(codigo);
+        return ResponseEntity.ok(avaliacoesDto);
+    }
 
-    @GetMapping
-    public ResponseEntity<List<AvaliacaoDto>> recuperarAvaliacoes(){
-        List<AvaliacaoDto> AvaliacoesDto =  AvaliacaoService.recuperarAvaliacoes();
-        return ResponseEntity.ok(AvaliacoesDto);
+    // GET - Recuperar avaliações de um usuário específico (/avaliacoes/usuario?usuarioId=1)
+    @GetMapping("/usuario")
+    public ResponseEntity<List<AvaliacaoDto>> recuperarAvaliacoesPorUsuario(@RequestParam Long usuarioId){
+        List<AvaliacaoDto> avaliacoesDto =  avaliacaoService.recuperarAvaliacoesPorUsuario(usuarioId);
+        return ResponseEntity.ok(avaliacoesDto);
     }
 
     @GetMapping("/{idAvaliacao}")
     public ResponseEntity<AvaliacaoDto> recuperarAvaliacaoPorId(@PathVariable Long idAvaliacao){
-        AvaliacaoDto AvaliacaoDto =  AvaliacaoService.recuperarAvaliacaoPorId(idAvaliacao);
-        return ResponseEntity.ok(AvaliacaoDto);
+        AvaliacaoDto avaliacaoDto =  avaliacaoService.recuperarAvaliacaoPorId(idAvaliacao);
+        return ResponseEntity.ok(avaliacaoDto);
     }
 
     @PostMapping
     public ResponseEntity<AvaliacaoDto> cadastrar(@RequestBody @Valid AvaliacaoCreate request) {
-        AvaliacaoDto criado = AvaliacaoService.cadastrarAvaliacao(request);
+        AvaliacaoDto criado = avaliacaoService.cadastrarAvaliacao(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
     @PutMapping("/{idAvaliacao}")
     public ResponseEntity<AvaliacaoDto> alterar(@PathVariable Long idAvaliacao, @RequestBody @Valid AvaliacaoCreate request) {
-        return ResponseEntity.ok(AvaliacaoService.alterarAvaliacao(idAvaliacao, request));
+        return ResponseEntity.ok(avaliacaoService.alterarAvaliacao(idAvaliacao, request));
     }
 
     @DeleteMapping("/{idAvaliacao}")
     public ResponseEntity<Void> remover(@PathVariable Long idAvaliacao) {
-        AvaliacaoService.removerAvaliacaoPorId(idAvaliacao);
+        avaliacaoService.removerAvaliacaoPorId(idAvaliacao);
         return ResponseEntity.noContent().build();
     }
 }
