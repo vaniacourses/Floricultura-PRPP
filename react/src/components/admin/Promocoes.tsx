@@ -13,6 +13,8 @@ const Promocoes = () => {
         descricao: "",
       });
 
+  
+  const hoje = new Date().toISOString().split("T")[0];
   const [editandoCodigo, setEditandoCodigo] = useState(null); //se tiver o id entende que está editando
 
   const [busca, setBusca] = useState("");
@@ -78,6 +80,15 @@ const Promocoes = () => {
       return;
     }
 
+    if (formData.dataInicio < hoje) {
+    alert("A data de início não pode ser anterior ao dia de hoje!");
+    return;
+    }
+
+    if (formData.dataFim <= formData.dataInicio) {
+      alert("A data de término deve ser posterior à data de início!");
+      return;
+    }
     try {
       if (editandoCodigo) {
         await axios.put(
@@ -167,6 +178,7 @@ const Promocoes = () => {
                 name="dataInicio"
                 value={formData.dataInicio}
                 type="date"
+                min = {hoje}
                 onChange={handleChange}
                 className="p-3 border-2 border-rosa-pastel rounded-xl focus:border-rosa-medio outline-none bg-white transition-all"
                 placeholder="Ex: 2026-06-01"
@@ -179,6 +191,7 @@ const Promocoes = () => {
                 name="dataFim"
                 value={formData.dataFim}
                 type="date"
+                min = {formData.dataInicio}
                 onChange={handleChange}
                 className="p-3 border-2 border-rosa-pastel rounded-xl focus:border-rosa-medio outline-none bg-white transition-all"
                 placeholder="Ex: 2026-06-01"

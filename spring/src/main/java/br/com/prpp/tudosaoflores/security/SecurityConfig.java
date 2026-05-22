@@ -46,6 +46,7 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/avaliacoes/**", "/error").permitAll()   // ← ADICIONE /error AQUI
                 .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/error").permitAll() 
                 .requestMatchers("/administrador/**").permitAll()
                 .requestMatchers("/admin/**").hasAnyRole("GERENTE", "ATENDENTE", "SUPER_ADMIN")

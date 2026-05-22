@@ -1,6 +1,7 @@
 
 import Layout from "./layout";
 import HomePage from "../pages/HomePage";
+import DetalhesPage from "../pages/DetalhesPage";
 import FloresPage from "../pages/FloresPage";
 import FloresSecas from "../pages/FloresSecas";
 import ArranjosPage from "../pages/ArranjosPage";
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
       { path: "contato", element: <ContatoPage /> },
       { path: "cliente-login", element: <ClienteLoginPage /> },
       { path: "cliente-registro", element: <ClienteRegistroPage /> },
+      { path: "detalhesPage/:codigo", element: <DetalhesPage /> },
       {
         path: "cliente-registro-google",
         element: <ClienteRegistroGooglePage />,

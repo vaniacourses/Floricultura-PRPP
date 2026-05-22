@@ -1,6 +1,11 @@
-const AcessoriosPage = () => {
+import GaleriaPage from "../components/GaleriaPage";
+
+export default function AcessoriosPage() {
   return (
-    <div>AcessoriosPage</div>
-  )
+    <GaleriaPage 
+      categoria="CARTOES" 
+      titulo="Nossos Cartões" 
+      descricao="Explore nossa coleção de cartões para complementar seu presente." 
+    />
+  );
 }
-export default AcessoriosPage
