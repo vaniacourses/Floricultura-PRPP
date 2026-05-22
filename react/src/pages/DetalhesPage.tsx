@@ -75,7 +75,7 @@ export default function DetalhesPage() {
         }).join(''));
 
         const dadosDoToken = JSON.parse(jsonPayload);
-        idDoUsuarioLogado = dadosDoToken.clienteId;
+        idDoUsuarioLogado = dadosDoToken.usuarioId;
       } catch (err) {
         console.error("Erro ao ler o ID de dentro do token:", err);
       }
