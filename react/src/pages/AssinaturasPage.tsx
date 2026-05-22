@@ -1,59 +1,46 @@
 import { useState } from "react";
 import {
   CheckCircle2,
-  Loader2,
   PackageCheck,
   Sparkles,
 } from "lucide-react";
-import { Assinatura, contratarAssinatura } from "../services/assinaturasApi";
+import { useNavigate } from "react-router-dom";
 
 const PLANOS = [
   {
     nome: "Semanal",
     subtitulo: "Flores sempre frescas",
+    descricao: "Perfeito para quem quer manter a casa sempre renovada com flores fresquinhas.",
     beneficios: ["Entrega toda semana", "Arranjos compactos", "Ideal para rotina"],
+  },
+  {
+    nome: "Quinzenal",
+    subtitulo: "Flores a cada 15 dias",
+    descricao: "Uma opção equilibrada para trazer delicadeza e cor ao seu espaço com frequência.",
+    beneficios: ["Entrega quinzenal", "Seleção da estação", "Equilíbrio perfeito"],
   },
   {
     nome: "Mensal",
     subtitulo: "Renove o ambiente",
+    descricao: "Ideal para transformar o mês com arranjos especiais e escolhidos com carinho.",
     beneficios: ["Entrega mensal", "Seleção da estação", "Ótimo custo-benefício"],
-  },
-  {
-    nome: "Anual",
-    subtitulo: "Flores o ano inteiro",
-    beneficios: ["Assinatura contínua", "Prioridade em datas especiais", "Plano completo"],
   },
 ];
 
 const AssinaturasPage = () => {
+  const navigate = useNavigate();
   const [planoSelecionado, setPlanoSelecionado] = useState("Mensal");
-  const [assinaturaCriada, setAssinaturaCriada] = useState<Assinatura | null>(null);
-  const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState("");
 
   const planoAtual = PLANOS.find((plano) => plano.nome === planoSelecionado) || PLANOS[1];
 
-  const handleContratar = async () => {
-    setErro("");
-    setAssinaturaCriada(null);
-
-    try {
-      setCarregando(true);
-      const assinatura = await contratarAssinatura(planoSelecionado);
-      setAssinaturaCriada(assinatura);
-    } catch (error) {
-      setErro("Não foi possível contratar a assinatura. Verifique se o backend está rodando.");
-    } finally {
-      setCarregando(false);
-    }
-  };
+  const handleContratar = () => navigate("/cliente-login");
 
   return (
     <main className="min-h-screen bg-rosa-claro font-[Arial] text-rosa-text">
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 md:grid-cols-[1fr_340px] md:py-12">
         <div>
           <div className="mb-8">
-            <h1 className="text-5xl font-bold leading-none text-rosa-choque md:text-6xl">
+            <h1 className="font-logo text-6xl font-normal leading-none text-rosa-choque md:text-7xl">
               Assinaturas
             </h1>
             <p className="mt-4 max-w-2xl text-base font-medium opacity-80 md:text-lg">
@@ -71,8 +58,6 @@ const AssinaturasPage = () => {
                   type="button"
                   onClick={() => {
                     setPlanoSelecionado(plano.nome);
-                    setAssinaturaCriada(null);
-                    setErro("");
                   }}
                   className={`flex min-h-[300px] flex-col rounded-lg border bg-white p-5 text-left shadow-lg transition-shadow hover:shadow-xl ${
                     selecionado
@@ -86,6 +71,9 @@ const AssinaturasPage = () => {
 
                   <h2 className="text-2xl font-black text-rosa-choque">{plano.nome}</h2>
                   <p className="mt-1 font-bold">{plano.subtitulo}</p>
+                  <p className="mt-3 text-sm font-medium leading-relaxed opacity-80">
+                    {plano.descricao}
+                  </p>
 
                   <ul className="mt-5 space-y-3">
                     {plano.beneficios.map((beneficio) => (
@@ -134,33 +122,11 @@ const AssinaturasPage = () => {
           <button
             type="button"
             onClick={handleContratar}
-            disabled={carregando}
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-rosa-choque px-6 py-3 font-bold text-white shadow-lg transition-colors hover:bg-rosa-text disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-rosa-choque px-6 py-3 font-bold text-white shadow-lg transition-colors hover:bg-rosa-text"
           >
-            {carregando ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
+            <CheckCircle2 size={18} />
             Assinar este plano
           </button>
-
-          {erro && (
-            <div className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-              {erro}
-            </div>
-          )}
-
-          {assinaturaCriada && (
-            <div className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-4 text-sm text-green-800">
-              <strong className="mb-2 block text-base">Assinatura contratada com sucesso.</strong>
-              <p>
-                Plano: <span className="font-bold">{assinaturaCriada.tipoPlano}</span>
-              </p>
-              <p>
-                Status: <span className="font-bold">{assinaturaCriada.status}</span>
-              </p>
-              <p className="mt-2 break-all font-mono text-xs">
-                Código: {assinaturaCriada.idAssinatura}
-              </p>
-            </div>
-          )}
         </aside>
       </section>
     </main>
