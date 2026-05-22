@@ -1,5 +1,8 @@
 package br.com.prpp.tudosaoflores.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -9,6 +12,9 @@ public abstract class Cliente extends Usuario {
 
     @Column(name = "google_id")
     private String googleId;
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecos = new ArrayList<>();
 
     public Cliente() {
         super();
@@ -21,4 +27,7 @@ public abstract class Cliente extends Usuario {
 
     public String getGoogleId() { return googleId; }
     public void setGoogleId(String googleId) { this.googleId = googleId; }
+
+    public List<Endereco> getEnderecos() { return enderecos; }
+    public void setEnderecos(List<Endereco> enderecos) { this.enderecos = enderecos; }
 }

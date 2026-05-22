@@ -1,4 +1,4 @@
-import axios from "axios";
+import { api } from "../../services/api";
 import { Mail, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import type { Administrador } from "./Administradores";
 
@@ -97,10 +97,10 @@ export function FormAdmin({ modo, adminAtual, onFechar, buscarAdministradores }:
       const payload = { nome, email, nivelAcesso: nivel };
 
       if (ehEdicao) {
-        await axios.put(`http://localhost:8080/administrador/${adminAtual.usuarioId}`, payload);
+        await api.put(`/administrador/${adminAtual.usuarioId}`, payload);
         alert("Administrador atualizado!");
       } else {
-        await axios.post("http://localhost:8080/administrador", payload);
+        await api.post("/administrador", payload);
         alert("Administrador cadastrado!");
       }
 

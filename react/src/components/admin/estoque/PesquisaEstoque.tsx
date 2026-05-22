@@ -1,6 +1,6 @@
 import React from "react";
 
-const FiltroEstoque = ({ valor, onBuscaChange }) => {
+const PesquisaEstoque = ({ valor, onBuscaChange }) => {
   return (
     <div className="mb-6 flex justify-end">
       <div className="relative w-full md:w-72">
@@ -30,4 +30,4 @@ const FiltroEstoque = ({ valor, onBuscaChange }) => {
   );
 };
 
-export default FiltroEstoque;
+export default PesquisaEstoque;
