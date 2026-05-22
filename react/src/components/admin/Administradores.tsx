@@ -22,7 +22,8 @@ const Administradores = () => {
   const buscarAdministradores = async () => {
     try {
       const response = await api.get<Administrador[]>("/administrador");
-      setAdministradores(response);   // sem .data
+      console.log(response);
+      setAdministradores(response); 
     } catch (error) {
       console.error("Erro ao buscar administradores:", error);
     }

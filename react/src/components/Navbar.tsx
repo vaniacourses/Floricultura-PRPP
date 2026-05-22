@@ -25,7 +25,7 @@ const Navbar = () => {
   const role = getRole();
 
   const isAdmin = role === "GERENTE" || role === "ATENDENTE" || role === "SUPER_ADMIN";
-  const contaLink = isAdmin ? "/admin" : "/cliente/perfil";
+  const contaLink = isAdmin ? "/admin/perfil-adm" : "/cliente/perfil";
   const contaTexto = isAdmin ? "Painel Admin" : "Minha Conta";
 
   const handleLogout = () => {

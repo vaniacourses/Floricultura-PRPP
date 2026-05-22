@@ -1,6 +1,7 @@
 package br.com.prpp.tudosaoflores.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class AdministradorService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas SUPER_ADMIN pode criar administradores");
         }
         Administrador admin = administradorMapper.toAdministrador(administradorCreate);
+        admin.setCreatedAt(LocalDate.now());
         administradorRespository.save(admin);
         return administradorMapper.toAdministradorDTO(admin);
     }
@@ -94,5 +96,11 @@ public class AdministradorService {
         String role = admin.getNivelAcesso() != null ? admin.getNivelAcesso().name() : "GERENTE";
         String token = jwtUtil.generateToken(admin.getEmail(), admin.getUsuarioId(), role);
         return new AuthResponse(token);
+    }
+
+    public AdministradorDTO recuperarAdministrador(String email){
+        Administrador admin = administradorRespository.findByEmail(email)
+                .orElseThrow(() -> new AdminNaoEncontradoException("Administrador não encontrado"));
+        return administradorMapper.toAdministradorDTO(admin);
     }
 }

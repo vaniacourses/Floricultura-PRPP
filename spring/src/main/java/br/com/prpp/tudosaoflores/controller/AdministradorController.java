@@ -4,6 +4,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,6 +58,27 @@ public class AdministradorController {
     public ResponseEntity<AdministradorDTO> deletarAdministrador(@PathVariable Long id){
         administradorService.deletarAdministrador(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me")
+        public ResponseEntity<AdministradorDTO> buscarPerfilAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName(); 
+        AdministradorDTO adminDTO = administradorService.recuperarAdministrador(email);
+        return ResponseEntity.ok(adminDTO);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<AdministradorDTO> atualizarPerfilAutenticado(
+            @RequestBody @Valid AdministradorCreate adminUpdate) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        
+        AdministradorDTO adminExistente = administradorService.recuperarAdministrador(email);
+        Long id = adminExistente.usuarioId();
+        
+        AdministradorDTO adminDTO = administradorService.atualizarAdministrador(id, adminUpdate);
+        return ResponseEntity.ok(adminDTO);
     }
 
 

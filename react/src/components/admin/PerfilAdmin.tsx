@@ -34,25 +34,14 @@ const PerfilAdministradorPage = () => {
 
   const carregarPerfil = async () => {
     try {
-      /*
+
       const data = await api.get<PerfilAdministrador>(
         "/administrador/me"
       );
 
       setPerfil(data);
       setForm({ ...data });
-      */
 
-      const fakeData = {
-        usuarioId: 1,
-        nome: "Isabella",
-        email: "isa@gmail.com",
-        telefone: "(21) 99999-9999",
-        nivelAcesso: "SUPER_ADMIN",
-      };
-
-      setPerfil(fakeData);
-      setForm(fakeData);
 
     } catch (e: any) {
       setErro(e.message || "Erro ao carregar perfil");

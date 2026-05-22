@@ -21,7 +21,7 @@ const AdminstradorLoginPage = () => {
 
       login(response.token);
 
-      navigate("/admin");
+      navigate("/admin/perfil-adm");
     } catch (error: any) {
       console.error("Erro na autenticação:", error);
       if (error.status === 404 || error.status === 401) {
