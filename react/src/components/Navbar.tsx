@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   ShoppingCart,
@@ -9,8 +9,10 @@ import {
   Home,
   Menu,
   X,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
 
 const categorias = [
   { name: "Assinaturas", path: "/assinaturas" },
@@ -22,10 +24,29 @@ const categorias = [
   { name: "Acessórios", path: "/acessorios" },
 ];
 
+type ProdutoApi = {
+  codigo: number;
+  nome: string;
+  preco: number;
+  imagem: string;
+};
+
+// Remove acentos de uma string
+const removeAcentos = (str: string) =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
+
+  // Estados da busca instantânea
+  const [termoBusca, setTermoBusca] = useState("");
+  const [todosProdutos, setTodosProdutos] = useState<ProdutoApi[]>([]);
+  const [resultados, setResultados] = useState<ProdutoApi[]>([]);
+  const [mostrarDropdown, setMostrarDropdown] = useState(false);
+  const [carregandoCache, setCarregandoCache] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const getRole = (): string | null => {
     const token = localStorage.getItem("token");
@@ -49,6 +70,56 @@ const Navbar = () => {
 
   const fecharMenu = () => setMenuAberto(false);
 
+  // Carrega todos os produtos uma única vez para filtrar localmente
+  useEffect(() => {
+    setCarregandoCache(true);
+    api
+      .get<ProdutoApi[]>("/produtos")
+      .then((response) => setTodosProdutos(response))
+      .catch((err) => console.error("Erro ao carregar produtos:", err))
+      .finally(() => setCarregandoCache(false));
+  }, []);
+
+  // Filtra produtos conforme o termo digitado (busca ao vivo)
+  useEffect(() => {
+    if (!termoBusca.trim()) {
+      setResultados([]);
+      setMostrarDropdown(false);
+      return;
+    }
+    const termo = removeAcentos(termoBusca.toLowerCase());
+    const filtrados = todosProdutos.filter((p) =>
+      removeAcentos(p.nome.toLowerCase()).includes(termo)
+    );
+    setResultados(filtrados.slice(0, 6)); // no máximo 6 sugestões
+    setMostrarDropdown(filtrados.length > 0);
+  }, [termoBusca, todosProdutos]);
+
+  // Navega para a página do produto e limpa o campo
+  const handleProdutoClick = (produto: ProdutoApi) => {
+    navigate(`/detalhesPage/${produto.codigo}`);
+    setTermoBusca("");
+    setMostrarDropdown(false);
+    fecharMenu();
+  };
+
+  // Quando pressiona Enter, redireciona para a página de busca completa
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const termo = termoBusca.trim();
+    if (termo) {
+      navigate(`/busca?q=${encodeURIComponent(termo)}`);
+      setMostrarDropdown(false);
+      fecharMenu();
+    }
+  };
+
+  // Esconde o dropdown se clicar fora do componente de busca
+  const handleBlur = () => {
+    // Pequeno atraso para permitir o clique no item do dropdown
+    setTimeout(() => setMostrarDropdown(false), 150);
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full bg-rosa-claro text-rosa-text shadow-lg">
       {/* ── Barra principal ── */}
@@ -65,19 +136,65 @@ const Navbar = () => {
           </span>
         </NavLink>
 
-        {/* Barra de busca — some em telas muito pequenas */}
         <div className="hidden sm:flex flex-1 mx-6 max-w-2xl relative">
-          <input
-            type="text"
-            placeholder="Pesquise produtos"
-            className="w-full bg-rosa-pastel/50 text-rosa-choque rounded-full px-6 py-3 outline-none placeholder:text-rosa-text/50 shadow-inner focus:ring-2 focus:ring-rosa-pastel transition-all"
-          />
-          <button className="absolute right-4 top-1/2 -translate-y-1/2 text-rosa-choque hover:scale-110 transition-transform cursor-pointer">
-            <Search size={20} />
-          </button>
+          <form onSubmit={handleSearchSubmit} className="w-full">
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Pesquise produtos"
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value)}
+              onFocus={() => termoBusca.trim() && setMostrarDropdown(true)}
+              onBlur={handleBlur}
+              className="w-full bg-rosa-pastel/50 text-rosa-choque rounded-full px-6 py-3 outline-none placeholder:text-rosa-text/50 shadow-inner focus:ring-2 focus:ring-rosa-pastel transition-all"
+            />
+            <button
+              type="submit"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-rosa-choque hover:scale-110 transition-transform cursor-pointer"
+            >
+              {carregandoCache ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : (
+                <Search size={20} />
+              )}
+            </button>
+          </form>
+
+          {mostrarDropdown && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-rosa-pastel overflow-hidden z-50">
+              {resultados.map((produto) => (
+                <button
+                  key={produto.codigo}
+                  onMouseDown={() => handleProdutoClick(produto)}
+                  className="w-full flex items-center gap-4 px-5 py-3 hover:bg-rosa-claro transition-colors text-left"
+                >
+                  <img
+                    src={produto.imagem}
+                    alt={produto.nome}
+                    className="w-10 h-10 rounded-xl object-cover"
+                  />
+                  <div className="min-w-0">
+                    <p className="font-bold text-rosa-text text-sm truncate">
+                      {produto.nome}
+                    </p>
+                    <p className="text-rosa-choque font-black text-xs">
+                      R$ {produto.preco.toFixed(2)}
+                    </p>
+                  </div>
+                </button>
+              ))}
+              <div className="border-t border-rosa-pastel/50">
+                <button
+                  onMouseDown={handleSearchSubmit}
+                  className="w-full px-5 py-3 text-sm text-rosa-choque font-bold hover:bg-rosa-claro transition-colors text-center"
+                >
+                  Ver todos os resultados para “{termoBusca}”
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Links desktop */}
         <div className="font-menu hidden md:flex items-center gap-6 font-medium shrink-0">
           <NavLink
             to="/home"
@@ -134,21 +251,66 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* ── Barra de busca mobile (linha separada) ── */}
       <div className="sm:hidden px-4 pb-3">
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Pesquise produtos"
-            className="w-full bg-rosa-pastel/50 text-rosa-choque rounded-full px-5 py-2.5 outline-none placeholder:text-rosa-text/50 shadow-inner focus:ring-2 focus:ring-rosa-pastel transition-all text-sm"
-          />
-          <button className="absolute right-4 top-1/2 -translate-y-1/2 text-rosa-choque">
-            <Search size={18} />
-          </button>
+          <form onSubmit={handleSearchSubmit}>
+            <input
+              type="text"
+              placeholder="Pesquise produtos"
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value)}
+              onFocus={() => termoBusca.trim() && setMostrarDropdown(true)}
+              onBlur={handleBlur}
+              className="w-full bg-rosa-pastel/50 text-rosa-choque rounded-full px-5 py-2.5 outline-none placeholder:text-rosa-text/50 shadow-inner focus:ring-2 focus:ring-rosa-pastel transition-all text-sm"
+            />
+            <button
+              type="submit"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-rosa-choque"
+            >
+              {carregandoCache ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Search size={18} />
+              )}
+            </button>
+          </form>
+
+          {mostrarDropdown && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-rosa-pastel overflow-hidden z-50">
+              {resultados.map((produto) => (
+                <button
+                  key={produto.codigo}
+                  onMouseDown={() => handleProdutoClick(produto)}
+                  className="w-full flex items-center gap-4 px-4 py-3 hover:bg-rosa-claro transition-colors text-left"
+                >
+                  <img
+                    src={produto.imagem}
+                    alt={produto.nome}
+                    className="w-10 h-10 rounded-xl object-cover"
+                  />
+                  <div className="min-w-0">
+                    <p className="font-bold text-rosa-text text-sm truncate">
+                      {produto.nome}
+                    </p>
+                    <p className="text-rosa-choque font-black text-xs">
+                      R$ {produto.preco.toFixed(2)}
+                    </p>
+                  </div>
+                </button>
+              ))}
+              <div className="border-t border-rosa-pastel/50">
+                <button
+                  onMouseDown={handleSearchSubmit}
+                  className="w-full px-5 py-3 text-sm text-rosa-choque font-bold hover:bg-rosa-claro transition-colors text-center"
+                >
+                  Ver todos os resultados para “{termoBusca}”
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── Subcategorias desktop ── */}
       <div className="hidden md:flex items-center justify-center gap-16 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
         {categorias.map((item) => (
           <NavLink
@@ -162,7 +324,6 @@ const Navbar = () => {
         ))}
       </div>
 
-      {/* ── Menu mobile (gaveta) ── */}
       {menuAberto && (
         <div className="md:hidden border-t border-white/20 bg-rosa-claro font-menu">
           {/* Links principais */}
@@ -204,7 +365,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Categorias */}
           <div className="grid grid-cols-2 px-6 py-4 gap-3">
             {categorias.map((item) => (
               <NavLink

@@ -28,6 +28,7 @@ import AvaliacoesPage from "../pages/cliente/AvaliacoesPage";
 import EnderecosPage from "../pages/cliente/EnderecosPage";
 import ClientePage from "../pages/cliente/ClientePage";
 import { createBrowserRouter } from "react-router-dom";
+import SearchPage from "../pages/SearchPage";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
       { path: "cliente-login", element: <ClienteLoginPage /> },
       { path: "cliente-registro", element: <ClienteRegistroPage /> },
       { path: "detalhesPage/:codigo", element: <DetalhesPage /> },
+      { path: "busca", element: <SearchPage /> },
       {
         path: "cliente-registro-google",
         element: <ClienteRegistroGooglePage />,

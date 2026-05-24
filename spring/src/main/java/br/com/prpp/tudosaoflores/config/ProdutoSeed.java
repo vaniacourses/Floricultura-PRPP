@@ -22,7 +22,6 @@ public class ProdutoSeed implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        produtoRepository.deleteAll();
         List<Produto> produtos = new ArrayList<>();
 
         // FLORES
@@ -32,7 +31,7 @@ public class ProdutoSeed implements CommandLineRunner {
         rosa.setDescricao("Rosa colombiana de alta qualidade.");
         rosa.setQuantidade(50);
         rosa.setImagem("/assets/imagens-produtos/flores/rosa-vermelha.jpg");
-        rosa.setUnidadeMedida(UnidadeMedida.MACO);
+        rosa.setUnidadeMedida(UnidadeMedida.UNITARIO);
         rosa.setValidade(LocalDate.now().plusDays(10));
         produtos.add(rosa);
 
@@ -42,7 +41,7 @@ public class ProdutoSeed implements CommandLineRunner {
         orquidea.setDescricao("Orquídea branca em vaso decorativo.");
         orquidea.setQuantidade(30);
         orquidea.setImagem("/assets/imagens-produtos/flores/orquidea.png");
-        orquidea.setUnidadeMedida(UnidadeMedida.DUZIA);
+        orquidea.setUnidadeMedida(UnidadeMedida.UNITARIO);
         orquidea.setValidade(LocalDate.now().plusDays(14));
         produtos.add(orquidea);
 
@@ -52,16 +51,45 @@ public class ProdutoSeed implements CommandLineRunner {
         girassol.setDescricao("Girassol gigante, ideal para alegrar qualquer ambiente.");
         girassol.setQuantidade(40);
         girassol.setImagem("/assets/imagens-produtos/flores/girassol.png");
-        girassol.setUnidadeMedida(UnidadeMedida.DUZIA);
+        girassol.setUnidadeMedida(UnidadeMedida.UNITARIO);
         girassol.setValidade(LocalDate.now().plusDays(8));
         produtos.add(girassol);
 
+        Flor tulipaRosa = new Flor();
+        tulipaRosa.setPreco(new BigDecimal("75.90"));
+        tulipaRosa.setNome("Tulipa Rosa");
+        tulipaRosa.setDescricao("Flor delicada com aparência romântica e elegante. Ideal para presentes e decoração minimalista.");
+        tulipaRosa.setQuantidade(20);
+        tulipaRosa.setImagem("/assets/imagens-produtos/flores/hayley-maxwell-BN0tsi5c52w-unsplash.jpg");
+        tulipaRosa.setUnidadeMedida(UnidadeMedida.DUZIA);
+        tulipaRosa.setValidade(LocalDate.now().plusDays(8));
+        produtos.add(tulipaRosa);
+
+        Flor anturioRosa = new Flor();
+        anturioRosa.setPreco(new BigDecimal("24.90"));
+        anturioRosa.setNome("Anturio Rosa");
+        anturioRosa.setDescricao("Flor tropical sofisticada, com pétalas brilhantes em tom rosado e haste longa. Muito usada em arranjos modernos.");
+        anturioRosa.setQuantidade(40);
+        anturioRosa.setImagem("/assets/imagens-produtos/flores/pawel-czerwinski-utu66oQU6vI-unsplash.jpg");
+        anturioRosa.setUnidadeMedida(UnidadeMedida.UNITARIO);
+        anturioRosa.setValidade(LocalDate.now().plusDays(15));
+        produtos.add(anturioRosa);
+
+        Flor crisantemo = new Flor();
+        crisantemo.setPreco(new BigDecimal("19.90"));
+        crisantemo.setNome("Crisântemo Alaranjado");
+        crisantemo.setDescricao("Flor volumosa em tons de salmão e laranja suave, com pétalas delicadas e visual aconchegante. Muito usada em arranjos elegantes e decoração vintage.");
+        crisantemo.setQuantidade(30);
+        crisantemo.setImagem("/assets/imagens-produtos/flores/ryunosuke-kikuno-38PNM7IWltk-unsplash.jpg");
+        crisantemo.setUnidadeMedida(UnidadeMedida.UNITARIO);
+        crisantemo.setValidade(LocalDate.now().plusDays(14));
+        produtos.add(crisantemo);
 
         // BUQUÊS
         Buque buqueRosas = new Buque();
         buqueRosas.setPreco(new BigDecimal("79.90"));
         buqueRosas.setNome("Buquê de Rosas");
-        buqueRosas.setDescricao("Buquê com 12 rosas vermelhas.");
+        buqueRosas.setDescricao("Buquê composto por lindas rosas vermelhas.");
         buqueRosas.setQuantidade(20);
         buqueRosas.setImagem("/assets/imagens-produtos/buques/0007_25_red_roses.jpg");
         buqueRosas.setValidade(LocalDate.now().plusDays(7));
@@ -70,22 +98,42 @@ public class ProdutoSeed implements CommandLineRunner {
         Buque buqueCampo = new Buque();
         buqueCampo.setPreco(new BigDecimal("89.90"));
         buqueCampo.setNome("Buquê do Campo");
-        buqueCampo.setDescricao("Mix de flores do campo.");
+        buqueCampo.setDescricao("Mix de diversas flores do campo.");
         buqueCampo.setQuantidade(15);
         buqueCampo.setImagem("/assets/imagens-produtos/buques/0000_Bouquet_of_5_eustoms_in_craft.jpg");
         buqueCampo.setValidade(LocalDate.now().plusDays(6));
         produtos.add(buqueCampo);
 
         // ARRANJOS
+        Arranjo arranjoMisto = new Arranjo();
+        arranjoMisto.setPreco(new BigDecimal("109.90"));
+        arranjoMisto.setNome("Arranjo Misto");
+        arranjoMisto.setDescricao("Arranjo composto por orquídeas, rosas e lírios.");
+        arranjoMisto.setQuantidade(8);
+        arranjoMisto.setImagem("/assets/imagens-produtos/arranjos/gilberto-peralta-bocio-LR1u8jkflRE-unsplash.jpg");
+        arranjoMisto.setValidade(LocalDate.now().plusDays(10));
+        arranjoMisto.setVaso("SIM");
+        produtos.add(arranjoMisto);
+
         Arranjo arranjoLuxo = new Arranjo();
-        arranjoLuxo.setPreco(new BigDecimal("149.90"));
+        arranjoLuxo.setPreco(new BigDecimal("129.90"));
         arranjoLuxo.setNome("Arranjo Luxo");
-        arranjoLuxo.setDescricao("Orquídeas, rosas e lírios.");
-        arranjoLuxo.setQuantidade(8);
-        arranjoLuxo.setImagem("/assets/imagens-produtos/arranjos/gilberto-peralta-bocio-LR1u8jkflRE-unsplash.jpg");
+        arranjoLuxo.setDescricao("Arranjo composto por flores pequenas e delicadas, perfeito para um ambiente minimalista.");
+        arranjoLuxo.setQuantidade(10);
+        arranjoLuxo.setImagem("/assets/imagens-produtos/arranjos/luxo.jpg");
         arranjoLuxo.setValidade(LocalDate.now().plusDays(10));
-        arranjoLuxo.setVaso("NAO");
+        arranjoLuxo.setVaso("SIM");
         produtos.add(arranjoLuxo);
+
+        Arranjo arranjoVerao = new Arranjo();
+        arranjoVerao.setPreco(new BigDecimal("79.90"));
+        arranjoVerao.setNome("Arranjo Verão");
+        arranjoVerao.setDescricao("Arranjo composto por diversas flores de tons quentes.");
+        arranjoVerao.setQuantidade(10);
+        arranjoVerao.setImagem("/assets/imagens-produtos/arranjos/verao.jpg");
+        arranjoVerao.setValidade(LocalDate.now().plusDays(7));
+        arranjoVerao.setVaso("SIM");
+        produtos.add(arranjoVerao);
 
         // KITS
         Kit kitCafe = new Kit();
