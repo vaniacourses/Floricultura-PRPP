@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,6 +59,10 @@ public class PedidoService {
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setData(LocalDateTime.now());
+        pedido.setStatus("PROCESSANDO");
+        pedido.setItens(new ArrayList<>());
+
+        BigDecimal totalAcumulado = BigDecimal.ZERO;
 
         for (ItemPedidoCreate itemDto : request.itens()) {
 
@@ -69,10 +75,12 @@ public class PedidoService {
                     itemDto.quantidade(),
                     produto.getPreco()
             );
+            BigDecimal subtotalItem = produto.getPreco().multiply(BigDecimal.valueOf(itemDto.quantidade()));
+            totalAcumulado = totalAcumulado.add(subtotalItem);
 
             pedido.getItens().add(novoItem);
         }
-
+        pedido.setValorTotal(totalAcumulado);
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
         return pedidoMapper.toPedidoDto(pedidoSalvo);
@@ -80,7 +88,6 @@ public class PedidoService {
 
     @Transactional
     public PedidoDto alterarPedido(Long idPedido, PedidoCreate request){
-
         Pedido pedido = pedidoRepository.findById(idPedido)
                 .orElseThrow(()-> new RuntimeException("Pedido nao encontrado"));
 
@@ -88,13 +95,13 @@ public class PedidoService {
                 .orElseThrow(()-> new RuntimeException("Usuario nao encontrado"));
 
         pedido.setUsuario(usuario);
-
         pedido.getItens().clear();
+
+        BigDecimal totalAcumulado = BigDecimal.ZERO;
 
         for (ItemPedidoCreate itemDto : request.itens()) {
             Produto produto = produtoRepository.findById(itemDto.idProduto())
                     .orElseThrow(() -> new RuntimeException("Produto nao encontrado"));
-
 
             ItemPedido novoItem = new ItemPedido(
                     pedido,
@@ -103,11 +110,15 @@ public class PedidoService {
                     produto.getPreco()
             );
 
+            BigDecimal subtotalItem = produto.getPreco().multiply(BigDecimal.valueOf(itemDto.quantidade()));
+            totalAcumulado = totalAcumulado.add(subtotalItem);
+
             pedido.getItens().add(novoItem);
         }
 
-        Pedido pedidoAtualizado = pedidoRepository.save(pedido);
+        pedido.setValorTotal(totalAcumulado);
 
+        Pedido pedidoAtualizado = pedidoRepository.save(pedido);
         return pedidoMapper.toPedidoDto(pedidoAtualizado);
     }
 

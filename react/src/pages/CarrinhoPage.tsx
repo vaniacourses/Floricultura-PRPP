@@ -30,6 +30,33 @@ export default function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const handleFinalizarCompra = async () => {
+    const tokenAtual = token || localStorage.getItem("token");
+
+    if (!tokenAtual) {
+      console.error("BLOQUEADO: Nenhum token encontrado para finalizar compra.");
+      navigate("/cliente-login");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await axios.post("http://localhost:8080/carrinho/finalizar", {}, {
+        headers: {
+          Authorization:  `Bearer ${tokenAtual}`
+        }
+      });
+
+      alert("Pedido realizado com sucesso!");
+      carregarCarrinho();
+    } catch (error) {
+      console.error("Erro ao finalizar compra:", error);
+      alert("Houve um erro técnico ao processar seu pedido. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const carregarCarrinho = async () => {
     const tokenAtual = token || localStorage.getItem("token");
 
@@ -45,7 +72,6 @@ export default function CarrinhoPage() {
           Authorization: `Bearer ${tokenAtual}`,
         },
       });
-      console.log("ESTRUTURA REAL DO CARRINHO QUE VEIO DO JAVA:", response.data);
       setCarrinho(response.data);
     } catch (error) {
       console.error("ERRO DO BACKEND AO BUSCAR CARRINHO:", error);
@@ -176,7 +202,7 @@ export default function CarrinhoPage() {
                   <button
                     type="button"
                     className="w-full rounded-full bg-rosa-choque text-white py-2.5 text-sm font-medium transition hover:bg-rosa-text text-center shadow-sm"
-                    onClick={() => alert("Integração de checkout a ser implementada na próxima etapa!")}
+                    onClick={handleFinalizarCompra}
                   >
                     Finalizar Compra
                   </button>

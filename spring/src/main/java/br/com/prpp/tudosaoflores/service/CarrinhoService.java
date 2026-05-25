@@ -4,17 +4,16 @@ import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
 import br.com.prpp.tudosaoflores.dto.ItemAtualizarQuantidade;
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
 import br.com.prpp.tudosaoflores.mapper.CarrinhoMapper;
-import br.com.prpp.tudosaoflores.model.Carrinho;
-import br.com.prpp.tudosaoflores.model.Cliente;
-import br.com.prpp.tudosaoflores.model.ItemCarrinho;
-import br.com.prpp.tudosaoflores.model.Produto;
+import br.com.prpp.tudosaoflores.model.*;
 import br.com.prpp.tudosaoflores.repository.CarrinhoRepository;
 import br.com.prpp.tudosaoflores.repository.ClienteRepository;
+import br.com.prpp.tudosaoflores.repository.PedidoRepository;
 import br.com.prpp.tudosaoflores.repository.ProdutoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -33,6 +32,9 @@ public class CarrinhoService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
 
     public CarrinhoDto recuperarCarrinho(Long clienteId)
@@ -115,4 +117,43 @@ public class CarrinhoService {
         carrinho.getItens().clear();
         carrinhoRepository.save(carrinho);
     };
+
+    @Transactional
+    public void finalizarCompra(Long clienteId){
+
+        Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(clienteId)
+                .orElseThrow(() -> new RuntimeException("Carrinho nao encontrado"));
+
+        if (carrinho.getItens() == null || carrinho.getItens().isEmpty()) {
+            throw new RuntimeException("Não é possível finalizar um carrinho vazio");
+        }
+
+        Pedido pedido = new Pedido();
+        pedido.setUsuario(carrinho.getCliente());
+        pedido.setData(java.time.LocalDateTime.now());
+        pedido.setStatus("PROCESSANDO");
+        pedido.setItens(new ArrayList<>());
+
+        BigDecimal valorTotal = carrinho.getItens().stream()
+                .map(item -> item.getProduto().getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        pedido.setValorTotal(valorTotal);
+
+        for (ItemCarrinho itemCarrinho : carrinho.getItens()) {
+            ItemPedido novoItemPedido = new ItemPedido();
+            novoItemPedido.setPedido(pedido);
+            novoItemPedido.setProduto(itemCarrinho.getProduto());
+            novoItemPedido.setQuantidade(itemCarrinho.getQuantidade());
+            novoItemPedido.setPrecoUnitario(itemCarrinho.getProduto().getPreco());
+
+            itemCarrinho.getProduto().setQuantidade(itemCarrinho.getProduto().getQuantidade() - itemCarrinho.getQuantidade());
+
+            pedido.getItens().add(novoItemPedido);
+        }
+
+        pedidoRepository.save(pedido);
+
+        carrinho.getItens().clear();
+        carrinhoRepository.save(carrinho);
+    }
 }

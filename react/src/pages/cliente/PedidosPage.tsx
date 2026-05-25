@@ -1,78 +1,65 @@
-import React, { useEffect, useState } from "react";
-import { api } from "../../services/api";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface PedidoItem {
-  id?: string;
-  nome?: string;
-  quantidade?: number;
-  preco?: number;
-  valor?: number;
-  descricao?: string;
+  id: number;
+  idUsuario: number;
+  codigo: number;
+  produtoNome: string;
+  quantidade: number;
+  valorUnitario: number;
+  subtotal: number;
 }
 
-interface Pedido {
-  id?: string;
-  numero?: string;
-  status?: string;
-  data?: string;
-  total?: number;
-  valorTotal?: number;
-  itens?: PedidoItem[];
-  items?: PedidoItem[];
-  produtos?: PedidoItem[];
-  endereco?: string;
-  [key: string]: any;
+interface PedidoData {
+  idPedido: number;
+  data: string;
+  idUsuario: number;
+  status: string;
+  valorTotal: number;
+  itens: PedidoItem[];
 }
 
-const PedidosPage: React.FC = () => {
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+export default function PedidosPage() {
+  const navigate = useNavigate();
+  const { token } = useAuth();
+
+  const [pedidos, setPedidos] = useState<PedidoData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const carregarPedidos = async () => {
+    const tokenAtual = token || localStorage.getItem("token");
+
+    if (!tokenAtual) {
+      console.error("BLOQUEADO: Nenhum token encontrado para carregar pedidos.");
+      navigate("/cliente-login");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // MODIFICAÇÃO: Batendo estritamente na rota de histórico de pedidos do Java
+      const response = await axios.get<PedidoData[]>("http://localhost:8080/pedidos", {
+        headers: {
+          Authorization: `Bearer ${tokenAtual}`,
+        },
+      });
+      setPedidos(response.data);
+    } catch (error) {
+      console.error("ERRO DO BACKEND AO BUSCAR HISTÓRICO DE PEDIDOS:", error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        navigate("/cliente-login");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadPedidos = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const resposta = await api.get<Pedido[]>("/clientes/me/pedidos");
-        if (Array.isArray(resposta)) {
-          setPedidos(resposta);
-          return;
-        }
-      } catch (err) {
-        console.log("Erro ao buscar pedidos por /clientes/me/pedidos", err);
-      }
-
-      try {
-        const resposta = await api.get<Pedido[]>("/pedidos");
-        if (Array.isArray(resposta)) {
-          setPedidos(resposta);
-          return;
-        }
-      } catch (err) {
-        console.log("Erro ao buscar pedidos por /pedidos", err);
-      }
-
-      const saved = localStorage.getItem("pedidos");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            setPedidos(parsed);
-            return;
-          }
-        } catch {
-          console.log("Não foi possível ler pedidos do localStorage");
-        }
-      }
-
-      setPedidos([]);
-      setError("Nenhum pedido encontrado para este cliente.");
-    };
-
-    loadPedidos().finally(() => setLoading(false));
-  }, []);
+    carregarPedidos();
+  }, [token]);
 
   const formatDate = (value?: string) => {
     if (!value) return "-";
@@ -82,98 +69,104 @@ const PedidosPage: React.FC = () => {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
     }).format(date);
   };
 
-  const formatCurrency = (value?: number) => {
-    if (typeof value !== "number") return "-";
-    return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  };
-
-  const getPedidoItems = (pedido: Pedido): PedidoItem[] => {
-    return pedido.itens || pedido.items || pedido.produtos || [];
-  };
-
-  const renderOrderCard = (pedido: Pedido, index: number) => {
-    const orderNumber = pedido.numero || pedido.id || `#${index + 1}`;
-    const orderDate = formatDate(pedido.data || pedido.createdAt || pedido.dataPedido);
-    const orderTotal = formatCurrency(pedido.total ?? pedido.valorTotal ?? pedido.totalPedido);
-    const orderStatus = pedido.status || "Pendente";
-    const itens = getPedidoItems(pedido);
-
-    return (
-      <article key={orderNumber + index} className="bg-white rounded-[32px] border border-rosa-pastel shadow-sm p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-rosa-choque font-black mb-2">Pedido {orderNumber}</p>
-            <h2 className="text-2xl font-bold text-rosa-text">{orderDate}</h2>
-          </div>
-          <div className="text-right space-y-2">
-            <p className="text-sm text-rosa-text/80">Status: <span className="font-bold text-rosa-text">{orderStatus}</span></p>
-            <p className="text-sm text-rosa-text/80">Total: <span className="font-bold text-rosa-text">{orderTotal}</span></p>
-          </div>
-        </div>
-
-        {pedido.endereco && (
-          <div className="mb-6 p-4 rounded-3xl bg-rosa-claro/30 border border-rosa-pastel">
-            <p className="text-sm text-rosa-text font-bold mb-1">Endereço de entrega</p>
-            <p className="text-sm text-rosa-text/80">{pedido.endereco}</p>
-          </div>
-        )}
-
-        <div className="space-y-4">
-          {itens.length > 0 ? (
-            itens.map((item, itemIndex) => (
-              <div key={`${orderNumber}-${itemIndex}`} className="grid grid-cols-4 gap-4 items-center p-4 rounded-3xl bg-rosa-claro/20 border border-rosa-pastel">
-                <div className="col-span-2">
-                  <p className="font-bold text-rosa-text">{item.nome || item.descricao || "Produto"}</p>
-                  <p className="text-sm text-rosa-text/70">Quantidade: {item.quantidade ?? 1}</p>
-                </div>
-                <p className="text-right font-black text-rosa-text col-span-2">{formatCurrency(item.preco ?? item.valor)}</p>
-              </div>
-            ))
-          ) : (
-            <div className="p-4 rounded-3xl bg-rosa-claro/20 border border-rosa-pastel text-rosa-text">
-              Nenhum item listado para este pedido.
-            </div>
-          )}
-        </div>
-      </article>
-    );
-  };
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Carregando seus pedidos...</div>;
+  }
 
   return (
-    <section className="min-h-screen bg-rosa-claro p-8 font-menu text-rosa-text">
-      <div className="mx-auto max-w-6xl">
-        <header className="mb-8">
-          <p className="text-sm uppercase tracking-[0.35em] text-rosa-choque font-black mb-2">Área do Cliente</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-rosa-text">Meus Pedidos</h1>
-          <p className="mt-3 text-sm text-rosa-text/80 max-w-2xl">
-            Confira aqui todos os pedidos já realizados com a sua conta.
-          </p>
-        </header>
-
-        {loading && (
-          <div className="rounded-[32px] border border-rosa-pastel bg-white p-12 text-center text-rosa-text shadow-sm">
-            Carregando pedidos...
+    <div className="min-h-screen bg-slate-50 py-8">
+      <div className="container mx-auto max-w-5xl bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+        
+        {/* Cabeçalho da Página */}
+        <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-900">Meus Pedidos</h2>
+            <p className="text-sm text-muted-foreground">Acompanhe o histórico de todas as suas compras de flores</p>
           </div>
-        )}
+          <button
+            type="button"
+            className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-xs font-medium transition hover:bg-slate-200"
+            onClick={() => navigate("/")}
+          >
+            Voltar para a Vitrine
+          </button>
+        </div>
 
-        {!loading && error && pedidos.length === 0 && (
-          <div className="rounded-[32px] border border-rosa-pastel bg-white p-12 text-center text-rosa-text shadow-sm">
-            <p className="font-bold text-rosa-text">Nenhum pedido encontrado.</p>
-            <p className="mt-2 text-sm text-rosa-text/80">Verifique se você está logado ou se há pedidos salvos para essa conta.</p>
+        {/* Verificação de Histórico Vazio */}
+        {!pedidos || pedidos.length === 0 ? (
+          <div className="text-center py-12 space-y-4">
+            <p className="text-sm text-muted-foreground">Você ainda não realizou nenhum pedido no nosso sistema.</p>
+            <button
+              onClick={() => navigate("/")}
+              className="rounded-full bg-rosa-choque text-white px-6 py-2 text-sm font-medium transition hover:bg-rosa-text"
+            >
+              Escolher minhas primeiras flores
+            </button>
           </div>
-        )}
+        ) : (
+          /* Listagem dos Cards de Pedidos */
+          <div className="space-y-6">
+            {pedidos.map((pedido) => (
+              <div 
+                key={pedido.idPedido} 
+                className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden"
+              >
+               {/* Topo do Card com Metadados do Pedido */}
+              <div className="bg-slate-50 p-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-4">
+                <div className="flex gap-6 text-xs text-slate-600">
+                  <div>
+                    <p className="uppercase font-semibold tracking-wider text-slate-400">Pedido realizado</p>
+                    {/* MODIFICAÇÃO: Mantido a data aqui */}
+                    <p className="font-medium text-slate-800">#{pedido.idPedido}</p>
+                  </div>
+                  <div>
+                    <p className="uppercase font-semibold tracking-wider text-slate-400">Total</p>
+                    <p className="font-bold text-rosa-text">R$ {(pedido.valorTotal || 0).toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="uppercase font-semibold tracking-wider text-slate-400">Nº do Pedido</p>
+                    {/* MODIFICAÇÃO: Corrigido para exibir o ID do pedido embaixo do título certo */}
+                    <p className="font-medium text-slate-800">{formatDate(pedido.data)}</p>
+                  </div>
+                </div>
+                <div>
+                  <span className="inline-flex items-center rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-rosa-choque ring-1 ring-inset ring-pink-700/10">
+                    {pedido.status || "PROCESSANDO"}
+                  </span>
+                </div>
+              </div>
 
-        {!loading && pedidos.length > 0 && (
-          <div className="grid gap-6">
-            {pedidos.map(renderOrderCard)}
+                {/* Listagem dos Itens de Dentro Desse Pedido */}
+                <div className="p-4 divide-y divide-slate-100">
+                  {pedido.itens && pedido.itens.map((item) => (
+                    <div key={item.id} className="py-4 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-xl bg-rosa-claro/20 border border-rosa-pastel flex items-center justify-center text-xl">
+                          🌸
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">{item.produtoNome || "Produto"}</h4>
+                          <p className="text-xs text-slate-500">Quantidade: {item.quantidade}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-slate-700">R$ {(item.subtotal || 0).toFixed(2)}</p>
+                        <p className="text-xs text-slate-400">un: R$ {(item.valorUnitario || 0).toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            ))}
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
-};
-
-export default PedidosPage;
+}

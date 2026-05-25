@@ -47,6 +47,13 @@ public class CarrinhoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(carrinhoDto);
     }
 
+    @PostMapping("/finalizar")
+    public ResponseEntity<Void> finalizarCompra() {
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        carrinhoService.finalizarCompra(clienteId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/itens/{itemId}")
     public ResponseEntity<CarrinhoDto> atualizarItem(
             @PathVariable Long itemId,

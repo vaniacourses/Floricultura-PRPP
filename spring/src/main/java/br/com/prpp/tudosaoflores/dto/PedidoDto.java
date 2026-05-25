@@ -11,7 +11,7 @@ public record PedidoDto (
         Long idPedido,
         LocalDateTime data,
         Long idUsuario,
-        List<ItemPedido> itens,
+        List<ItemPedidoDto> itens,
         BigDecimal valorTotal,
         String status
 ){
