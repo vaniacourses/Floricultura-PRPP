@@ -107,7 +107,7 @@ export default function DetalhesPage() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/carrinho/adicionar",
+        "http://localhost:8080/carrinho/adicionar",
         {
           produtoCodigo: produto.codigo, 
           quantidade: 1

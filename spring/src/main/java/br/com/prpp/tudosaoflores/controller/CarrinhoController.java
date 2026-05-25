@@ -6,6 +6,7 @@ import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
 import br.com.prpp.tudosaoflores.model.Carrinho;
 import br.com.prpp.tudosaoflores.model.Cliente;
 import br.com.prpp.tudosaoflores.service.CarrinhoService;
+import br.com.prpp.tudosaoflores.service.ClienteService;
 import br.com.prpp.tudosaoflores.service.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,47 +27,49 @@ public class CarrinhoController {
     @Autowired
     private ProdutoService produtoService;
 
+    @Autowired
+    private ClienteService clienteService;
+
 
     @GetMapping
-    public ResponseEntity<CarrinhoDto> recuperarCarrinho(@AuthenticationPrincipal Cliente clienteLogado)
+    public ResponseEntity<CarrinhoDto> recuperarCarrinho()
     {
-        Long clienteId = clienteLogado.getUsuarioId();
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
         CarrinhoDto carrinhoDto = carrinhoService.recuperarCarrinho(clienteId);
         return ResponseEntity.ok(carrinhoDto);
     }
 
     @PostMapping("/adicionar")
-    public ResponseEntity<CarrinhoDto> adicionarItem(@AuthenticationPrincipal Cliente clienteLogado,
-                                                     @RequestBody @Valid ItemCarrinhoCreate itemCarrinhoCreate)
+    public ResponseEntity<CarrinhoDto> adicionarItem(@RequestBody @Valid ItemCarrinhoCreate itemCarrinhoCreate)
     {
-        CarrinhoDto carrinhoDto = carrinhoService.adicionarItemCarrinho(clienteLogado.getUsuarioId(), itemCarrinhoCreate);
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        CarrinhoDto carrinhoDto = carrinhoService.adicionarItemCarrinho(clienteId, itemCarrinhoCreate);
         return ResponseEntity.status(HttpStatus.CREATED).body(carrinhoDto);
     }
 
     @PutMapping("/itens/{itemId}")
     public ResponseEntity<CarrinhoDto> atualizarItem(
-            @AuthenticationPrincipal Cliente clienteLogado,
             @PathVariable Long itemId,
             @RequestBody @Valid ItemAtualizarQuantidade request)
     {
-        CarrinhoDto carrinhoDto = carrinhoService.atualizarItem(clienteLogado.getUsuarioId(), itemId, request.novaQuantidade());
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        CarrinhoDto carrinhoDto = carrinhoService.atualizarItem(clienteId, itemId, request.novaQuantidade());
         return ResponseEntity.ok(carrinhoDto);
     }
 
     @DeleteMapping("/itens/{itemId}")
-    public ResponseEntity<CarrinhoDto> excluirItem(
-            @PathVariable Long itemId,
-            @AuthenticationPrincipal Cliente clienteLogado)
+    public ResponseEntity<CarrinhoDto> excluirItem(@PathVariable Long itemId)
     {
-        CarrinhoDto carrinhoDto = carrinhoService.excluirItemPorId(itemId, clienteLogado.getUsuarioId());
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        CarrinhoDto carrinhoDto = carrinhoService.excluirItemPorId(itemId, clienteId);
         return ResponseEntity.ok(carrinhoDto);
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> esvaziarCarrinho(
-            @AuthenticationPrincipal Cliente clienteLogado)
+    public ResponseEntity<Void> esvaziarCarrinho()
     {
-        carrinhoService.esvaziarCarrinho(clienteLogado.getUsuarioId());
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        carrinhoService.esvaziarCarrinho(clienteId);
         return ResponseEntity.noContent().build();
     }
 

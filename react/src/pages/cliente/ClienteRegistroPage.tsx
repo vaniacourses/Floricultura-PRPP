@@ -95,7 +95,7 @@ const ClienteRegistroPage: React.FC = () => {
     try {
       // Atualiza perfil com os campos do tipo real
       const payloadPerfil = tipoCliente === "PF"
-        ? { tipo: "PF", nome: formData.nome, email: formData.email, telefone: formData.telefone, cpf: formData.cpf, nascimento: formData.dataNascimento, cidade: formData.cidade }
+        ? { tipo: "PF", nome: formData.nome, email: formData.email, telefone: formData.telefone, cpf: formData.cpf, nascimento: formData.dataNascimento}
         : { tipo: "PJ", nome: formData.nome, email: formData.email, telefone: formData.telefone, razaoSocial: formData.nome, cnpj: formData.cnpj };
 
       await api.put("/clientes/me", payloadPerfil);

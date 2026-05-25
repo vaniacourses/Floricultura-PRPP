@@ -5,6 +5,7 @@ import br.com.prpp.tudosaoflores.dto.ItemAtualizarQuantidade;
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
 import br.com.prpp.tudosaoflores.mapper.CarrinhoMapper;
 import br.com.prpp.tudosaoflores.model.Carrinho;
+import br.com.prpp.tudosaoflores.model.Cliente;
 import br.com.prpp.tudosaoflores.model.ItemCarrinho;
 import br.com.prpp.tudosaoflores.model.Produto;
 import br.com.prpp.tudosaoflores.repository.CarrinhoRepository;
@@ -14,6 +15,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -32,6 +34,7 @@ public class CarrinhoService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+
     public CarrinhoDto recuperarCarrinho(Long clienteId)
     {
         Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(clienteId)
@@ -45,9 +48,16 @@ public class CarrinhoService {
         Produto produto = produtoRepository.findById(request.produtoCodigo())
                 .orElseThrow(() -> new RuntimeException("Produto nao encontrado"));
 
-        Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(idUsuarioLogado)
-                .orElseThrow(()->new RuntimeException("Usuario nao encontrado"));
+        Cliente cliente = clienteRepository.findById(idUsuarioLogado)
+                .orElseThrow(() -> new RuntimeException("Usuario nao encontrado de verdade"));
 
+        Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(idUsuarioLogado)
+                .orElseGet(() -> {
+                    Carrinho novoCarrinho = new Carrinho();
+                    novoCarrinho.setCliente(cliente);
+                    novoCarrinho.setItens(new ArrayList<>());
+                    return carrinhoRepository.save(novoCarrinho);
+                });
 
         Optional<ItemCarrinho> itemExistente = carrinho.getItens().stream()
                 .filter(item -> item.getProduto().getCodigo().equals(request.produtoCodigo()))
@@ -68,7 +78,7 @@ public class CarrinhoService {
         Carrinho carrinhoSalvo = carrinhoRepository.save(carrinho);
 
         return carrinhoMapper.toCarrinhoDto(carrinhoSalvo);
-    };
+    }
 
     @Transactional
     public CarrinhoDto atualizarItem(Long clienteId, Long itemId, Integer novaQuantidade)
