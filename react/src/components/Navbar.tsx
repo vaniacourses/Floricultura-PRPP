@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -34,10 +35,18 @@ type ProdutoApi = {
 // Remove acentos de uma string
 const removeAcentos = (str: string) =>
   str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+=======
+import React, { useEffect, useState, useRef } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { ShoppingCart, User, Search, Flower, Phone, Home, Bell } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import axios from "axios";
+>>>>>>> Stashed changes
 
 const Navbar = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+<<<<<<< Updated upstream
   const [menuAberto, setMenuAberto] = useState(false);
 
   // Estados da busca instantânea
@@ -47,6 +56,11 @@ const Navbar = () => {
   const [mostrarDropdown, setMostrarDropdown] = useState(false);
   const [carregandoCache, setCarregandoCache] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+=======
+  const [notificacoes, setNotificacoes] = useState<any[]>([]);
+  const [menuAberto, setMenuAberto] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+>>>>>>> Stashed changes
 
   const getRole = (): string | null => {
     const token = localStorage.getItem("token");
@@ -63,6 +77,7 @@ const Navbar = () => {
   };
 
   const role = getRole();
+<<<<<<< Updated upstream
   const isAdmin =
     role === "GERENTE" || role === "ATENDENTE" || role === "SUPER_ADMIN";
   const contaLink = isAdmin ? "/admin/perfil-adm" : "/cliente/perfil";
@@ -130,12 +145,84 @@ const Navbar = () => {
           to="/"
           onClick={fecharMenu}
         >
+=======
+  const isAdmin = role === "GERENTE" || role === "ATENDENTE" || role === "SUPER_ADMIN";
+  const contaLink = isAdmin ? "/admin/perfil-adm" : "/cliente/perfil";
+  const contaTexto = isAdmin ? "Painel Admin" : "Minha Conta";
+
+  // 1. Busca as notificações enviando o Token de Segurança (Bearer Token)
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const dadosToken = JSON.parse(window.atob(base64));
+        const usuarioId = dadosToken.usuarioId;
+
+        if (!usuarioId || isNaN(usuarioId)) return;
+
+        const rotaNotif = `http://localhost:8080/api/notificacoes/usuario/${usuarioId}`;
+
+        // Enviando o cabeçalho de autenticação para o Spring Security aceitar a chamada
+        axios.get(rotaNotif, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then(response => {
+          setNotificacoes(response.data);
+        })
+        .catch(error => console.error("Erro ao buscar notificações", error));
+      } catch (err) {
+        console.error("Erro ao ler token no sininho", err);
+      }
+    }
+  }, [isAuthenticated]);
+
+  const marcarComoLida = (idNotificacao: number) => {
+    
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    axios.put(`http://localhost:8080/api/notificacoes/${idNotificacao}/ler`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(() => {
+      
+      setNotificacoes(prev => prev.filter(n => n.idNotificacao !== idNotificacao));
+    })
+    .catch(error => console.error("Erro ao marcar notificação como lida", error));
+  };
+  
+  useEffect(() => {
+    const fecharAoClicarFora = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setMenuAberto(false);
+      }
+    };
+    document.addEventListener("mousedown", fecharAoClicarFora);
+    return () => document.removeEventListener("mousedown", fecharAoClicarFora);
+  }, []);
+
+  return (
+    <nav className="sticky top-0 z-50 w-full bg-rosa-claro text-rosa-text shadow-lg">
+      <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+        
+        {/* LOGO */}
+        <NavLink className="flex items-center gap-2 font-bold text-2xl" to="/">
+>>>>>>> Stashed changes
           <Flower size={24} className="mt-2" />
           <span className="text-[38px] font-logo mt-2 hidden sm:inline">
             tudo são flores
           </span>
         </NavLink>
 
+<<<<<<< Updated upstream
         <div className="hidden sm:flex flex-1 mx-6 max-w-2xl relative">
           <form onSubmit={handleSearchSubmit} className="w-full">
             <input
@@ -207,6 +294,28 @@ const Navbar = () => {
             to="/contato"
             className="flex items-center gap-1 hover:text-rosa-choque transition-colors"
           >
+=======
+        {/* BARRA DE PESQUISA */}
+        <div className="flex flex-1 mx-12 max-w-2xl relative">
+          <input
+            type="text"
+            placeholder="Pesquise produtos"
+            className="w-full bg-rosa-pastel/50 text-rosa-choque rounded-full px-6 py-3 outline-none placeholder:text-rosa-text/50 shadow-inner focus:ring-2 focus:ring-rosa-pastel transition-all"
+          />
+          <button className="absolute right-4 top-1/2 -translate-y-1/2 text-rosa-choque hover:scale-110 transition-transform cursor-pointer">
+            <Search size={20} />
+          </button>
+        </div>
+
+        {/* LINKS PRINCIPAIS */}
+        <div className="font-menu flex items-center gap-6 font-medium min-w-fit">
+          <NavLink to="/home" className="flex items-center gap-1 hover:text-rosa-choque transition-colors">
+            <Home size={20} />
+            Home
+          </NavLink>
+          
+          <NavLink to="/contato" className="flex items-center gap-1 hover:text-rosa-choque transition-colors">
+>>>>>>> Stashed changes
             <Phone size={20} />
             Contato
           </NavLink>
@@ -234,6 +343,62 @@ const Navbar = () => {
             <ShoppingCart size={20} />
             Carrinho
           </NavLink>
+
+          {/* SININHO DE NOTIFICAÇÕES */}
+          {isAuthenticated && (
+            <div className="relative" ref={dropdownRef}>
+              <button 
+                onClick={() => setMenuAberto(!menuAberto)}
+                
+                className="flex items-center gap-2 hover:text-rosa-choque transition-colors cursor-pointer relative p-1"
+              >
+                <div className="relative">
+                  <Bell size={20} />
+                  {notificacoes.length > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[10px] w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
+                      {notificacoes.length}
+                    </span>
+                  )}
+                </div>
+                <span>Notificações</span>
+              </button>
+
+              {/* Menu Dropdown de Notificações */}
+              {menuAberto && (
+                <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-xl border border-rosa-pastel py-2 text-gray-700 z-50">
+                  <div className="px-4 py-2 border-b border-gray-100 font-semibold text-rosa-choque">
+                    Notificações
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    
+                    {notificacoes.length === 0 ? (
+                      <div className="px-4 py-6 text-center text-sm text-gray-400">
+                        Nenhuma nova notificação
+                      </div>
+                    ) : (
+                      notificacoes.map((notif, index) => (
+                        <div 
+                          
+                          key={notif.idNotificacao || index} 
+                          onClick={() => {
+                            marcarComoLida(notif.idNotificacao);
+                          }}
+                          className="px-4 py-3 border-b border-gray-50 hover:bg-rosa-pastel/10 transition-colors cursor-pointer"
+                        >
+                          <p className="text-sm font-medium text-gray-800">
+                            {notif.mensagem}
+                          </p>
+                          <span className="text-[10px] text-gray-400 block mt-1">
+                            {notif.dataEnvio ? new Date(notif.dataEnvio).toLocaleDateString() : "Agora"}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Ícones compactos mobile (carrinho + hambúrguer) */}
@@ -251,6 +416,7 @@ const Navbar = () => {
         </div>
       </div>
 
+<<<<<<< Updated upstream
       <div className="sm:hidden px-4 pb-3">
         <div className="relative">
           <form onSubmit={handleSearchSubmit}>
@@ -313,6 +479,19 @@ const Navbar = () => {
 
       <div className="hidden md:flex items-center justify-center gap-16 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
         {categorias.map((item) => (
+=======
+      {/* CATEGORIAS */}
+      <div className="flex items-center justify-center gap-16 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
+        {[
+          { name: "Assinaturas", path: "/assinaturas" },
+          { name: "Flores", path: "/flores" },
+          { name: "Flores Secas", path: "/flores-secas" },
+          { name: "Arranjos", path: "/arranjos" },
+          { name: "Buquês", path: "/buques" },
+          { name: "Kits", path: "/kits" },
+          { name: "Acessórios", path: "/acessorios" },
+        ].map((item) => (
+>>>>>>> Stashed changes
           <NavLink
             key={item.name}
             to={item.path}

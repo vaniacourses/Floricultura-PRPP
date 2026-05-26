@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; 
 import type { Produto, Avaliacao } from "../data/types";
 import axios from "axios";
+<<<<<<< Updated upstream
 import { useAuth } from "../contexts/AuthContext";
+=======
+import BotaoFavorito from "../components/BotaoFavoritos";
+>>>>>>> Stashed changes
 
 export default function DetalhesPage() {
   const { codigo } = useParams<{ codigo: string }>(); 
   const navigate = useNavigate(); 
-
+  const [usuarioLogadoId, setUsuarioLogadoId] = useState<number | null>(null);
   const [Produto, setProduto] = useState<Produto | null>(null);
   const [loading, setLoading] = useState(true);
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]); 
@@ -18,7 +22,7 @@ export default function DetalhesPage() {
     imagem: "/assets/comentario.jpg",
     nota: "",
     produtoId: Number(codigo),
-    usuarioId: null,
+    usuarioId: usuarioLogadoId,
   });
 
   const [editandoCodigo, setEditandoCodigo] = useState<number | null>(null);
@@ -36,11 +40,30 @@ export default function DetalhesPage() {
   };
 
   useEffect(() => {
-    if (codigo) {
-      carregarProduto();
-      carregarAvaliacoes();
+  if (codigo) {
+    // REPETINDO A SUA LÓGICA QUE JÁ FUNCIONA:
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const dadosDoToken = JSON.parse(jsonPayload);
+        
+       
+        setUsuarioLogadoId(dadosDoToken.usuarioId); 
+      } catch (err) {
+        console.error("Erro ao ler o ID de dentro do token:", err);
+      }
     }
-  }, [codigo]);
+
+    carregarProduto();
+    carregarAvaliacoes();
+  }
+}, [codigo]);
 
   const carregarAvaliacoes = async () => {
     try {
@@ -158,7 +181,7 @@ export default function DetalhesPage() {
         }).join(''));
 
         const dadosDoToken = JSON.parse(jsonPayload);
-        idDoUsuarioLogado = dadosDoToken.usuarioId;
+        const idDoUsuarioLogado = dadosDoToken.usuarioId;
       } catch (err) {
         console.error("Erro ao ler o ID de dentro do token:", err);
       }
@@ -226,13 +249,13 @@ export default function DetalhesPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="border border-slate-200 rounded-full bg-white p-2 text-slate-400 hover:text-red-500 hover:border-red-200 transition flex items-center justify-center h-10 w-10 shadow-sm"
-              onClick={() => alert("Favoritado! (Lógica ainda não implementada)")}
-            >
-              <span className="text-3xl leading-none select-none">♥</span>
-            </button>
+            {usuarioLogadoId ? (
+              <BotaoFavorito usuarioId={usuarioLogadoId} produtoCodigo={Produto.codigo} />
+            ) : (
+              <span className="text-xs text-slate-400 bg-slate-100 px-3 py-2 rounded-full">
+                Faça login para favoritar
+              </span>
+            )}
             <button
                   type="button"
                   className="w-full rounded-full border border-slate-300 bg-rosa-choque text-white px-4 py-2 text-sm font-medium transition hover:bg-rosa-text transition-colors"
