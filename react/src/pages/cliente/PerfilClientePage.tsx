@@ -64,10 +64,35 @@ const PerfilClientePage = () => {
     }
   };
 
-  const formatarData = (iso: string) => {
-    if (!iso || !iso.includes("-")) return iso || "";
-    const [ano, mes, dia] = iso.split("-");
-    return `${dia}/${mes}/${ano}`;
+  const formatarData = (valor: any): string => {
+    if (!valor) return "";
+    let str = String(valor);
+
+    if (str.includes("-") && str.length >= 10) {
+      const [ano, mes, dia] = str.split("-");
+      return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${ano}`;
+    }
+
+    if (str.includes(",")) {
+      const partes = str.split(",");
+      if (partes.length === 3) {
+        const [ano, mes, dia] = partes;
+        return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${ano}`;
+      }
+    }
+
+    if (/^\d+$/.test(str)) {
+      const ts = Number(str);
+      const data = new Date(ts);
+      if (!isNaN(data.getTime())) {
+        const dia = String(data.getDate()).padStart(2, "0");
+        const mes = String(data.getMonth() + 1).padStart(2, "0");
+        const ano = data.getFullYear();
+        return `${dia}/${mes}/${ano}`;
+      }
+    }
+
+    return str;
   };
 
   if (loading) {

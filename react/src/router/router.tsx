@@ -27,6 +27,7 @@ import PedidosPage from "../pages/cliente/PedidosPage";
 import AvaliacoesPage from "../pages/cliente/AvaliacoesPage";
 import EnderecosPage from "../pages/cliente/EnderecosPage";
 import ClientePage from "../pages/cliente/ClientePage";
+import FavoritosPage from "../pages/cliente/FavoritosPage";
 import { createBrowserRouter } from "react-router-dom";
 import SearchPage from "../pages/SearchPage";
 
@@ -77,6 +78,7 @@ const router = createBrowserRouter([
 
           { path: "perfil", element: <PerfilClientePage /> },
           { path: "pedidos", element: <PedidosPage /> },
+          { path: "favoritos", element: <FavoritosPage /> },
           { path: "avaliacoes", element: <AvaliacoesPage /> },
           { path: "enderecos", element: <EnderecosPage /> },
         ],

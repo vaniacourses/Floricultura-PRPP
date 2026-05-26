@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { User, Package, Star, MapPin, LogOut, Trash2 } from "lucide-react";
+import { User, Package, Star, MapPin, LogOut, Trash2, Heart } from "lucide-react";
 import { auth } from "../../config/firebase";
 import { useAuth } from "../../contexts/AuthContext";
 import { api } from "../../services/api";
@@ -41,6 +41,7 @@ const SidebarCliente: React.FC = () => {
   const menuItems = [
     { name: "Meu Perfil", path: "/cliente/perfil", icon: <User size={20} /> },
     { name: "Meus Pedidos", path: "/cliente/pedidos", icon: <Package size={20} /> },
+    { name: "Favoritos", path: "/cliente/favoritos", icon: <Heart size={20} /> },
     { name: "Minhas Avaliações", path: "/cliente/avaliacoes", icon: <Star size={20} /> },
     { name: "Endereços", path: "/cliente/enderecos", icon: <MapPin size={20} /> },
   ];

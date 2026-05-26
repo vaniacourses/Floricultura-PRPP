@@ -3,16 +3,21 @@ package br.com.prpp.tudosaoflores.service;
 import br.com.prpp.tudosaoflores.dto.ClienteCreate;
 import br.com.prpp.tudosaoflores.dto.ClienteDto;
 import br.com.prpp.tudosaoflores.mapper.ClienteMapper;
+import br.com.prpp.tudosaoflores.model.Carrinho;
 import br.com.prpp.tudosaoflores.model.Cliente;
 import br.com.prpp.tudosaoflores.model.PessoaFisica;
 import br.com.prpp.tudosaoflores.model.PessoaJuridica;
+import br.com.prpp.tudosaoflores.repository.CarrinhoRepository;
 import br.com.prpp.tudosaoflores.repository.ClienteRepository;
+import br.com.prpp.tudosaoflores.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import br.com.prpp.tudosaoflores.model.Pedido;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +28,13 @@ public class ClienteService {
 
     @Autowired
     private ClienteMapper clienteMapper;
+
+    @Autowired
+    private CarrinhoRepository carrinhoRepository;
+
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     public List<ClienteDto> recuperarClientes() {
         List<Cliente> clientes = clienteRepository.findAll();
@@ -126,8 +138,23 @@ public class ClienteService {
         return alterarCliente(cliente.getUsuarioId(), request);
     }
 
+
+
     public void removerMinhaConta() {
         Cliente cliente = obterClienteAutenticado();
+
+        Optional<Carrinho> carrinhoOpt = carrinhoRepository.findByUsuarioUsuarioId(cliente.getUsuarioId());
+        carrinhoOpt.ifPresent(carrinho -> {
+            carrinho.getItens().clear();
+            carrinhoRepository.delete(carrinho);
+        });
+
+        List<Pedido> pedidos = pedidoRepository.findByUsuarioUsuarioId(cliente.getUsuarioId());
+        for (Pedido pedido : pedidos) {
+            pedido.setUsuario(null); 
+            pedidoRepository.save(pedido);
+        }
+
         clienteRepository.delete(cliente);
     }
 }

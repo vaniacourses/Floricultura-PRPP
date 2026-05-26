@@ -1,17 +1,18 @@
 package br.com.prpp.tudosaoflores.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDate;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClienteCreate {
     private String tipo;
     private String nome;
     private String email;
     private String telefone;
     private String googleId;
-    // PF
     private String cpf;
     private LocalDate nascimento;
-    // PJ
     private String razaoSocial;
     private String cnpj;
 
