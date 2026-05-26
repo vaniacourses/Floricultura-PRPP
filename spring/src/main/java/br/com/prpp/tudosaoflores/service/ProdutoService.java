@@ -6,22 +6,37 @@ import br.com.prpp.tudosaoflores.factory.ProdutoFactory;
 import br.com.prpp.tudosaoflores.mapper.ProdutoMapper;
 import br.com.prpp.tudosaoflores.model.Produto;
 import br.com.prpp.tudosaoflores.model.produtos.*;
+import br.com.prpp.tudosaoflores.observer.NotificacaoBancoObserver;
+import br.com.prpp.tudosaoflores.observer.ProdutoObserver;
+import br.com.prpp.tudosaoflores.observer.ProdutoPublisher;
+import br.com.prpp.tudosaoflores.repository.NotificacaoRepository;
 import br.com.prpp.tudosaoflores.repository.ProdutoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class ProdutoService{
+public class ProdutoService implements ProdutoPublisher {
     private final ProdutoRepository produtoRepository;
     private final Map<String, ProdutoFactory> fabricas;
     private final ProdutoMapper produtoMapper;
     private final ObjectMapper objectMapper;
+    private final NotificacaoBancoObserver notificacaoBanco;
+    private final List<ProdutoObserver> observers = new ArrayList<>();
+
+    //Configura os ouvintes
+    @PostConstruct
+    public void inicializarSubscribers() {
+        addObserver(notificacaoBanco);
+    }
 
     // GET - Recupera todos os produtos (retorna uma lista polimórfica de FlorDto, BuqueDto...)
     public List<ProdutoDto> recuperarProdutos() {
@@ -69,22 +84,48 @@ public class ProdutoService{
         return produtoMapper.toProdutoDto(produto);
     }
 
-    // PUT - Atualiza uma entidade existente de forma reflexiva com o Jackson
+    // PUT / PATCH - Atualiza uma entidade de forma reflexiva e dispara o Observer
     @Transactional
     public ProdutoDto alterarProduto(Long codigo, Map<String, Object> dados) {
+        // 1. Busca o produto atual antes de ser modificado
         Produto produtoExistente = produtoRepository.findById(codigo).orElseThrow(
                 () -> new EntidadeNaoEncontradaException("Produto com código " + codigo + " não encontrado")
         );
 
+
+        int estoqueAntigo = produtoExistente.getQuantidade();
+        BigDecimal precoAntigo = produtoExistente.getPreco();
+
         try {
-            // Mescla os dados novos vindos no Map direto no objeto gerenciado pelo JPA
+
             objectMapper.readerForUpdating(produtoExistente).readValue(objectMapper.writeValueAsString(dados));
         } catch (Exception e) {
             throw new RuntimeException("Erro ao atualizar os dados dinâmicos do produto", e);
         }
 
-        produtoRepository.save(produtoExistente);
-        return produtoMapper.toProdutoDto(produtoExistente);
+
+        Produto produtoSalvo = produtoRepository.save(produtoExistente);
+
+
+        int estoqueNovo = produtoSalvo.getQuantidade();
+        BigDecimal precoNovo = produtoSalvo.getPreco();
+
+        //LÓGICA DO OBSERVER
+        // Se o preço baixou
+        if (precoAntigo != null && precoNovo != null && precoNovo.compareTo(precoAntigo) < 0) {
+            String msg = String.format("Aproveite! Redução de preço em '%s', de R$ %s por apenas R$ %s.",
+                    produtoSalvo.getNome(), precoAntigo.toString(), precoNovo.toString());
+            notifyObservers(produtoSalvo, msg);
+        }
+
+        // Se o produto estava esgotado e voltou ao estoque
+        if (estoqueAntigo == 0 && estoqueNovo > 0) {
+            String msg = String.format("Produto de volta ao estoque! Nosso produto: '%s' está disponível novamente",
+                    produtoSalvo.getNome());
+            notifyObservers(produtoSalvo, msg);
+        }
+
+        return produtoMapper.toProdutoDto(produtoSalvo);
     }
 
     // DELETE - Remove o produto por código
@@ -110,4 +151,20 @@ public class ProdutoService{
     }
 
 
+    @Override
+    public void addObserver(ProdutoObserver observer) {
+        this.observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(ProdutoObserver observer) {
+        this.observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(Produto produto, String mensagem) {
+        for (ProdutoObserver observer : observers) {
+            observer.update(produto, mensagem);
+        }
+    }
 }

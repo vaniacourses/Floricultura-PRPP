@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/avaliacoes/**", "/error").permitAll()   // ← ADICIONE /error AQUI
                 .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/error").permitAll() 
                 .requestMatchers("/administrador/**").permitAll()
+                .requestMatchers("/api/favoritos/**", "/api/notificacoes/**").permitAll()
                 .requestMatchers("/admin/**").hasAnyRole("GERENTE", "ATENDENTE", "SUPER_ADMIN")
                 
                 .anyRequest().authenticated()
