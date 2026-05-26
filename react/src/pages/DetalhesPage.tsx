@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; 
 import type { Produto, Avaliacao } from "../data/types";
 import axios from "axios";
-<<<<<<< Updated upstream
 import { useAuth } from "../contexts/AuthContext";
-=======
 import BotaoFavorito from "../components/BotaoFavoritos";
->>>>>>> Stashed changes
+
 
 export default function DetalhesPage() {
   const { codigo } = useParams<{ codigo: string }>(); 
