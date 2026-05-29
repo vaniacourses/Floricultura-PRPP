@@ -54,17 +54,17 @@ public class CarrinhoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/itens/{itemId}")
+    @PutMapping("/item/{itemId}")
     public ResponseEntity<CarrinhoDto> atualizarItem(
             @PathVariable Long itemId,
-            @RequestBody @Valid ItemAtualizarQuantidade request)
+            @RequestParam Integer novaQuantidade)
     {
         Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
-        CarrinhoDto carrinhoDto = carrinhoService.atualizarItem(clienteId, itemId, request.novaQuantidade());
+        CarrinhoDto carrinhoDto = carrinhoService.atualizarItem(clienteId, itemId, novaQuantidade);
         return ResponseEntity.ok(carrinhoDto);
     }
 
-    @DeleteMapping("/itens/{itemId}")
+    @DeleteMapping("/item/{itemId}")
     public ResponseEntity<CarrinhoDto> excluirItem(@PathVariable Long itemId)
     {
         Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
