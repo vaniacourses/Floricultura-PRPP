@@ -15,7 +15,6 @@ import ContatoPage from "../pages/ContatoPage";
 import PerfilAdmin from "../components/admin/PerfilAdmin";
 import Estoque from "../components/admin/estoque/Estoque";
 import Promocoes from "../components/admin/Promocoes";
-import Relatorios from "../components/admin/Relatorios";
 import Administradores from "../components/admin/Administradores";
 import ClienteLoginPage from "../pages/cliente/ClienteLoginPage";
 import ClienteRegistroGooglePage from "../pages/cliente/ClienteRegistroGooglePage";
@@ -30,6 +29,7 @@ import ClientePage from "../pages/cliente/ClientePage";
 import FavoritosPage from "../pages/cliente/FavoritosPage";
 import { createBrowserRouter } from "react-router-dom";
 import SearchPage from "../pages/SearchPage";
+import Relatorio from "../components/admin/Relatorios";
 
 const router = createBrowserRouter([
   {
@@ -65,7 +65,7 @@ const router = createBrowserRouter([
           { path: "perfil-adm", element: <PerfilAdmin /> },
           { path: "estoque", element: <Estoque /> },
           { path: "promocoes", element: <Promocoes /> },
-          { path: "relatorios", element: <Relatorios /> },
+          { path: "relatorios", element: <Relatorio /> },
           { path: "administradores", element: <Administradores /> },
         ],
       },

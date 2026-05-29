@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { IMAGENS_PREDEFINIDAS } from "../../../util/produtos";
-import TabelaDeProdutos from "./TabelaDeProdutos";
 import FormularioEstoque from "./FormularioEstoque";
 import HeaderEstoque from "./HeaderEstoque";
 import PesquisaEstoque from "./PesquisaEstoque";

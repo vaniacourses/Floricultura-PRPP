@@ -46,11 +46,13 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/avaliacoes/**", "/error").permitAll()   // ← ADICIONE /error AQUI
-                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/error").permitAll() 
-                .requestMatchers("/administrador/**").permitAll()
+                .requestMatchers("/produtos/**", "/cupons/**","/auth/**", "/avaliacoes/**", "/error").permitAll() 
                 .requestMatchers("/api/favoritos/**", "/api/notificacoes/**").permitAll()
-                .requestMatchers("/admin/**").hasAnyRole("GERENTE", "ATENDENTE", "SUPER_ADMIN")
+
+                .requestMatchers("/administrador/me").hasAnyRole("GERENTE", "ATENDENTE", "SUPER_ADMIN")
+                .requestMatchers("/administrador").hasRole("SUPER_ADMIN")
+                .requestMatchers("/administrador/{id}").hasRole("SUPER_ADMIN")
+                .requestMatchers("/relatorios").hasAnyRole("GERENTE", "SUPER_ADMIN")
                 
                 .anyRequest().authenticated()
             )

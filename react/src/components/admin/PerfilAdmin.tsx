@@ -62,20 +62,28 @@ const PerfilAdministradorPage = () => {
 
   const handleSalvar = async () => {
     if (!form) return;
+    
 
     setSalvando(true);
+    
+    const payload = {
+    nome: form.nome,
+    email: form.email,    
+    telefone: form.telefone,
+    nivelAcesso: form.nivelAcesso
+  };
 
     try {
-      const updated = await api.put<PerfilAdministrador>(
+       const updated  = await api.put<PerfilAdministrador>(
         "/administrador/me",
-        form
+        payload 
       );
 
       setPerfil(updated);
       setEditando(false);
 
     } catch (e: any) {
-      alert(e.message);
+      setErro(e.response?.data?.message || "Erro ao carregar perfil");
 
     } finally {
       setSalvando(false);
@@ -162,6 +170,7 @@ const PerfilAdministradorPage = () => {
               value={dadosExibicao.telefone}
               editando={editando}
               onChange={(v) => handleChange("telefone", v)}
+              maxLength={11}
             />
 
             <InfoItem
@@ -214,6 +223,7 @@ interface InfoItemProps {
   value: string;
   editando?: boolean;
   onChange?: (valor: string) => void;
+  maxLength?: number;
 }
 
 const InfoItem: React.FC<InfoItemProps> = ({
@@ -222,6 +232,7 @@ const InfoItem: React.FC<InfoItemProps> = ({
   value,
   editando = false,
   onChange,
+  maxLength,
 }) => (
   <div className="flex flex-col">
 
@@ -238,6 +249,7 @@ const InfoItem: React.FC<InfoItemProps> = ({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        maxLength={maxLength}
         className="p-3 border-2 border-rosa-pastel rounded-xl focus:border-rosa-medio outline-none transition-all"
       />
     ) : (

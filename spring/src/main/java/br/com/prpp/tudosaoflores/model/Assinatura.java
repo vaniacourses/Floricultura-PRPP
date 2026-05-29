@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
 public class Assinatura {
 
@@ -21,6 +21,10 @@ public class Assinatura {
 
     private String tipoPlano;
     private String status;
+    private LocalDate createdAt;
+    public Assinatura() {
+        this.createdAt = LocalDate.now();
+    }
 
     // Gera o ID único na inicialização
     {
