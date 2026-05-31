@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
-    @Query("SELECT p FROM Pedido p JOIN FETCH p.itens WHERE p.usuario.id = :idUsuario")
+    @Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.itens WHERE p.usuario.usuarioId = :idUsuario ORDER BY p.data DESC")
     List<Pedido> findByUsuarioUsuarioId(Long idUsuario);
 }

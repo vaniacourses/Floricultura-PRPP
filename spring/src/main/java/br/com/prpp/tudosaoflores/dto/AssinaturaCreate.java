@@ -9,4 +9,11 @@ import lombok.*;
 public class AssinaturaCreate {
     @NotBlank(message = "O tipo do plano é obrigatório")
     private String tipoPlano;
+    private String estiloArranjo;
+    private String coresPreferidas;
+    private String observacao;
+
+    public AssinaturaCreate(String tipoPlano) {
+        this.tipoPlano = tipoPlano;
+    }
 }

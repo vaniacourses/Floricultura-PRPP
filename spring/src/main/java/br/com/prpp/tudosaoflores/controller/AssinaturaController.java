@@ -24,9 +24,22 @@ public class AssinaturaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
+    @PostMapping("/comprar")
+    public ResponseEntity<AssinaturaDto> comprar(@RequestBody @Valid AssinaturaCreate assinaturaCreate) {
+        AssinaturaDto criado = service.comprarAssinatura(assinaturaCreate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
+    }
+
     @GetMapping
     public ResponseEntity<List<AssinaturaDto>> recuperarAssinaturas() {
         return ResponseEntity.ok(service.recuperarAssinaturas());
+    }
+
+    @GetMapping("/minha")
+    public ResponseEntity<AssinaturaDto> recuperarMinhaAssinaturaAtiva() {
+        return service.recuperarMinhaAssinaturaAtiva()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/{id}")

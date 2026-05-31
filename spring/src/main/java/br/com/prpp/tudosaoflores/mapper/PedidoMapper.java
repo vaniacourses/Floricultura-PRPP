@@ -16,6 +16,7 @@ public interface PedidoMapper {
     List<PedidoDto> toPedidosDto(List<Pedido> pedidos);
 
 
+    @Mapping(source = "id", target = "idPedido")
     @Mapping(source = "usuario.usuarioId", target = "idUsuario")
     PedidoDto toPedidoDto(Pedido pedido);
 

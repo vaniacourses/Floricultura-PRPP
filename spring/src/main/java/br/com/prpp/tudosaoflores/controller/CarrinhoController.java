@@ -1,5 +1,6 @@
 package br.com.prpp.tudosaoflores.controller;
 
+import br.com.prpp.tudosaoflores.dto.AssinaturaCreate;
 import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
 import br.com.prpp.tudosaoflores.dto.ItemAtualizarQuantidade;
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
@@ -44,6 +45,14 @@ public class CarrinhoController {
     {
         Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
         CarrinhoDto carrinhoDto = carrinhoService.adicionarItemCarrinho(clienteId, itemCarrinhoCreate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(carrinhoDto);
+    }
+
+    @PostMapping("/assinatura")
+    public ResponseEntity<CarrinhoDto> adicionarAssinatura(@RequestBody @Valid AssinaturaCreate assinaturaCreate)
+    {
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        CarrinhoDto carrinhoDto = carrinhoService.adicionarAssinatura(clienteId, assinaturaCreate);
         return ResponseEntity.status(HttpStatus.CREATED).body(carrinhoDto);
     }
 

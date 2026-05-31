@@ -21,7 +21,7 @@ public class AdminSeed implements CommandLineRunner {
         String[][] admins = {
             {"Luiza Canto Furley Schmidt", "lufurley@id.uff.br", "SUPER_ADMIN"},
             {"Isabella Direito Labre Martins", "isamartins@id.uff.br", "SUPER_ADMIN"},
-            {"Juliana Poutska", "julianapoustka@id.uff.br", "SUPER_ADMIN"},
+            {"Juliana Alves Poustka", "julianapoustka@id.uff.br", "SUPER_ADMIN"},
             {"Amanda Lemos Ribas", "amandaribas@id.uff.br", "SUPER_ADMIN"},
             {"Maria Eduarda D'Angelo Quitete Vianna", "me_vianna@id.uff.br", "SUPER_ADMIN"},
             {"Lais Ferreira Nazareth", "laisfn@id.uff.br", "SUPER_ADMIN"},

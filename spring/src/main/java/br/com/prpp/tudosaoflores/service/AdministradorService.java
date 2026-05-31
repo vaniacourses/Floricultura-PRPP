@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,6 +27,8 @@ import br.com.prpp.tudosaoflores.security.JwtUtil;
 
 @Service
 public class AdministradorService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AdministradorService.class);
 
     @Autowired
     private AdministradorRespository administradorRespository;
@@ -85,8 +89,12 @@ public class AdministradorService {
     }
 
     public AuthResponse autenticarComGoogle(GoogleAuthRequest request) {
-        Administrador admin = administradorRespository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AdminNaoEncontradoException("Administrador não encontrado"));
+        String email = request.getEmail() == null ? "" : request.getEmail().trim().toLowerCase();
+        Administrador admin = administradorRespository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.warn("Login de administrador recusado: email Google '{}' não cadastrado", email);
+                    return new AdminNaoEncontradoException("Administrador não encontrado");
+                });
 
         if (admin.getFirebaseUid() == null || admin.getFirebaseUid().isBlank()) {
             admin.setFirebaseUid(request.getUid());
