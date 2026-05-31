@@ -6,7 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const AdminstradorLoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth(); 
+  const { login } = useAuth();
 
   const handleGoogleLogin = async () => {
     try {
@@ -19,6 +19,7 @@ const AdminstradorLoginPage = () => {
         nome: user.displayName,
       });
 
+      
       login(response.token);
 
       navigate("/admin/perfil-adm");

@@ -1,4 +1,3 @@
-
 import Layout from "./layout";
 import HomePage from "../pages/HomePage";
 import DetalhesPage from "../pages/DetalhesPage";
@@ -31,6 +30,7 @@ import { createBrowserRouter } from "react-router-dom";
 import SearchPage from "../pages/SearchPage";
 import Relatorio from "../components/admin/Relatorios";
 import Dashboard from "../components/admin/Dashboard";
+import ProtectedRoute from "./ProtectedRouter";
 
 const router = createBrowserRouter([
   {
@@ -57,18 +57,22 @@ const router = createBrowserRouter([
         path: "cliente-registro-google",
         element: <ClienteRegistroGooglePage />,
       },
-
       {
-        path: "admin",
-        element: <AdministradorPage />,
+        element: <ProtectedRoute/>,
         children: [
-          { index: true, element: <PerfilAdmin /> },
-          { path: "perfil-adm", element: <PerfilAdmin /> },
-          { path: "dashboard", element: <Dashboard /> },
-          { path: "estoque", element: <Estoque /> },
-          { path: "promocoes", element: <Promocoes /> },
-          { path: "relatorios", element: <Relatorio /> },
-          { path: "administradores", element: <Administradores /> },
+          {
+            path: "admin",
+            element: <AdministradorPage />,
+            children: [
+              { index: true, element: <PerfilAdmin /> },
+              { path: "perfil-adm", element: <PerfilAdmin /> },
+              { path: "dashboard", element: <Dashboard /> },
+              { path: "estoque", element: <Estoque /> },
+              { path: "promocoes", element: <Promocoes /> },
+              { path: "relatorios", element: <Relatorio /> },
+              { path: "administradores", element: <Administradores /> },
+            ],
+          },
         ],
       },
       { path: "admin-login", element: <AdminstradorLoginPage /> },
