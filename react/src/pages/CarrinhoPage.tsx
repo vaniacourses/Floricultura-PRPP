@@ -36,10 +36,9 @@ export default function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
   const [loading, setLoading] = useState(true);
 
-<<<<<<< HEAD
   const possuiItens = !!carrinho?.itens?.length;
   const possuiAssinatura = !!carrinho?.tipoPlanoAssinatura && !!carrinho?.valorAssinatura;
-=======
+
   // Procure estas três funções na sua CarrinhoPage.tsx e aplique a MODIFICAÇÃO:
 
   const handleAlterarQuantidade = async (itemId: number, quantidadeAtual: number, mudanca: number) => {
@@ -111,8 +110,6 @@ export default function CarrinhoPage() {
       setLoading(false);
     }
   };
->>>>>>> a96650a8cb9c1987acb0989c7c6094ef7935604c
-
   const handleFinalizarCompra = async () => {
     const tokenAtual = token || localStorage.getItem("token");
     if (!tokenAtual) {

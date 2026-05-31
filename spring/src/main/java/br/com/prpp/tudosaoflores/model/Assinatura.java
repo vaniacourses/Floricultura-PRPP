@@ -10,17 +10,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-<<<<<<< HEAD
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-=======
 import java.time.LocalDate;
->>>>>>> a96650a8cb9c1987acb0989c7c6094ef7935604c
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
 public class Assinatura {
 
@@ -34,23 +32,18 @@ public class Assinatura {
 
     private String tipoPlano;
     private String status;
-<<<<<<< HEAD
     private BigDecimal valorPlano;
     private LocalDateTime dataContratacao;
     private Long idPedido;
     private String estiloArranjo;
     private String coresPreferidas;
     private String observacao;
-=======
     private LocalDate createdAt;
-    public Assinatura() {
-        this.createdAt = LocalDate.now();
-    }
->>>>>>> a96650a8cb9c1987acb0989c7c6094ef7935604c
 
     // Gera o ID único na inicialização
     {
         this.idAssinatura = UUID.randomUUID().toString();
+        this.createdAt = LocalDate.now();
     }
 
     public void consultarHistorico() {
