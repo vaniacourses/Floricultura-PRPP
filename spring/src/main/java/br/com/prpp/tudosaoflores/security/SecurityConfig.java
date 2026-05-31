@@ -53,6 +53,9 @@ public class SecurityConfig {
                 .requestMatchers("/administrador").hasRole("SUPER_ADMIN")
                 .requestMatchers("/administrador/{id}").hasRole("SUPER_ADMIN")
                 .requestMatchers("/relatorios", "/dashboard").hasAnyRole("GERENTE", "SUPER_ADMIN")
+                .requestMatchers("/carrinho/**").hasRole("CLIENTE")
+                .requestMatchers(HttpMethod.POST, "/assinaturas", "/assinaturas/comprar").hasRole("CLIENTE")
+                .requestMatchers(HttpMethod.GET, "/assinaturas/minha").hasRole("CLIENTE")
                 
                 .anyRequest().authenticated()
             )

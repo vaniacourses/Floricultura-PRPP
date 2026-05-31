@@ -2,6 +2,25 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const getToken = (): string | null => localStorage.getItem("token");
 
+const mensagemErroHttp = (status: number, body: string) => {
+  if (body) {
+    try {
+      const data = JSON.parse(body);
+      if (typeof data.message === "string" && data.message.trim()) return data.message;
+      if (typeof data.error === "string" && data.error.trim()) return data.error;
+    } catch {
+      // Respostas HTML/texto do Spring nao devem vazar para a interface.
+    }
+  }
+
+  if (status === 401) return "Sua sessão expirou. Faça login novamente.";
+  if (status === 403) return "Você não tem permissão para realizar esta ação.";
+  if (status === 404) return "Recurso não encontrado.";
+  if (status === 409) return "Não foi possível concluir a ação por conflito de dados.";
+  if (status >= 500) return "Erro interno no servidor. Tente novamente em instantes.";
+  return `Erro ${status}`;
+};
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
@@ -19,7 +38,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    const error = new Error(errorBody || `Erro ${response.status}`);
+    const error = new Error(mensagemErroHttp(response.status, errorBody));
     (error as any).status = response.status; 
     throw error;
   }

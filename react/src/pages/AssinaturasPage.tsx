@@ -54,9 +54,25 @@ const ETAPAS_ASSINATURA = [
   },
 ];
 
+const obterRoleToken = (token: string | null) => {
+  if (!token) return null;
+
+  try {
+    const payloadBase64 = token.split(".")[1];
+    const payloadJson = atob(payloadBase64);
+    const payload = JSON.parse(payloadJson);
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+};
+
+const isRoleAdmin = (role: string | null) =>
+  role === "GERENTE" || role === "ATENDENTE" || role === "SUPER_ADMIN";
+
 const AssinaturasPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   const [planoSelecionado, setPlanoSelecionado] = useState("Mensal");
   const [carregandoPlano, setCarregandoPlano] = useState("");
   const [verificandoAssinatura, setVerificandoAssinatura] = useState(false);
@@ -70,9 +86,10 @@ const AssinaturasPage = () => {
   });
 
   const planoAtual = PLANOS.find((plano) => plano.nome === planoSelecionado) || PLANOS[1];
+  const isAdmin = isRoleAdmin(obterRoleToken(token || localStorage.getItem("token")));
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || isAdmin) {
       setAssinaturaAtiva(null);
       return;
     }
@@ -90,7 +107,7 @@ const AssinaturasPage = () => {
     };
 
     carregarAssinaturaAtiva();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isAdmin]);
 
   const formatarMoeda = (valor: number) =>
     new Intl.NumberFormat("pt-BR", {
@@ -109,6 +126,11 @@ const AssinaturasPage = () => {
       return;
     }
 
+    if (isAdmin) {
+      setErro("Assinaturas são exclusivas para contas de cliente.");
+      return;
+    }
+
     if (assinaturaAtiva) {
       setErro("Você já possui uma assinatura ativa.");
       return;
@@ -119,6 +141,12 @@ const AssinaturasPage = () => {
   };
 
   const handleAdicionarAoCarrinho = async () => {
+    if (isAdmin) {
+      setErro("Assinaturas são exclusivas para contas de cliente.");
+      setModalAberto(false);
+      return;
+    }
+
     try {
       setCarregandoPlano(planoSelecionado);
       await adicionarAssinaturaAoCarrinho(planoSelecionado, personalizacao);
@@ -241,16 +269,21 @@ const AssinaturasPage = () => {
                 Você já tem uma assinatura ativa: {assinaturaAtiva.tipoPlano}.
               </div>
             )}
+            {isAdmin && (
+              <div className="rounded-lg border border-[#f3d7df] bg-[#fff7f8] px-3 py-2 text-[#6f4b5a]">
+                Entre com uma conta de cliente para contratar uma assinatura.
+              </div>
+            )}
           </div>
 
           <button
             type="button"
             onClick={handleIniciarCompra}
-            disabled={!!carregandoPlano || verificandoAssinatura || !!assinaturaAtiva}
+            disabled={!!carregandoPlano || verificandoAssinatura || !!assinaturaAtiva || isAdmin}
             className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#b63b6d] px-6 py-3 font-bold text-white shadow-sm transition-colors hover:bg-[#8f2b53] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {carregandoPlano || verificandoAssinatura ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
-            {assinaturaAtiva ? "Assinatura ativa" : "Iniciar compra"}
+            {isAdmin ? "Disponível para clientes" : assinaturaAtiva ? "Assinatura ativa" : "Iniciar compra"}
           </button>
 
           {erro && (
