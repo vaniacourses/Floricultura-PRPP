@@ -104,10 +104,10 @@ public class RelatorioService {
 
         // Cupons
         int totalCupons = (int) cupomRepo.count();
-        int cuponsAtivos = cupomRepo.countByDataInicioBeforeAndDataFimAfter(hoje, hoje);
+        int cuponsAtivos = cupomRepo.countByDataInicioLessThanEqualAndDataFimGreaterThanEqual(hoje, hoje);
         int novosCupons = cupomRepo.countByDataInicioBetween(inicio, fim);
 
-        // Retorno limpo e mapeado perfeitamente com os atributos do front
+
         return new RelatorioDTO(
                 periodo, inicio, fim,
                 new RelatorioDTO.MetricasClientes(totalClientes, novosClientes),

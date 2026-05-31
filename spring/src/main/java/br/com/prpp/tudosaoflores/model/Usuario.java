@@ -39,5 +39,10 @@ public abstract class Usuario {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public LocalDate getCreatedAt(){ return this.createdAt; }
+    @PrePersist
+    protected void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDate.now();
+        }
+    }
 }

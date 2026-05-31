@@ -8,6 +8,6 @@ import java.time.LocalDate;
 
 @Repository
 public interface CupomRepository extends JpaRepository<Cupom, Long> {
-    int countByDataInicioBeforeAndDataFimAfter(LocalDate data1, LocalDate data2); 
+    int countByDataInicioLessThanEqualAndDataFimGreaterThanEqual(LocalDate inicio, LocalDate fim);
     int countByDataInicioBetween(LocalDate inicio, LocalDate fim);
 }
