@@ -63,7 +63,7 @@ public class RelatorioService {
         // Pedidos & Faturamento
         LocalDateTime inicioDateTime = inicio.atStartOfDay();
         LocalDateTime fimDateTime = fim.atTime(LocalTime.MAX);
-        List<Pedido> pedidosPeriodo = pedidoRepo.findByDataBetweenWithItens(inicioDateTime, fimDateTime);
+        List<Pedido> pedidosPeriodo = pedidoRepo.findByDataBetweenCompleto(inicioDateTime, fimDateTime);
         
         int totalPedidos = pedidosPeriodo.size();
         BigDecimal faturamentoTotal = pedidosPeriodo.stream()
