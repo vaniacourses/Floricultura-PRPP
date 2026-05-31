@@ -1,5 +1,7 @@
 package br.com.prpp.tudosaoflores.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -14,6 +16,7 @@ public abstract class Usuario {
     private String nome;
     private String telefone;
     private String email;
+    private LocalDate createdAt;
 
     public Usuario() {}
 
@@ -21,6 +24,7 @@ public abstract class Usuario {
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
+        this.createdAt = LocalDate.now();
     }
 
     public Long getUsuarioId() { return usuarioId; }
@@ -34,4 +38,11 @@ public abstract class Usuario {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    @PrePersist
+    protected void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDate.now();
+        }
+    }
 }

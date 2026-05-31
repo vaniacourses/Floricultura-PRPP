@@ -15,7 +15,7 @@ const Promocoes = () => {
 
   
   const hoje = new Date().toISOString().split("T")[0];
-  const [editandoCodigo, setEditandoCodigo] = useState(null); //se tiver o id entende que está editando
+  const [editandoCodigo, setEditandoCodigo] = useState(null); 
 
   const [busca, setBusca] = useState("");
 

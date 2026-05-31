@@ -32,7 +32,7 @@ export const renderAdministrador = (
               </div>
               <div className="rounded-xl bg-[#FFF5F8] px-4 py-3">
                 <p className="text-xs font-medium uppercase text-gray-400">Desde</p>
-                <p className="mt-1 font-semibold text-[#490829]">{admin.createdAt}</p>
+                <p className="mt-1 font-semibold text-[#490829]">{new Date(admin.createdAt).toLocaleDateString("pt-BR")}</p>
               </div>
             </div>
           </div>

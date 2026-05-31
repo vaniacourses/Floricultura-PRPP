@@ -1,4 +1,3 @@
-
 import Layout from "./layout";
 import HomePage from "../pages/HomePage";
 import DetalhesPage from "../pages/DetalhesPage";
@@ -15,7 +14,6 @@ import ContatoPage from "../pages/ContatoPage";
 import PerfilAdmin from "../components/admin/PerfilAdmin";
 import Estoque from "../components/admin/estoque/Estoque";
 import Promocoes from "../components/admin/Promocoes";
-import Relatorios from "../components/admin/Relatorios";
 import Administradores from "../components/admin/Administradores";
 import ClienteLoginPage from "../pages/cliente/ClienteLoginPage";
 import ClienteRegistroGooglePage from "../pages/cliente/ClienteRegistroGooglePage";
@@ -30,6 +28,9 @@ import ClientePage from "../pages/cliente/ClientePage";
 import FavoritosPage from "../pages/cliente/FavoritosPage";
 import { createBrowserRouter } from "react-router-dom";
 import SearchPage from "../pages/SearchPage";
+import Relatorio from "../components/admin/Relatorios";
+import Dashboard from "../components/admin/Dashboard";
+import ProtectedRoute from "./ProtectedRouter";
 
 const router = createBrowserRouter([
   {
@@ -56,17 +57,22 @@ const router = createBrowserRouter([
         path: "cliente-registro-google",
         element: <ClienteRegistroGooglePage />,
       },
-
       {
-        path: "admin",
-        element: <AdministradorPage />,
+        element: <ProtectedRoute/>,
         children: [
-          { index: true, element: <PerfilAdmin /> },
-          { path: "perfil-adm", element: <PerfilAdmin /> },
-          { path: "estoque", element: <Estoque /> },
-          { path: "promocoes", element: <Promocoes /> },
-          { path: "relatorios", element: <Relatorios /> },
-          { path: "administradores", element: <Administradores /> },
+          {
+            path: "admin",
+            element: <AdministradorPage />,
+            children: [
+              { index: true, element: <PerfilAdmin /> },
+              { path: "perfil-adm", element: <PerfilAdmin /> },
+              { path: "dashboard", element: <Dashboard /> },
+              { path: "estoque", element: <Estoque /> },
+              { path: "promocoes", element: <Promocoes /> },
+              { path: "relatorios", element: <Relatorio /> },
+              { path: "administradores", element: <Administradores /> },
+            ],
+          },
         ],
       },
       { path: "admin-login", element: <AdminstradorLoginPage /> },

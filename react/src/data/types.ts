@@ -18,3 +18,64 @@ export type Avaliacao = {
   usuarioId: number; 
   usuarioNome: string;       
 };
+
+export interface RelatorioDTO {
+  periodo: string;
+  dataInicio: string;  
+  dataFim: string;
+  produtos: {
+    totalProdutos: number;
+    porCategoria: Record<string, number>;
+  };
+  clientes: {
+    totalClientes: number;
+    novosNoPeriodo: number;
+  };
+  assinaturas: {
+    totalAtivas: number;
+    novasNoPeriodo: number;
+    porTipo: Record<string, number>;
+  };
+  entregas: {
+    totalNoPeriodo: number;
+  };
+  pedidos: {
+    totalNoPeriodo: number;
+    valorTotalNoPeriodo: number;
+  };
+  cupons: {
+    totalCupons: number;
+    ativos: number;
+    novosNoPeriodo: number;
+  };
+  faturamentoTotal: number;
+  vendas: {
+    produtoMaisVendido: string;
+    quantidadeProdutoMaisVendido: number;
+    categoriaMaisVendida: string;
+    topProdutos: Array<{ nome: string; quantidade: number }>;
+  };
+};
+
+export interface PedidoResumoDto {
+  id: number;
+  clienteNome: string;
+  status: string;
+  valorTotal: number;
+}
+
+export interface EntregaResumoDto {
+  id: number;
+  endereco: string;
+  status: string;
+  origem: string;
+}
+
+export interface DashboardDto {
+  pedidosHoje: PedidoResumoDto[];
+  entregasHoje: EntregaResumoDto[];
+  entregasAssinatura: EntregaResumoDto[];
+  faturamentoHoje: number;
+  totalPedidosHoje: number;
+  estoqueCritico: Produto[]; 
+}
