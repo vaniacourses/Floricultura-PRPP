@@ -56,3 +56,26 @@ export interface RelatorioDTO {
     topProdutos: Array<{ nome: string; quantidade: number }>;
   };
 };
+
+export interface PedidoResumoDto {
+  id: number;
+  clienteNome: string;
+  status: string;
+  valorTotal: number;
+}
+
+export interface EntregaResumoDto {
+  id: number;
+  endereco: string;
+  status: string;
+  origem: string;
+}
+
+export interface DashboardDto {
+  pedidosHoje: PedidoResumoDto[];
+  entregasHoje: EntregaResumoDto[];
+  entregasAssinatura: EntregaResumoDto[];
+  faturamentoHoje: number;
+  totalPedidosHoje: number;
+  estoqueCritico: Produto[]; 
+}

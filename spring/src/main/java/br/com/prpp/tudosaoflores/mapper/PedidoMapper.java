@@ -2,6 +2,7 @@ package br.com.prpp.tudosaoflores.mapper;
 
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
+import br.com.prpp.tudosaoflores.dto.PedidoResumoDto;
 import br.com.prpp.tudosaoflores.model.ItemPedido;
 import br.com.prpp.tudosaoflores.model.Pedido;
 import org.mapstruct.Mapper;
@@ -32,5 +33,10 @@ public interface PedidoMapper {
     @Mapping(target = "itens", ignore = true)
     @Mapping(target = "usuario", ignore = true)
     Pedido toPedido(PedidoCreate pedidoCreate);
+
+    @Mapping(source = "usuario.nome", target = "clienteNome")
+    PedidoResumoDto toPedidoResumo(Pedido pedido);
+    @Mapping(source = "usuario.nome", target = "clienteNome")
+    List<PedidoResumoDto> toPedidosResumo(List<Pedido> pedidos);
 
 }

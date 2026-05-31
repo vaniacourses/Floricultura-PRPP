@@ -30,6 +30,7 @@ import FavoritosPage from "../pages/cliente/FavoritosPage";
 import { createBrowserRouter } from "react-router-dom";
 import SearchPage from "../pages/SearchPage";
 import Relatorio from "../components/admin/Relatorios";
+import Dashboard from "../components/admin/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <PerfilAdmin /> },
           { path: "perfil-adm", element: <PerfilAdmin /> },
+          { path: "dashboard", element: <Dashboard /> },
           { path: "estoque", element: <Estoque /> },
           { path: "promocoes", element: <Promocoes /> },
           { path: "relatorios", element: <Relatorio /> },

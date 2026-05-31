@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/administrador/me").hasAnyRole("GERENTE", "ATENDENTE", "SUPER_ADMIN")
                 .requestMatchers("/administrador").hasRole("SUPER_ADMIN")
                 .requestMatchers("/administrador/{id}").hasRole("SUPER_ADMIN")
-                .requestMatchers("/relatorios").hasAnyRole("GERENTE", "SUPER_ADMIN")
+                .requestMatchers("/relatorios", "/dashboard").hasAnyRole("GERENTE", "SUPER_ADMIN")
                 
                 .anyRequest().authenticated()
             )
