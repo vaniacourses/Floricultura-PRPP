@@ -13,9 +13,14 @@ public interface AssinaturaMapper {
 
     List<AssinaturaDto> toAssinaturasDto(List<Assinatura> assinaturas);
 
+    @Mapping(source = "usuario.usuarioId", target = "idUsuario")
     AssinaturaDto toAssinaturaDto(Assinatura assinatura);
 
     @Mapping(target = "idAssinatura", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "valorPlano", ignore = true)
+    @Mapping(target = "dataContratacao", ignore = true)
+    @Mapping(target = "idPedido", ignore = true)
     Assinatura toAssinatura(AssinaturaCreate assinaturaCreate);
 }

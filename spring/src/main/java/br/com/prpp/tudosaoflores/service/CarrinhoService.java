@@ -3,17 +3,21 @@ package br.com.prpp.tudosaoflores.service;
 import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
 import br.com.prpp.tudosaoflores.dto.ItemAtualizarQuantidade;
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
+import br.com.prpp.tudosaoflores.dto.AssinaturaCreate;
 import br.com.prpp.tudosaoflores.mapper.CarrinhoMapper;
 import br.com.prpp.tudosaoflores.model.*;
 import br.com.prpp.tudosaoflores.repository.CarrinhoRepository;
 import br.com.prpp.tudosaoflores.repository.ClienteRepository;
 import br.com.prpp.tudosaoflores.repository.PedidoRepository;
 import br.com.prpp.tudosaoflores.repository.ProdutoRepository;
+import br.com.prpp.tudosaoflores.repository.AssinaturaRepository;
+import br.com.prpp.tudosaoflores.strategy.PrecificacaoAssinaturaResolver;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -35,6 +39,15 @@ public class CarrinhoService {
 
     @Autowired
     private PedidoRepository pedidoRepository;
+
+    @Autowired
+    private AssinaturaRepository assinaturaRepository;
+
+    @Autowired
+    private PrecificacaoAssinaturaResolver precificacaoAssinaturaResolver;
+
+    @Autowired
+    private AssinaturaService assinaturaService;
 
 
     public CarrinhoDto recuperarCarrinho(Long clienteId)
@@ -83,6 +96,35 @@ public class CarrinhoService {
     }
 
     @Transactional
+    public CarrinhoDto adicionarAssinatura(Long idUsuarioLogado, AssinaturaCreate assinaturaCreate)
+    {
+        assinaturaService.validarClienteSemAssinaturaAtivaRecente(idUsuarioLogado);
+
+        String tipoPlano = assinaturaCreate.getTipoPlano();
+        BigDecimal valorPlano = precificacaoAssinaturaResolver.calcularPreco(tipoPlano);
+
+        Cliente cliente = clienteRepository.findById(idUsuarioLogado)
+                .orElseThrow(() -> new RuntimeException("Usuario nao encontrado de verdade"));
+
+        Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(idUsuarioLogado)
+                .orElseGet(() -> {
+                    Carrinho novoCarrinho = new Carrinho();
+                    novoCarrinho.setCliente(cliente);
+                    novoCarrinho.setItens(new ArrayList<>());
+                    return carrinhoRepository.save(novoCarrinho);
+                });
+
+        carrinho.setTipoPlanoAssinatura(tipoPlano);
+        carrinho.setValorAssinatura(valorPlano);
+        carrinho.setEstiloArranjoAssinatura(assinaturaCreate.getEstiloArranjo());
+        carrinho.setCoresPreferidasAssinatura(assinaturaCreate.getCoresPreferidas());
+        carrinho.setObservacaoAssinatura(assinaturaCreate.getObservacao());
+
+        Carrinho carrinhoSalvo = carrinhoRepository.save(carrinho);
+        return carrinhoMapper.toCarrinhoDto(carrinhoSalvo);
+    }
+
+    @Transactional
     public CarrinhoDto atualizarItem(Long clienteId, Long itemId, Integer novaQuantidade)
     {
         Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(clienteId)
@@ -115,6 +157,11 @@ public class CarrinhoService {
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
         carrinho.getItens().clear();
+        carrinho.setTipoPlanoAssinatura(null);
+        carrinho.setValorAssinatura(null);
+        carrinho.setEstiloArranjoAssinatura(null);
+        carrinho.setCoresPreferidasAssinatura(null);
+        carrinho.setObservacaoAssinatura(null);
         carrinhoRepository.save(carrinho);
     };
 
@@ -124,8 +171,29 @@ public class CarrinhoService {
         Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(clienteId)
                 .orElseThrow(() -> new RuntimeException("Carrinho nao encontrado"));
 
-        if (carrinho.getItens() == null || carrinho.getItens().isEmpty()) {
+        boolean temItens = carrinho.getItens() != null && !carrinho.getItens().isEmpty();
+        boolean temAssinatura = carrinho.getTipoPlanoAssinatura() != null && carrinho.getValorAssinatura() != null;
+
+        if (!temItens && !temAssinatura) {
             throw new RuntimeException("Não é possível finalizar um carrinho vazio");
+        }
+
+        if (temAssinatura) {
+            assinaturaService.validarClienteSemAssinaturaAtivaRecente(clienteId);
+        }
+
+        Assinatura assinatura = null;
+        if (temAssinatura) {
+            assinatura = new Assinatura();
+            assinatura.setUsuario(carrinho.getCliente());
+            assinatura.setTipoPlano(carrinho.getTipoPlanoAssinatura());
+            assinatura.setStatus("Ativa");
+            assinatura.setValorPlano(carrinho.getValorAssinatura());
+            assinatura.setDataContratacao(LocalDateTime.now());
+            assinatura.setEstiloArranjo(carrinho.getEstiloArranjoAssinatura());
+            assinatura.setCoresPreferidas(carrinho.getCoresPreferidasAssinatura());
+            assinatura.setObservacao(carrinho.getObservacaoAssinatura());
+            assinatura = assinaturaRepository.save(assinatura);
         }
 
         Pedido pedido = new Pedido();
@@ -134,26 +202,51 @@ public class CarrinhoService {
         pedido.setStatus("PROCESSANDO");
         pedido.setItens(new ArrayList<>());
 
-        BigDecimal valorTotal = carrinho.getItens().stream()
-                .map(item -> item.getProduto().getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal valorProdutos = temItens
+                ? carrinho.getItens().stream()
+                    .map(item -> item.getProduto().getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                : BigDecimal.ZERO;
+        BigDecimal valorTotal = valorProdutos.add(temAssinatura ? carrinho.getValorAssinatura() : BigDecimal.ZERO);
         pedido.setValorTotal(valorTotal);
 
-        for (ItemCarrinho itemCarrinho : carrinho.getItens()) {
-            ItemPedido novoItemPedido = new ItemPedido();
-            novoItemPedido.setPedido(pedido);
-            novoItemPedido.setProduto(itemCarrinho.getProduto());
-            novoItemPedido.setQuantidade(itemCarrinho.getQuantidade());
-            novoItemPedido.setPrecoUnitario(itemCarrinho.getProduto().getPreco());
-
-            itemCarrinho.getProduto().setQuantidade(itemCarrinho.getProduto().getQuantidade() - itemCarrinho.getQuantidade());
-
-            pedido.getItens().add(novoItemPedido);
+        if (temAssinatura) {
+            pedido.setOrigem(temItens ? "MISTA" : "ASSINATURA");
+            pedido.setDescricao("Assinatura " + carrinho.getTipoPlanoAssinatura());
+            pedido.setIdAssinatura(assinatura.getIdAssinatura());
+            pedido.setEstiloAssinatura(carrinho.getEstiloArranjoAssinatura());
+            pedido.setCoresAssinatura(carrinho.getCoresPreferidasAssinatura());
+            pedido.setObservacaoAssinatura(carrinho.getObservacaoAssinatura());
         }
 
-        pedidoRepository.save(pedido);
+        if (temItens) {
+            for (ItemCarrinho itemCarrinho : carrinho.getItens()) {
+                ItemPedido novoItemPedido = new ItemPedido();
+                novoItemPedido.setPedido(pedido);
+                novoItemPedido.setProduto(itemCarrinho.getProduto());
+                novoItemPedido.setQuantidade(itemCarrinho.getQuantidade());
+                novoItemPedido.setPrecoUnitario(itemCarrinho.getProduto().getPreco());
+
+                itemCarrinho.getProduto().setQuantidade(itemCarrinho.getProduto().getQuantidade() - itemCarrinho.getQuantidade());
+
+                pedido.getItens().add(novoItemPedido);
+            }
+        }
+
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+
+        if (assinatura != null) {
+            assinatura.setIdPedido(pedidoSalvo.getId());
+            assinaturaRepository.save(assinatura);
+        }
 
         carrinho.getItens().clear();
+        carrinho.setTipoPlanoAssinatura(null);
+        carrinho.setValorAssinatura(null);
+        carrinho.setEstiloArranjoAssinatura(null);
+        carrinho.setCoresPreferidasAssinatura(null);
+        carrinho.setObservacaoAssinatura(null);
         carrinhoRepository.save(carrinho);
     }
+
 }

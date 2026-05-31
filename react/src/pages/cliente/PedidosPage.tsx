@@ -7,6 +7,7 @@ interface PedidoItem {
   id: number;
   idUsuario: number;
   codigo: number;
+  nomeProduto?: string;
   produtoNome: string;
   quantidade: number;
   valorUnitario: number;
@@ -19,6 +20,12 @@ interface PedidoData {
   idUsuario: number;
   status: string;
   valorTotal: number;
+  origem?: string;
+  descricao?: string;
+  idAssinatura?: string;
+  estiloAssinatura?: string;
+  coresAssinatura?: string;
+  observacaoAssinatura?: string;
   itens: PedidoItem[];
 }
 
@@ -121,8 +128,7 @@ export default function PedidosPage() {
                 <div className="flex gap-6 text-xs text-slate-600">
                   <div>
                     <p className="uppercase font-semibold tracking-wider text-slate-400">Pedido realizado</p>
-                    {/* MODIFICAÇÃO: Mantido a data aqui */}
-                    <p className="font-medium text-slate-800">#{pedido.idPedido}</p>
+                    <p className="font-medium text-slate-800">{formatDate(pedido.data)}</p>
                   </div>
                   <div>
                     <p className="uppercase font-semibold tracking-wider text-slate-400">Total</p>
@@ -130,27 +136,58 @@ export default function PedidosPage() {
                   </div>
                   <div>
                     <p className="uppercase font-semibold tracking-wider text-slate-400">Nº do Pedido</p>
-                    {/* MODIFICAÇÃO: Corrigido para exibir o ID do pedido embaixo do título certo */}
-                    <p className="font-medium text-slate-800">{formatDate(pedido.data)}</p>
+                    <p className="font-medium text-slate-800">#{pedido.idPedido}</p>
                   </div>
                 </div>
                 <div>
                   <span className="inline-flex items-center rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-rosa-choque ring-1 ring-inset ring-pink-700/10">
-                    {pedido.status || "PROCESSANDO"}
+                    {pedido.idAssinatura ? "ASSINATURA" : pedido.status || "PROCESSANDO"}
                   </span>
                 </div>
               </div>
 
                 {/* Listagem dos Itens de Dentro Desse Pedido */}
                 <div className="p-4 divide-y divide-slate-100">
-                  {pedido.itens && pedido.itens.map((item) => (
+                  {pedido.idAssinatura && (
+                    <div className="py-4 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-xl bg-rosa-claro/20 border border-rosa-pastel flex items-center justify-center text-xl">
+                          🌸
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">
+                            {pedido.descricao || "Assinatura de flores"}
+                          </h4>
+                          <p className="text-xs text-slate-500">
+                            Código da assinatura: {pedido.idAssinatura || "-"}
+                          </p>
+                          {(pedido.estiloAssinatura || pedido.coresAssinatura) && (
+                            <p className="text-xs text-slate-500">
+                              {pedido.estiloAssinatura || "Estilo livre"} · {pedido.coresAssinatura || "sem preferência de cor"}
+                            </p>
+                          )}
+                          {pedido.observacaoAssinatura && (
+                            <p className="text-xs text-slate-500">
+                              Observação: {pedido.observacaoAssinatura}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-slate-700">R$ {(pedido.valorTotal || 0).toFixed(2)}</p>
+                        <p className="text-xs text-slate-400">{pedido.status || "PROCESSANDO"}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {pedido.itens && pedido.itens.length > 0 ? pedido.itens.map((item) => (
                     <div key={item.id} className="py-4 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-xl bg-rosa-claro/20 border border-rosa-pastel flex items-center justify-center text-xl">
                           🌸
                         </div>
                         <div>
-                          <h4 className="text-sm font-semibold text-slate-900">{item.produtoNome || "Produto"}</h4>
+                          <h4 className="text-sm font-semibold text-slate-900">{item.nomeProduto || item.produtoNome || "Produto"}</h4>
                           <p className="text-xs text-slate-500">Quantidade: {item.quantidade}</p>
                         </div>
                       </div>
@@ -159,7 +196,9 @@ export default function PedidosPage() {
                         <p className="text-xs text-slate-400">un: R$ {(item.valorUnitario || 0).toFixed(2)}</p>
                       </div>
                     </div>
-                  ))}
+                  )) : !pedido.idAssinatura && (
+                    <div className="py-4 text-sm text-slate-500">Nenhum item detalhado para este pedido.</div>
+                  )}
                 </div>
 
               </div>
