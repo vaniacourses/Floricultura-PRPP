@@ -32,6 +32,12 @@ public class Pedido {
     private LocalDateTime data;
     private BigDecimal valorTotal;
     private String status;
+    private String origem;
+    private String descricao;
+    private String idAssinatura;
+    private String estiloAssinatura;
+    private String coresAssinatura;
+    private String observacaoAssinatura;
 
     public Pedido(LocalDateTime data, BigDecimal valorTotal, String status){
         this.data = data;

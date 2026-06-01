@@ -13,6 +13,12 @@ public record PedidoDto (
         Long idUsuario,
         List<ItemPedidoDto> itens,
         BigDecimal valorTotal,
-        String status
+        String status,
+        String origem,
+        String descricao,
+        String idAssinatura,
+        String estiloAssinatura,
+        String coresAssinatura,
+        String observacaoAssinatura
 ){
 }

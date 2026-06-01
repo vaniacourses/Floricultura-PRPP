@@ -10,7 +10,12 @@ public record CarrinhoDto (
         Long clienteId,
         String clienteNome,
         List<ItemCarrinhoDto> itens,
-        BigDecimal valorTotal)
+        BigDecimal valorTotal,
+        String tipoPlanoAssinatura,
+        BigDecimal valorAssinatura,
+        String estiloArranjoAssinatura,
+        String coresPreferidasAssinatura,
+        String observacaoAssinatura)
 {
     public CarrinhoDto(Carrinho carrinho){
         this(
@@ -23,6 +28,12 @@ public record CarrinhoDto (
                 carrinho.getItens().stream()
                     .map(item -> item.getProduto().getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
                     .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .add(carrinho.getValorAssinatura() != null ? carrinho.getValorAssinatura() : BigDecimal.ZERO),
+                carrinho.getTipoPlanoAssinatura(),
+                carrinho.getValorAssinatura(),
+                carrinho.getEstiloArranjoAssinatura(),
+                carrinho.getCoresPreferidasAssinatura(),
+                carrinho.getObservacaoAssinatura()
         );
 
     }

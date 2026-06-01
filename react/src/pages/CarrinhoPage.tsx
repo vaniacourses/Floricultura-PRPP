@@ -21,6 +21,11 @@ interface CarrinhoData {
   clienteId: number;
   clienteNome: string;
   valorTotal: number; 
+  tipoPlanoAssinatura?: string;
+  valorAssinatura?: number;
+  estiloArranjoAssinatura?: string;
+  coresPreferidasAssinatura?: string;
+  observacaoAssinatura?: string;
   itens: ItemCarrinho[];
 }
 
@@ -30,6 +35,9 @@ export default function CarrinhoPage() {
 
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const possuiItens = !!carrinho?.itens?.length;
+  const possuiAssinatura = !!carrinho?.tipoPlanoAssinatura && !!carrinho?.valorAssinatura;
 
   // Procure estas três funções na sua CarrinhoPage.tsx e aplique a MODIFICAÇÃO:
 
@@ -102,7 +110,6 @@ export default function CarrinhoPage() {
       setLoading(false);
     }
   };
-
   const handleFinalizarCompra = async () => {
     const tokenAtual = token || localStorage.getItem("token");
     if (!tokenAtual) {
@@ -185,7 +192,7 @@ export default function CarrinhoPage() {
         </div>
 
         {/* Verificação de Carrinho Vazio */}
-        {!carrinho || !carrinho.itens || carrinho.itens.length === 0 ? (
+        {!carrinho || (!possuiItens && !possuiAssinatura) ? (
           <div className="text-center py-12 space-y-4">
             <p className="text-sm text-muted-foreground">Não há nenhum produto no seu carrinho no momento.</p>
             <button
@@ -201,6 +208,43 @@ export default function CarrinhoPage() {
             
             {/* Seção dos Itens Cadastrados */}
             <div className="space-y-4">
+              {possuiAssinatura && (
+                <div className="rounded-2xl bg-[#fff7f8] p-4 border border-[#f3d7df] flex flex-col sm:flex-row items-center gap-4 justify-between">
+                  <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <div className="h-20 w-20 rounded-xl bg-white shadow-sm border border-[#f3d7df] flex items-center justify-center text-3xl">
+                      🌸
+                    </div>
+                    <div>
+                      <h3 className="text-md font-semibold text-slate-900">
+                        Assinatura {carrinho.tipoPlanoAssinatura}
+                      </h3>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mb-1">
+                        {carrinho.estiloArranjoAssinatura || "Flores selecionadas"} · {carrinho.coresPreferidasAssinatura || "sem preferência de cor"}
+                      </p>
+                      {carrinho.observacaoAssinatura && (
+                        <p className="mb-1 text-xs text-slate-500">
+                          Observação: {carrinho.observacaoAssinatura}
+                        </p>
+                      )}
+                      <span className="text-sm font-bold text-slate-700">
+                        R$ {(carrinho.valorAssinatura || 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/60">
+                    <div className="text-sm text-slate-600">
+                      Plano: <span className="font-semibold text-slate-900 bg-white px-2 py-1 rounded-md border border-[#f3d7df] ml-1">{carrinho.tipoPlanoAssinatura}</span>
+                    </div>
+                    <div className="text-right min-w-[80px]">
+                      <span className="text-sm font-bold text-rosa-text">
+                        R$ {(carrinho.valorAssinatura || 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {carrinho.itens.map((item) => (
                 <div 
                   key={item.id} 
@@ -281,7 +325,7 @@ export default function CarrinhoPage() {
                 
                 <div className="space-y-2 border-b border-slate-200/60 pb-4 text-sm">
                   <div className="flex justify-between text-slate-600">
-                    <span>Subtotal dos produtos:</span>
+                    <span>Subtotal:</span>
                     <span>R$ {(carrinho.valorTotal || 0).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-slate-600">

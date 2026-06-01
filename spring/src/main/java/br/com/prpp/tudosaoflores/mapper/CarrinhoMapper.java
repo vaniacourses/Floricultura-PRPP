@@ -1,7 +1,6 @@
 package br.com.prpp.tudosaoflores.mapper;
 
 import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
-import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoDto;
 import br.com.prpp.tudosaoflores.model.Carrinho;
 import br.com.prpp.tudosaoflores.model.ItemCarrinho;
@@ -22,8 +21,13 @@ public interface CarrinhoMapper {
         if (carrinho == null || carrinho.getItens() == null) {
             return BigDecimal.ZERO;
         }
-        return carrinho.getItens().stream()
+        BigDecimal valorProdutos = carrinho.getItens().stream()
                 .map(item -> item.getProduto().getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal valorAssinatura = carrinho.getValorAssinatura() != null
+                ? carrinho.getValorAssinatura()
+                : BigDecimal.ZERO;
+
+        return valorProdutos.add(valorAssinatura);
     }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Mail, Phone, User, Calendar, Edit3, Loader2, Building2, FileText, Hash } from "lucide-react";
+import { Mail, Phone, User, Calendar, Edit3, Loader2, Building2, FileText, Hash, BadgeCheck } from "lucide-react";
 import { api } from "../../services/api";
+import { consultarMinhaAssinatura, type Assinatura } from "../../services/assinaturasApi";
 
 type PerfilCliente = {
   tipo: "PF" | "PJ";
@@ -15,6 +16,7 @@ type PerfilCliente = {
 
 const PerfilClientePage = () => {
   const [perfil, setPerfil] = useState<PerfilCliente | null>(null);
+  const [assinatura, setAssinatura] = useState<Assinatura | null>(null);
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState<PerfilCliente | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,9 +29,13 @@ const PerfilClientePage = () => {
 
   const carregarPerfil = async () => {
     try {
-      const data = await api.get<PerfilCliente>("/clientes/me");
+      const [data, assinaturaAtiva] = await Promise.all([
+        api.get<PerfilCliente>("/clientes/me"),
+        consultarMinhaAssinatura(),
+      ]);
       setPerfil(data);
       setForm({ ...data });
+      setAssinatura(assinaturaAtiva || null);
     } catch (e: any) {
       setErro(e.message || "Erro ao carregar perfil");
     } finally {
@@ -66,6 +72,12 @@ const PerfilClientePage = () => {
 
   const formatarData = (valor: any): string => {
     if (!valor) return "";
+
+    if (Array.isArray(valor) && valor.length >= 3) {
+      const [ano, mes, dia] = valor;
+      return `${String(dia).padStart(2, "0")}/${String(mes).padStart(2, "0")}/${ano}`;
+    }
+
     let str = String(valor);
 
     if (str.includes("-") && str.length >= 10) {
@@ -93,6 +105,14 @@ const PerfilClientePage = () => {
     }
 
     return str;
+  };
+
+  const formatarMoeda = (valor?: number): string => {
+    if (valor === undefined || valor === null) return "";
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valor);
   };
 
   if (loading) {
@@ -182,6 +202,26 @@ const PerfilClientePage = () => {
               >
                 Cancelar
               </button>
+            </div>
+          )}
+        </section>
+
+        <section className="mt-8 bg-white rounded-3xl shadow-xl p-6 md:p-10 border border-rosa-pastel">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="w-2 h-8 bg-rosa-choque rounded-full"></span>
+            <h2 className="text-2xl font-bold">Minha assinatura</h2>
+          </div>
+
+          {assinatura ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InfoItem icon={<BadgeCheck />} label="Plano" value={assinatura.tipoPlano} />
+              <InfoItem icon={<BadgeCheck />} label="Status" value={assinatura.status} />
+              <InfoItem icon={<Calendar />} label="Data de contratação" value={formatarData(assinatura.dataContratacao)} />
+              <InfoItem icon={<FileText />} label="Valor do plano" value={formatarMoeda(assinatura.valorPlano)} />
+            </div>
+          ) : (
+            <div className="p-4 border-2 border-rosa-pastel rounded-xl bg-rosa-claro/30 font-semibold">
+              Nenhuma assinatura ativa no último mês.
             </div>
           )}
         </section>

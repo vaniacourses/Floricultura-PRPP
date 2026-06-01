@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -25,4 +26,10 @@ public class Carrinho {
 
     @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemCarrinho> itens;
+
+    private String tipoPlanoAssinatura;
+    private BigDecimal valorAssinatura;
+    private String estiloArranjoAssinatura;
+    private String coresPreferidasAssinatura;
+    private String observacaoAssinatura;
 }

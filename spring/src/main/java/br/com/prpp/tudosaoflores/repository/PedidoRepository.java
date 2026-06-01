@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
-    @Query("SELECT p FROM Pedido p JOIN FETCH p.itens WHERE p.usuario.id = :idUsuario")
+    @Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.itens WHERE p.usuario.usuarioId = :idUsuario ORDER BY p.data DESC")
     List<Pedido> findByUsuarioUsuarioId(Long idUsuario);
 
     @Query("SELECT DISTINCT p FROM Pedido p " +"LEFT JOIN FETCH p.itens " + "LEFT JOIN FETCH p.usuario " + "WHERE p.data BETWEEN :inicio AND :fim")
