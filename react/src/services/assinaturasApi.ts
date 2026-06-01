@@ -41,3 +41,14 @@ export const consultarAssinatura = async (idAssinatura: string) => {
 export const consultarMinhaAssinatura = async () => {
   return api.get<Assinatura | undefined>("/assinaturas/minha");
 };
+
+export const atualizarPlanoAssinatura = async (idAssinatura: string, novoPlano: string) => {
+  return api.put<Assinatura>(
+    `/assinaturas/${idAssinatura}/plano?novoPlano=${encodeURIComponent(novoPlano)}`,
+    {}
+  );
+};
+
+export const cancelarAssinatura = async (idAssinatura: string) => {
+  return api.delete<void>(`/assinaturas/${idAssinatura}`);
+};

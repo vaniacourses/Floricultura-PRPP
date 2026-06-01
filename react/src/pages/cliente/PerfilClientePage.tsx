@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Mail, Phone, User, Calendar, Edit3, Loader2, Building2, FileText, Hash, BadgeCheck } from "lucide-react";
+import { Mail, Phone, User, Calendar, Edit3, Loader2, Building2, FileText, Hash, BadgeCheck, XCircle } from "lucide-react";
 import { api } from "../../services/api";
-import { consultarMinhaAssinatura, type Assinatura } from "../../services/assinaturasApi";
+import {
+  atualizarPlanoAssinatura,
+  cancelarAssinatura,
+  consultarMinhaAssinatura,
+  type Assinatura,
+} from "../../services/assinaturasApi";
 
 type PerfilCliente = {
   tipo: "PF" | "PJ";
@@ -22,6 +27,9 @@ const PerfilClientePage = () => {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [planoAssinatura, setPlanoAssinatura] = useState("");
+  const [salvandoAssinatura, setSalvandoAssinatura] = useState(false);
+  const [mensagemAssinatura, setMensagemAssinatura] = useState<string | null>(null);
 
   useEffect(() => {
     carregarPerfil();
@@ -36,10 +44,47 @@ const PerfilClientePage = () => {
       setPerfil(data);
       setForm({ ...data });
       setAssinatura(assinaturaAtiva || null);
+      setPlanoAssinatura(assinaturaAtiva?.tipoPlano || "");
     } catch (e: any) {
       setErro(e.message || "Erro ao carregar perfil");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAtualizarPlano = async () => {
+    if (!assinatura || !planoAssinatura || planoAssinatura === assinatura.tipoPlano) return;
+
+    setSalvandoAssinatura(true);
+    setMensagemAssinatura(null);
+    try {
+      const atualizada = await atualizarPlanoAssinatura(assinatura.idAssinatura, planoAssinatura);
+      setAssinatura(atualizada);
+      setPlanoAssinatura(atualizada.tipoPlano);
+      setMensagemAssinatura("Plano atualizado com sucesso.");
+    } catch (e: any) {
+      setMensagemAssinatura(e.message || "Não foi possível atualizar o plano.");
+    } finally {
+      setSalvandoAssinatura(false);
+    }
+  };
+
+  const handleCancelarAssinatura = async () => {
+    if (!assinatura) return;
+    const confirmou = window.confirm("Tem certeza que deseja cancelar sua assinatura?");
+    if (!confirmou) return;
+
+    setSalvandoAssinatura(true);
+    setMensagemAssinatura(null);
+    try {
+      await cancelarAssinatura(assinatura.idAssinatura);
+      setAssinatura(null);
+      setPlanoAssinatura("");
+      setMensagemAssinatura("Assinatura cancelada com sucesso.");
+    } catch (e: any) {
+      setMensagemAssinatura(e.message || "Não foi possível cancelar a assinatura.");
+    } finally {
+      setSalvandoAssinatura(false);
     }
   };
 
@@ -213,15 +258,65 @@ const PerfilClientePage = () => {
           </div>
 
           {assinatura ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InfoItem icon={<BadgeCheck />} label="Plano" value={assinatura.tipoPlano} />
-              <InfoItem icon={<BadgeCheck />} label="Status" value={assinatura.status} />
-              <InfoItem icon={<Calendar />} label="Data de contratação" value={formatarData(assinatura.dataContratacao)} />
-              <InfoItem icon={<FileText />} label="Valor do plano" value={formatarMoeda(assinatura.valorPlano)} />
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InfoItem icon={<BadgeCheck />} label="Plano atual" value={assinatura.tipoPlano} />
+                <InfoItem icon={<BadgeCheck />} label="Status" value={assinatura.status} />
+                <InfoItem icon={<Calendar />} label="Data de contratação" value={formatarData(assinatura.dataContratacao)} />
+                <InfoItem icon={<FileText />} label="Valor do plano" value={formatarMoeda(assinatura.valorPlano)} />
+              </div>
+
+              <div className="rounded-2xl border-2 border-rosa-pastel bg-rosa-claro/20 p-5">
+                <h3 className="mb-4 text-lg font-bold">Gerenciar assinatura</h3>
+                <div className="grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-end">
+                  <label className="flex flex-col">
+                    <span className="mb-2 font-semibold">Alterar plano</span>
+                    <select
+                      value={planoAssinatura}
+                      onChange={(event) => {
+                        setPlanoAssinatura(event.target.value);
+                        setMensagemAssinatura(null);
+                      }}
+                      disabled={salvandoAssinatura}
+                      className="min-h-[48px] rounded-xl border-2 border-rosa-pastel bg-white px-4 font-semibold outline-none transition-all focus:border-rosa-medio disabled:opacity-60"
+                    >
+                      <option value="Mensal">Mensal</option>
+                      <option value="Quinzenal">Quinzenal</option>
+                      <option value="Semanal">Semanal</option>
+                    </select>
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={handleAtualizarPlano}
+                    disabled={salvandoAssinatura || !planoAssinatura || planoAssinatura === assinatura.tipoPlano}
+                    className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-rosa-choque px-6 font-bold text-white transition-colors hover:bg-rosa-text disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {salvandoAssinatura && <Loader2 className="animate-spin" size={18} />}
+                    Salvar plano
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleCancelarAssinatura}
+                    disabled={salvandoAssinatura}
+                    className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border-2 border-red-200 bg-red-50 px-6 font-bold text-red-600 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <XCircle size={18} />
+                    Cancelar
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="p-4 border-2 border-rosa-pastel rounded-xl bg-rosa-claro/30 font-semibold">
               Nenhuma assinatura ativa no último mês.
+            </div>
+          )}
+
+          {mensagemAssinatura && (
+            <div className="mt-5 rounded-xl border-2 border-rosa-pastel bg-rosa-claro/30 p-4 font-semibold">
+              {mensagemAssinatura}
             </div>
           )}
         </section>
