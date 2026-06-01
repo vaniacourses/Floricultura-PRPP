@@ -56,6 +56,8 @@ public class SecurityConfig {
                 .requestMatchers("/carrinho/**").hasRole("CLIENTE")
                 .requestMatchers(HttpMethod.POST, "/assinaturas", "/assinaturas/comprar").hasRole("CLIENTE")
                 .requestMatchers(HttpMethod.GET, "/assinaturas/minha").hasRole("CLIENTE")
+                .requestMatchers(HttpMethod.PUT, "/assinaturas/{id}/plano").hasRole("CLIENTE")
+                .requestMatchers(HttpMethod.DELETE, "/assinaturas/{id}").hasRole("CLIENTE")
                 
                 .anyRequest().authenticated()
             )

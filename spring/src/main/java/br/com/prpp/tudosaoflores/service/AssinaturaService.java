@@ -123,19 +123,32 @@ public class AssinaturaService {
 
     @Transactional
     public AssinaturaDto atualizarPlano(String id, String novoPlano) {
-        Assinatura assinatura = repository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Assinatura não encontrada!"));
+        Assinatura assinatura = buscarAssinaturaDoClienteAutenticado(id);
+        BigDecimal valorPlano = precificacaoAssinaturaResolver.calcularPreco(novoPlano);
+
         assinatura.setTipoPlano(novoPlano);
+        assinatura.setValorPlano(valorPlano);
         Assinatura salva = repository.save(assinatura);
         return mapper.toAssinaturaDto(salva);
     }
 
     @Transactional
     public void cancelarAssinatura(String id) {
-        Assinatura assinatura = repository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Assinatura não encontrada!"));
+        Assinatura assinatura = buscarAssinaturaDoClienteAutenticado(id);
         assinatura.setStatus("Cancelada");
         repository.save(assinatura);
+    }
+
+    private Assinatura buscarAssinaturaDoClienteAutenticado(String id) {
+        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
+        Assinatura assinatura = repository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Assinatura não encontrada!"));
+
+        if (assinatura.getUsuario() == null || !clienteId.equals(assinatura.getUsuario().getUsuarioId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão para alterar esta assinatura.");
+        }
+
+        return assinatura;
     }
 
 }
