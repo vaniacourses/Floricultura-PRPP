@@ -22,5 +22,7 @@ public interface AssinaturaMapper {
     @Mapping(target = "valorPlano", ignore = true)
     @Mapping(target = "dataContratacao", ignore = true)
     @Mapping(target = "idPedido", ignore = true)
+    @Mapping(target = "historico", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Assinatura toAssinatura(AssinaturaCreate assinaturaCreate);
 }

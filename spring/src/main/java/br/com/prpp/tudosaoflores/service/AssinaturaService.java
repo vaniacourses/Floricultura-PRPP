@@ -4,6 +4,7 @@ import br.com.prpp.tudosaoflores.dto.AssinaturaCreate;
 import br.com.prpp.tudosaoflores.dto.AssinaturaDto;
 import br.com.prpp.tudosaoflores.mapper.AssinaturaMapper;
 import br.com.prpp.tudosaoflores.model.Assinatura;
+import br.com.prpp.tudosaoflores.model.HistoricoAssinatura;
 import br.com.prpp.tudosaoflores.model.Pedido;
 import br.com.prpp.tudosaoflores.model.Usuario;
 import br.com.prpp.tudosaoflores.repository.AssinaturaRepository;
@@ -125,9 +126,21 @@ public class AssinaturaService {
     public AssinaturaDto atualizarPlano(String id, String novoPlano) {
         Assinatura assinatura = buscarAssinaturaDoClienteAutenticado(id);
         BigDecimal valorPlano = precificacaoAssinaturaResolver.calcularPreco(novoPlano);
+        LocalDateTime dataTroca = LocalDateTime.now();
+
+        HistoricoAssinatura historico = new HistoricoAssinatura();
+        historico.setAssinatura(assinatura);
+        historico.setPlanoAnterior(assinatura.getTipoPlano());
+        historico.setPlanoNovo(novoPlano);
+        historico.setValorAnterior(assinatura.getValorPlano());
+        historico.setValorNovo(valorPlano);
+        historico.setDataTroca(dataTroca);
 
         assinatura.setTipoPlano(novoPlano);
         assinatura.setValorPlano(valorPlano);
+        assinatura.setDataContratacao(dataTroca);
+        assinatura.getHistorico().add(historico);
+
         Assinatura salva = repository.save(assinatura);
         return mapper.toAssinaturaDto(salva);
     }
