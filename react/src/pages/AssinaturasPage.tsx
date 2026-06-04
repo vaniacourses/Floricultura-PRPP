@@ -168,7 +168,7 @@ const AssinaturasPage = () => {
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 md:grid-cols-[1fr_340px] md:py-12">
         <div>
           <div className="mb-8">
-            <h1 className="font-[Arial] text-5xl font-black leading-none text-black md:text-6xl">
+            <h1 className="font-[Arial] text-2xl font-black leading-none text-black md:text-4xl">
               Assinaturas
             </h1>
             <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-[#6f4b5a] md:text-lg">
