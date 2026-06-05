@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Mail, Phone, User, Calendar, Edit3, Loader2, Building2, FileText, Hash, BadgeCheck, XCircle } from "lucide-react";
+import { Mail, Phone, User, Calendar, Edit3, Loader2, Building2, FileText, Hash, BadgeCheck, XCircle, History } from "lucide-react";
 import { api } from "../../services/api";
 import {
   atualizarPlanoAssinatura,
@@ -125,8 +125,8 @@ const PerfilClientePage = () => {
 
     let str = String(valor);
 
-    if (str.includes("-") && str.length >= 10) {
-      const [ano, mes, dia] = str.split("-");
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+      const [ano, mes, dia] = str.slice(0, 10).split("-");
       return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${ano}`;
     }
 
@@ -264,6 +264,40 @@ const PerfilClientePage = () => {
                 <InfoItem icon={<BadgeCheck />} label="Status" value={assinatura.status} />
                 <InfoItem icon={<Calendar />} label="Data de contratação" value={formatarData(assinatura.dataContratacao)} />
                 <InfoItem icon={<FileText />} label="Valor do plano" value={formatarMoeda(assinatura.valorPlano)} />
+              </div>
+
+              <div className="rounded-2xl border-2 border-rosa-pastel bg-white p-5">
+                <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
+                  <History size={18} className="text-rosa-choque" />
+                  Histórico da assinatura
+                </h3>
+
+                {assinatura.historico && assinatura.historico.length > 0 ? (
+                  <div className="space-y-3">
+                    {assinatura.historico.map((item) => (
+                      <div
+                        key={item.id}
+                        className="rounded-xl border-2 border-rosa-pastel bg-rosa-claro/30 p-4"
+                      >
+                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                          <p className="font-bold text-rosa-text">
+                            {item.planoAnterior} → {item.planoNovo}
+                          </p>
+                          <span className="text-sm font-semibold text-rosa-text/70">
+                            {formatarData(item.dataTroca)}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm font-semibold text-rosa-text/80">
+                          Valor anterior: {formatarMoeda(item.valorAnterior)} | Novo valor: {formatarMoeda(item.valorNovo)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border-2 border-rosa-pastel bg-rosa-claro/30 p-4 font-semibold">
+                    Nenhuma troca de plano registrada.
+                  </div>
+                )}
               </div>
 
               <div className="rounded-2xl border-2 border-rosa-pastel bg-rosa-claro/20 p-5">

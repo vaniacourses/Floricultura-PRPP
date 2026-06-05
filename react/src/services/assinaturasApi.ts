@@ -11,6 +11,16 @@ export type Assinatura = {
   estiloArranjo?: string;
   coresPreferidas?: string;
   observacao?: string;
+  historico?: HistoricoAssinatura[];
+};
+
+export type HistoricoAssinatura = {
+  id: number;
+  planoAnterior: string;
+  planoNovo: string;
+  valorAnterior?: number;
+  valorNovo?: number;
+  dataTroca?: string;
 };
 
 export type AssinaturaPersonalizacao = {
