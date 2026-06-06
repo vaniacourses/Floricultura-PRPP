@@ -38,6 +38,9 @@ public class PedidoService {
     @Autowired
     private ClienteService clienteService;
 
+    @Autowired
+    private PagamentoMockService pagamentoMockService;
+
 
     public List<PedidoDto> recuperarPedidos(Long idUsuario){
         List<Pedido> pedidos = pedidoRepository.findByUsuarioUsuarioId(idUsuario);
@@ -59,7 +62,6 @@ public class PedidoService {
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setData(LocalDateTime.now());
-        pedido.setStatus("PROCESSANDO");
         pedido.setItens(new ArrayList<>());
 
         BigDecimal totalAcumulado = BigDecimal.ZERO;
@@ -81,7 +83,10 @@ public class PedidoService {
             pedido.getItens().add(novoItem);
         }
         pedido.setValorTotal(totalAcumulado);
+        pagamentoMockService.iniciarPagamento(pedido);
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        pagamentoMockService.aprovarPagamento(pedidoSalvo);
+        pedidoSalvo = pedidoRepository.save(pedidoSalvo);
 
         return pedidoMapper.toPedidoDto(pedidoSalvo);
     }

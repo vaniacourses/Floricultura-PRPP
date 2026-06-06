@@ -35,6 +35,7 @@ export default function CarrinhoPage() {
 
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [processandoPagamento, setProcessandoPagamento] = useState(false);
 
   const possuiItens = !!carrinho?.itens?.length;
   const possuiAssinatura = !!carrinho?.tipoPlanoAssinatura && !!carrinho?.valorAssinatura;
@@ -120,6 +121,7 @@ export default function CarrinhoPage() {
 
     try {
       setLoading(true);
+      setProcessandoPagamento(true);
       await axios.post("http://localhost:8080/carrinho/finalizar", {}, {
         headers: { Authorization: `Bearer ${tokenAtual}` }
       });
@@ -130,6 +132,7 @@ export default function CarrinhoPage() {
       console.error("Erro ao finalizar compra:", error);
       alert("Houve um erro técnico ao processar seu pedido. Tente novamente.");
     } finally {
+      setProcessandoPagamento(false);
       setLoading(false);
     }
   };
@@ -162,7 +165,11 @@ export default function CarrinhoPage() {
   }, [token]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Carregando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        {processandoPagamento ? "Aguardando confirmação do pagamento..." : "Carregando..."}
+      </div>
+    );
   }
 
   return (
@@ -344,10 +351,11 @@ export default function CarrinhoPage() {
                 <div className="flex flex-col gap-2">
                   <button
                     type="button"
-                    className="w-full rounded-full bg-rosa-choque text-white py-2.5 text-sm font-medium transition hover:bg-rosa-text text-center shadow-sm"
+                    className="w-full rounded-full bg-rosa-choque text-white py-2.5 text-sm font-medium transition hover:bg-rosa-text text-center shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
                     onClick={handleFinalizarCompra}
+                    disabled={processandoPagamento}
                   >
-                    Finalizar Compra
+                    {processandoPagamento ? "Aguardando pagamento..." : "Finalizar Compra"}
                   </button>
                   <button
                     type="button"
