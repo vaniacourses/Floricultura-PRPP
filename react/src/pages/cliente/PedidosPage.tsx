@@ -26,6 +26,12 @@ interface PedidoData {
   estiloAssinatura?: string;
   coresAssinatura?: string;
   observacaoAssinatura?: string;
+  dataReserva?: string;
+  observacaoReserva?: string;
+  tipoEvento?: string;
+  localEvento?: string;
+  dataEvento?: string;
+  finalidadeReserva?: string;
   itens: PedidoItem[];
 }
 
@@ -141,13 +147,40 @@ export default function PedidosPage() {
                 </div>
                 <div>
                   <span className="inline-flex items-center rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-rosa-choque ring-1 ring-inset ring-pink-700/10">
-                    {pedido.idAssinatura ? "ASSINATURA" : pedido.status || "PROCESSANDO"}
+                    {pedido.origem === "RESERVA" ? pedido.status || "RESERVA_SOLICITADA" : pedido.idAssinatura ? "ASSINATURA" : pedido.status || "PROCESSANDO"}
                   </span>
                 </div>
               </div>
 
                 {/* Listagem dos Itens de Dentro Desse Pedido */}
                 <div className="p-4 divide-y divide-slate-100">
+                  {pedido.origem === "RESERVA" && (
+                    <div className="pb-4 text-sm text-slate-600">
+                      <p>
+                        <span className="font-bold text-slate-800">Evento:</span>{" "}
+                        {pedido.tipoEvento || "-"} {pedido.finalidadeReserva ? `· ${pedido.finalidadeReserva}` : ""}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-bold text-slate-800">Local:</span>{" "}
+                        {pedido.localEvento || "-"}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-bold text-slate-800">Data do evento:</span>{" "}
+                        {formatDate(pedido.dataEvento)}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-bold text-slate-800">Entrega desejada:</span>{" "}
+                        {formatDate(pedido.dataReserva)}
+                      </p>
+                      {pedido.observacaoReserva && (
+                        <p className="mt-1">
+                          <span className="font-bold text-slate-800">Observação:</span>{" "}
+                          {pedido.observacaoReserva}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {pedido.idAssinatura && (
                     <div className="py-4 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
                       <div className="flex items-center gap-4">

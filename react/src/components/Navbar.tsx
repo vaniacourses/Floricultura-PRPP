@@ -23,6 +23,7 @@ const categorias = [
   { name: "Arranjos", path: "/arranjos" },
   { name: "Buquês", path: "/buques" },
   { name: "Kits", path: "/kits" },
+  { name: "Eventos", path: "/eventos" },
   { name: "Acessórios", path: "/acessorios" },
 ];
 
