@@ -49,6 +49,9 @@ public class CarrinhoService {
     @Autowired
     private AssinaturaService assinaturaService;
 
+    @Autowired
+    private PagamentoMockService pagamentoMockService;
+
 
     public CarrinhoDto recuperarCarrinho(Long clienteId)
     {
@@ -199,7 +202,6 @@ public class CarrinhoService {
         Pedido pedido = new Pedido();
         pedido.setUsuario(carrinho.getCliente());
         pedido.setData(java.time.LocalDateTime.now());
-        pedido.setStatus("PROCESSANDO");
         pedido.setItens(new ArrayList<>());
 
         BigDecimal valorProdutos = temItens
@@ -233,7 +235,10 @@ public class CarrinhoService {
             }
         }
 
+        pagamentoMockService.iniciarPagamento(pedido);
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        pagamentoMockService.aprovarPagamento(pedidoSalvo);
+        pedidoSalvo = pedidoRepository.save(pedidoSalvo);
 
         if (assinatura != null) {
             assinatura.setIdPedido(pedidoSalvo.getId());

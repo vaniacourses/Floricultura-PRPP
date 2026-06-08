@@ -2,6 +2,7 @@ package br.com.prpp.tudosaoflores.controller;
 
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
+import br.com.prpp.tudosaoflores.dto.ReservaCreate;
 import br.com.prpp.tudosaoflores.service.ClienteService;
 import br.com.prpp.tudosaoflores.service.PedidoService;
 import br.com.prpp.tudosaoflores.service.ProdutoService;
@@ -43,6 +44,23 @@ public class PedidoController {
     public ResponseEntity<PedidoDto> cadastrarPedido(@RequestBody @Valid PedidoCreate request){
         PedidoDto criado = pedidoService.cadastrarPedido(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
+    }
+
+    @PostMapping("/reserva")
+    public ResponseEntity<PedidoDto> cadastrarReserva(@RequestBody @Valid ReservaCreate request){
+        PedidoDto criado = pedidoService.cadastrarReserva(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
+    }
+
+    @PostMapping("/reserva/comprar")
+    public ResponseEntity<PedidoDto> comprarReserva(@RequestBody @Valid ReservaCreate request){
+        PedidoDto criado = pedidoService.comprarReserva(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
+    }
+
+    @PutMapping("/reserva/{idPedido}/confirmar")
+    public ResponseEntity<PedidoDto> confirmarReserva(@PathVariable Long idPedido){
+        return ResponseEntity.ok(pedidoService.confirmarReserva(idPedido));
     }
 
     @PutMapping("/{idPedido}")

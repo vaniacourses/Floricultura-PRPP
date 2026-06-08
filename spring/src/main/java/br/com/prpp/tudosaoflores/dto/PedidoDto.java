@@ -19,6 +19,12 @@ public record PedidoDto (
         String idAssinatura,
         String estiloAssinatura,
         String coresAssinatura,
-        String observacaoAssinatura
+        String observacaoAssinatura,
+        LocalDateTime dataReserva,
+        String observacaoReserva,
+        String tipoEvento,
+        String localEvento,
+        LocalDateTime dataEvento,
+        String finalidadeReserva
 ){
 }

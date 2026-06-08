@@ -38,6 +38,12 @@ public class Pedido {
     private String estiloAssinatura;
     private String coresAssinatura;
     private String observacaoAssinatura;
+    private LocalDateTime dataReserva;
+    private String observacaoReserva;
+    private String tipoEvento;
+    private String localEvento;
+    private LocalDateTime dataEvento;
+    private String finalidadeReserva;
 
     public Pedido(LocalDateTime data, BigDecimal valorTotal, String status){
         this.data = data;

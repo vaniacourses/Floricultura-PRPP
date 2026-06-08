@@ -28,11 +28,23 @@ public interface PedidoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "itens", ignore = true)
     @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "dataReserva", ignore = true)
+    @Mapping(target = "observacaoReserva", ignore = true)
+    @Mapping(target = "tipoEvento", ignore = true)
+    @Mapping(target = "localEvento", ignore = true)
+    @Mapping(target = "dataEvento", ignore = true)
+    @Mapping(target = "finalidadeReserva", ignore = true)
     void updateToPedido(PedidoCreate pedidoCreate, @MappingTarget Pedido pedido);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "itens", ignore = true)
     @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "dataReserva", ignore = true)
+    @Mapping(target = "observacaoReserva", ignore = true)
+    @Mapping(target = "tipoEvento", ignore = true)
+    @Mapping(target = "localEvento", ignore = true)
+    @Mapping(target = "dataEvento", ignore = true)
+    @Mapping(target = "finalidadeReserva", ignore = true)
     Pedido toPedido(PedidoCreate pedidoCreate);
 
     @Mapping(source = "usuario.nome", target = "clienteNome")

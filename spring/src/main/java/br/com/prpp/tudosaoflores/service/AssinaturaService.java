@@ -43,6 +43,9 @@ public class AssinaturaService {
     @Autowired
     private PrecificacaoAssinaturaResolver precificacaoAssinaturaResolver;
 
+    @Autowired
+    private PagamentoMockService pagamentoMockService;
+
     private Optional<Assinatura> buscarAssinaturaAtivaRecente(Long clienteId) {
         return repository.findFirstByUsuarioUsuarioIdAndStatusIgnoreCaseAndDataContratacaoAfterOrderByDataContratacaoDesc(
                 clienteId,
@@ -88,7 +91,6 @@ public class AssinaturaService {
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setData(LocalDateTime.now());
-        pedido.setStatus("PROCESSANDO");
         pedido.setValorTotal(valorPlano);
         pedido.setOrigem("ASSINATURA");
         pedido.setDescricao("Assinatura " + assinaturaSalva.getTipoPlano());
@@ -97,7 +99,10 @@ public class AssinaturaService {
         pedido.setCoresAssinatura(assinaturaSalva.getCoresPreferidas());
         pedido.setObservacaoAssinatura(assinaturaSalva.getObservacao());
 
+        pagamentoMockService.iniciarPagamento(pedido);
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        pagamentoMockService.aprovarPagamento(pedidoSalvo);
+        pedidoSalvo = pedidoRepository.save(pedidoSalvo);
 
         assinaturaSalva.setIdPedido(pedidoSalvo.getId());
         Assinatura assinaturaAtualizada = repository.save(assinaturaSalva);
