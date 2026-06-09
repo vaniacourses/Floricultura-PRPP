@@ -11,11 +11,15 @@ import br.com.prpp.tudosaoflores.repository.ClienteRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Service
 public class AvaliacaoService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AvaliacaoService.class);
 
     @Autowired
     private AvaliacaoRepository avaliacaoRepository;
@@ -34,12 +38,32 @@ public class AvaliacaoService {
 
     public List<AvaliacaoDto> recuperarAvaliacoesPorProduto(Long codigo) {
         List<Avaliacao> avaliacoes = avaliacaoRepository.findByProduto_codigo(codigo);
-        return avaliacaoMapper.toAvaliacoesDto(avaliacoes);
+        logger.info("recuperarAvaliacoesPorProduto: Found {} avaliacoes for codigo={}", avaliacoes.size(), codigo);
+        for (Avaliacao a : avaliacoes) {
+            logger.info("  - Avaliacao id={}, produto={}, usuario={}", a.getIdAvaliacao(), 
+                    a.getProduto() != null ? a.getProduto().getCodigo() : "NULL",
+                    a.getUsuario() != null ? a.getUsuario().getUsuarioId() : "NULL");
+        }
+        // Filtra avaliações com produto ou usuário nulo
+        return avaliacoes.stream()
+                .filter(a -> a.getProduto() != null && a.getUsuario() != null)
+                .map(avaliacaoMapper::toAvaliacaoDto)
+                .toList();
     }
 
     public List<AvaliacaoDto> recuperarAvaliacoesPorUsuario(Long usuarioCodigo) {
         List<Avaliacao> avaliacoes = avaliacaoRepository.findByUsuario_usuarioId(usuarioCodigo);
-        return avaliacaoMapper.toAvaliacoesDto(avaliacoes);
+        logger.info("recuperarAvaliacoesPorUsuario: Found {} avaliacoes for usuarioId={}", avaliacoes.size(), usuarioCodigo);
+        for (Avaliacao a : avaliacoes) {
+            logger.info("  - Avaliacao id={}, produto={}, usuario={}", a.getIdAvaliacao(), 
+                    a.getProduto() != null ? a.getProduto().getCodigo() : "NULL",
+                    a.getUsuario() != null ? a.getUsuario().getUsuarioId() : "NULL");
+        }
+        // Filtra avaliações com produto nulo (órfãs) e mapeia as válidas
+        return avaliacoes.stream()
+                .filter(a -> a.getProduto() != null && a.getUsuario() != null)
+                .map(avaliacaoMapper::toAvaliacaoDto)
+                .toList();
     }
 
     public AvaliacaoDto recuperarAvaliacaoPorId(Long idAvaliacao){

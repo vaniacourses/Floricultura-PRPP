@@ -168,7 +168,7 @@ export default function DetalhesPage() {
     }
 
     const token = localStorage.getItem("token");
-    let idDoUsuarioLogado: number | null = null;
+    let idDoUsuarioLogado: number | null = usuarioLogadoId;
 
     if (token) {
       try {
@@ -179,7 +179,7 @@ export default function DetalhesPage() {
         }).join(''));
 
         const dadosDoToken = JSON.parse(jsonPayload);
-        const idDoUsuarioLogado = dadosDoToken.usuarioId;
+        idDoUsuarioLogado = dadosDoToken.usuarioId;
       } catch (err) {
         console.error("Erro ao ler o ID de dentro do token:", err);
       }

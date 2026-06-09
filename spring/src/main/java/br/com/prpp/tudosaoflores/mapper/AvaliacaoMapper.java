@@ -16,6 +16,8 @@ public interface AvaliacaoMapper {
     List<AvaliacaoDto> toAvaliacoesDto(List<Avaliacao> avaliacoes);
 
     @Mapping(target = "usuarioNome", source = "usuario.nome")
+    @Mapping(target = "produtoId", source = "produto.codigo")
+    @Mapping(target = "usuarioId", source = "usuario.usuarioId")
     AvaliacaoDto toAvaliacaoDto(Avaliacao avaliacao);
 
     @Mapping(target = "idAvaliacao", ignore = true)
