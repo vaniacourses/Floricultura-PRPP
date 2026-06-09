@@ -129,10 +129,10 @@ const Relatorio: React.FC = () => {
             detalhes={`${dados.assinaturas.novasNoPeriodo} novas`}
           />
           <CardMetrica
-            icon={<Truck size={24} />}
-            titulo="Entregas"
-            valor={dados.entregas.totalNoPeriodo}
-            detalhes="no período"
+            icon={<TrendingUp size={24} />}
+            titulo="Ticket Médio"
+            valor={`R$ ${dados.ticketMedio.toFixed(2)}`}
+            detalhes="valor médio por pedido"
           />
           <CardMetrica
             icon={<ShoppingCart size={24} />}

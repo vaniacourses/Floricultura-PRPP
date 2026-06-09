@@ -34,22 +34,22 @@ public class DashboardService {
         LocalDateTime inicio = hoje.atStartOfDay();
         LocalDateTime fim = hoje.atTime(23, 59, 59);
 
-        // Pedidos do dia (já com itens e usuário)
+  
         List<Pedido> pedidos = pedidoRepo.findByDataBetweenCompleto(inicio, fim);
         List<PedidoResumoDto> pedidosHoje = pedidoMapper.toPedidosResumo(pedidos);
 
-        // Total de pedidos
+
         long totalPedidos = pedidos.size();
 
-        // Faturamento (*** ajuste os status reais ***)
-        List<String> statusValidos = List.of("PAGO", "ENVIADO", "ENTREGUE", "CONCLUIDO");
+
+        List<String> statusValidos = List.of("PAGO", "ENVIADO", "ENTREGUE");
         BigDecimal faturamento = pedidoRepo.faturamentoDia(inicio, fim, statusValidos);
 
-        // Estoque crítico (< 10)
+  
         List<Produto> criticos = produtoRepo.findByQuantidadeLessThan(10);
         List<ProdutoDto> estoqueCritico = produtoMapper.toProdutosDto(criticos);
 
-        // Entregas (placeholder)
+
         List<EntregaResumoDto> entregas = Collections.emptyList();
         List<EntregaResumoDto> entregasAssinatura = Collections.emptyList();
 

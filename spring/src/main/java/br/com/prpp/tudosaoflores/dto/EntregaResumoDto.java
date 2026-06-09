@@ -1,3 +1,12 @@
 package br.com.prpp.tudosaoflores.dto;
 
-public record EntregaResumoDto(Long id, String endereco, String status, String origem) {}
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record EntregaResumoDto(
+        Long idPedido,
+        String cliente,
+        LocalDateTime dataPedido,
+        BigDecimal valorTotal,
+        String status
+) {}

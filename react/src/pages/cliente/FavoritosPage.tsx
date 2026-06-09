@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { api } from "../../services/api";
-import { Produto } from "../../data/types";
+import type { Produto } from "../../data/types";
 
 const FavoritosPage = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);

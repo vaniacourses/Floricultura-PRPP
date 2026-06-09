@@ -36,9 +36,7 @@ export interface RelatorioDTO {
     novasNoPeriodo: number;
     porTipo: Record<string, number>;
   };
-  entregas: {
-    totalNoPeriodo: number;
-  };
+  ticketMedio: number;
   pedidos: {
     totalNoPeriodo: number;
     valorTotalNoPeriodo: number;

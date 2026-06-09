@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
@@ -20,9 +21,8 @@ public class RelatorioService {
     private final AssinaturaRepository assinaturaRepo;
     private final PedidoRepository pedidoRepo;
     private final CupomRepository cupomRepo;
-    // private final EntregaRepository entregaRepo;  
 
-    public RelatorioService(ProdutoRepository produtoRepo, // Mantido no construtor se preferir não mexer nas injeções de dependência agora
+    public RelatorioService(ProdutoRepository produtoRepo,
                             ClienteRepository clienteRepo,
                             AssinaturaRepository assinaturaRepo,
                             PedidoRepository pedidoRepo,
@@ -55,10 +55,6 @@ public class RelatorioService {
         for (Assinatura a : assinaturaRepo.findAll()) {
             assinaturasPorTipo.merge(a.getTipoPlano(), 1, Integer::sum);
         }
-       
-        // Entregas (Mantido estático conforme solicitado)
-        int totalEntregas = 0;
-        // totalEntregas = entregaRepo.countByDataEntregaBetween(inicio, fim);
 
         // Pedidos & Faturamento
         LocalDateTime inicioDateTime = inicio.atStartOfDay();
@@ -82,6 +78,17 @@ public class RelatorioService {
                 String categoria = p.getClass().getSimpleName(); 
                 vendasPorCategoria.merge(categoria, item.getQuantidade(), Integer::sum);
             }
+        }
+
+        BigDecimal ticketMedio;
+        if (totalPedidos == 0) {
+            ticketMedio = BigDecimal.ZERO;
+        } else {
+            ticketMedio = faturamentoTotal.divide(
+                BigDecimal.valueOf(totalPedidos),
+                2,
+                RoundingMode.HALF_UP
+            );
         }
 
         // Produto mais vendido
@@ -112,7 +119,7 @@ public class RelatorioService {
                 periodo, inicio, fim,
                 new RelatorioDTO.MetricasClientes(totalClientes, novosClientes),
                 new RelatorioDTO.MetricasAssinaturas(totalAtivas, novasAssinaturas, assinaturasPorTipo),
-                new RelatorioDTO.MetricasEntregas(totalEntregas),
+                ticketMedio,
                 new RelatorioDTO.MetricasPedidos(totalPedidos),
                 new RelatorioDTO.MetricasCupons(totalCupons, cuponsAtivos, novosCupons),
                 metricasVendas,

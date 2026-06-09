@@ -10,7 +10,7 @@ public record RelatorioDTO(
     LocalDate dataFim,
     MetricasClientes clientes,
     MetricasAssinaturas assinaturas,
-    MetricasEntregas entregas,
+    BigDecimal ticketMedio,
     MetricasPedidos pedidos,
     MetricasCupons cupons,
     MetricasVendas vendas,
@@ -18,7 +18,6 @@ public record RelatorioDTO(
 ) {
     public record MetricasClientes(int totalClientes, int novosNoPeriodo) {}
     public record MetricasAssinaturas(int totalAtivas, int novasNoPeriodo, Map<String, Integer> porTipo) {}
-    public record MetricasEntregas(int totalNoPeriodo) {}
     public record MetricasPedidos(int totalNoPeriodo) {}
     public record MetricasCupons(int totalCupons, int ativos, int novosNoPeriodo) {}
     public record MetricasVendas(String produtoMaisVendido, int quantidadeProdutoMaisVendido, String categoriaMaisVendida) {}

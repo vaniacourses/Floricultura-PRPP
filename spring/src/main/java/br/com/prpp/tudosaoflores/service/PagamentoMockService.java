@@ -14,7 +14,7 @@ public class PagamentoMockService {
 
     public void aprovarPagamento(Pedido pedido) {
         aguardarProcessamento();
-        pedido.setStatus("PROCESSANDO");
+        pedido.setStatus("PAGO");
     }
 
     private void aguardarProcessamento() {
