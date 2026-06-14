@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext"; // Ajuste o caminho da pasta se necessário
+import { useAuth } from "../contexts/AuthContext"; 
 
 const ProtectedRoute = () => {
   const { isAuthenticated, token } = useAuth();

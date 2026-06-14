@@ -32,6 +32,8 @@ import SearchPage from "../pages/SearchPage";
 import Relatorio from "../components/admin/Relatorios";
 import Dashboard from "../components/admin/Dashboard";
 import ProtectedRoute from "./ProtectedRouter";
+import HistoricoPedidosPage from "../components/admin/PedidosGerais";
+
 
 const router = createBrowserRouter([
   {
@@ -69,10 +71,12 @@ const router = createBrowserRouter([
               { path: "perfil-adm", element: <PerfilAdmin /> },
               { path: "dashboard", element: <Dashboard /> },
               { path: "reservas", element: <ReservasSolicitadas /> },
+              { path: "pedidos-clientes", element: <HistoricoPedidosPage /> },
               { path: "estoque", element: <Estoque /> },
               { path: "promocoes", element: <Promocoes /> },
               { path: "relatorios", element: <Relatorio /> },
               { path: "administradores", element: <Administradores /> },
+              //{ path: "pedidos-detalhes/:id", element: <PedidoDetalhesPage /> },
             ],
           },
         ],

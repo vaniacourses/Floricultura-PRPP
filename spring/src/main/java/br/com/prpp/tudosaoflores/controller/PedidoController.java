@@ -2,6 +2,7 @@ package br.com.prpp.tudosaoflores.controller;
 
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
+import br.com.prpp.tudosaoflores.dto.PedidoResumoDto;
 import br.com.prpp.tudosaoflores.dto.ReservaCreate;
 import br.com.prpp.tudosaoflores.service.ClienteService;
 import br.com.prpp.tudosaoflores.service.PedidoService;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -21,8 +23,6 @@ public class PedidoController {
 
     @Autowired
     PedidoService pedidoService;
-    @Autowired
-    private ProdutoService produtoService;
 
     @Autowired
     private ClienteService clienteService;
@@ -43,6 +43,21 @@ public class PedidoController {
     public ResponseEntity<PedidoDto> recuperarPedidoPorId(@PathVariable Long idPedido){
         PedidoDto pedido = pedidoService.recuperarPedidoPorId(idPedido);
         return ResponseEntity.ok(pedido);
+    }
+
+    @GetMapping("/admin/pedidos-detalhes/{id}")
+    public ResponseEntity<PedidoDto> recuperarDetalhesPedido(@PathVariable Long id){
+        PedidoDto pedido = pedidoService.recuperarPedidoPorId(id);
+        return ResponseEntity.ok(pedido);
+    }
+
+    @GetMapping("/admin/historico")
+    public ResponseEntity<List<PedidoResumoDto>> recuperarHistoricoPedidos(
+            @RequestParam(required = false) String cliente,
+            @RequestParam(required = false) LocalDate dataInicio,
+            @RequestParam(required = false) LocalDate dataFim
+    ){
+        return ResponseEntity.ok(pedidoService.recuperarHistoricoPedidos(cliente,dataInicio,dataFim));
     }
 
     @PostMapping

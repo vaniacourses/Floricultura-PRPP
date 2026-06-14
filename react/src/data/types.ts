@@ -60,6 +60,7 @@ export interface PedidoResumoDto {
   clienteNome: string;
   status: string;
   valorTotal: number;
+  data: string;
 }
 
 export interface EntregaResumoDto {

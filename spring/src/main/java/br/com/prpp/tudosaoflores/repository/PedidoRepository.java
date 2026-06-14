@@ -21,4 +21,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
   
     @Query("SELECT COALESCE(SUM(p.valorTotal), 0) FROM Pedido p " + "WHERE p.data BETWEEN :inicio AND :fim AND p.status IN :statusValidos")
     BigDecimal faturamentoDia(@Param("inicio") LocalDateTime inicio,@Param("fim") LocalDateTime fim,  @Param("statusValidos") List<String> statusValidos);
+
+    @Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.usuario ORDER BY p.data DESC")
+    List<Pedido> findAllCompleto();
 }

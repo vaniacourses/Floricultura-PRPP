@@ -48,7 +48,15 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>(path),
+  get: <T>(path: string, params?: Record<string, string>) => {
+    const query = params
+      ? `?${new URLSearchParams(
+          Object.entries(params).filter(([, v]) => v)
+        )}`
+      : "";
+
+    return request<T>(`${path}${query}`);
+  },
   post: <T>(path: string, body: any) => request<T>(path, { method: "POST", body: JSON.stringify(body) }),
   put: <T>(path: string, body: any) => request<T>(path, { method: "PUT", body: JSON.stringify(body) }),
   delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),

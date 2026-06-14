@@ -3,6 +3,7 @@ package br.com.prpp.tudosaoflores.service;
 import br.com.prpp.tudosaoflores.dto.ItemPedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
+import br.com.prpp.tudosaoflores.dto.PedidoResumoDto;
 import br.com.prpp.tudosaoflores.dto.ReservaCreate;
 import br.com.prpp.tudosaoflores.mapper.PedidoMapper;
 import br.com.prpp.tudosaoflores.model.ItemPedido;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +100,17 @@ public class PedidoService {
 
         return pedidoMapper.toPedidoDto(pedidoSalvo);
     }
+
+    public List<PedidoResumoDto> recuperarHistoricoPedidos(String cliente, LocalDate dataInicio, LocalDate dataFim){
+        List<Pedido> pedidos = pedidoRepository.findAllCompleto();
+
+        pedidos = pedidos.stream().filter(p -> cliente == null || cliente.isBlank() || p.getUsuario().getNome().toLowerCase().contains(cliente.toLowerCase()))
+                .filter(p -> dataInicio == null || !p.getData().toLocalDate().isBefore(dataInicio))
+                .filter(p -> dataFim == null || !p.getData().toLocalDate().isAfter(dataFim))
+                .toList();
+        return pedidoMapper.toPedidosResumo(pedidos);
+    }
+
 
     @Transactional
     public PedidoDto cadastrarReserva(ReservaCreate request) {

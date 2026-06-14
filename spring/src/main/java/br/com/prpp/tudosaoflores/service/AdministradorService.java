@@ -1,7 +1,6 @@
 package br.com.prpp.tudosaoflores.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +81,7 @@ public class AdministradorService {
                 .findFirst()
                 .orElse(null);
         if (role == null) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas SUPER_ADMIN pode criar administradores");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas SUPER_ADMIN pode deletar administradores");
         }
         recuperarAdministrador(id);
         administradorRespository.deleteById(id);

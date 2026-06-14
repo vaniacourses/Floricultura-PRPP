@@ -163,7 +163,6 @@ export function FormAdmin({ modo, adminAtual, onFechar, buscarAdministradores }:
               <option value="">Selecionar nível...</option>
               <option value="SUPER_ADMIN">SUPER ADMIN</option>
               <option value="GERENTE">GERENTE</option>
-              <option value="ATENDENTE">ATENDENTE</option>
             </select>
           </label>
 

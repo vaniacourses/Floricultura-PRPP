@@ -32,6 +32,7 @@ const SidebarAdmin = () => {
     { name: "Meu Perfil", path: "perfil-adm", icon: <User size={20} /> },
     { name: "Dashboard", path: "dashboard", icon: <LayoutGrid size={20} /> },
     { name: "Reservas", path: "reservas", icon: <ClipboardList size={20} /> },
+    { name: "PedidosClientes", path: "pedidos-clientes", icon: <ClipboardList size={20} /> },
     { name: "Estoque", path: "estoque", icon: <Package size={20} /> },
     { name: "Promoções", path: "promocoes", icon: <Tag size={20} /> },
     { name: "Relatórios", path: "relatorios", icon: <BarChart3 size={20} /> },
