@@ -12,7 +12,6 @@ public record ReservaCreate(
         @NotNull String tipoEvento,
         @NotNull String localEvento,
         @NotNull @FutureOrPresent LocalDateTime dataEvento,
-        @NotNull @FutureOrPresent LocalDateTime dataReserva,
         @NotNull String finalidade,
         String observacao,
         @NotEmpty List<@Valid ItemPedidoCreate> itens

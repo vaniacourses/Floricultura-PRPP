@@ -34,6 +34,11 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
+    @GetMapping("/reservas/solicitadas")
+    public ResponseEntity<List<PedidoDto>> recuperarReservasSolicitadas(){
+        return ResponseEntity.ok(pedidoService.recuperarReservasSolicitadas());
+    }
+
     @GetMapping("/{idPedido}")
     public ResponseEntity<PedidoDto> recuperarPedidoPorId(@PathVariable Long idPedido){
         PedidoDto pedido = pedidoService.recuperarPedidoPorId(idPedido);
@@ -52,15 +57,14 @@ public class PedidoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
-    @PostMapping("/reserva/comprar")
-    public ResponseEntity<PedidoDto> comprarReserva(@RequestBody @Valid ReservaCreate request){
-        PedidoDto criado = pedidoService.comprarReserva(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
-    }
-
     @PutMapping("/reserva/{idPedido}/confirmar")
     public ResponseEntity<PedidoDto> confirmarReserva(@PathVariable Long idPedido){
         return ResponseEntity.ok(pedidoService.confirmarReserva(idPedido));
+    }
+
+    @PutMapping("/reserva/{idPedido}/recusar")
+    public ResponseEntity<PedidoDto> recusarReserva(@PathVariable Long idPedido){
+        return ResponseEntity.ok(pedidoService.recusarReserva(idPedido));
     }
 
     @PutMapping("/{idPedido}")

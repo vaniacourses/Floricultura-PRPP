@@ -13,6 +13,7 @@ public interface ItemPedidoMapper {
 
     @Mapping(source = "produto.codigo", target = "codigo")
     @Mapping(source = "produto.nome", target = "nomeProduto")
+    @Mapping(source = "produto.quantidade", target = "estoqueAtual")
     @Mapping(source = "pedido.usuario.usuarioId", target = "idUsuario")
     @Mapping(source = "precoUnitario", target = "valorUnitario")
     @Mapping(target = "subtotal", expression = "java(itemPedido.getPrecoUnitario().multiply(new BigDecimal(itemPedido.getQuantidade())))")

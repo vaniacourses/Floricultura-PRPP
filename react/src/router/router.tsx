@@ -15,6 +15,7 @@ import PerfilAdmin from "../components/admin/PerfilAdmin";
 import Estoque from "../components/admin/estoque/Estoque";
 import Promocoes from "../components/admin/Promocoes";
 import Administradores from "../components/admin/Administradores";
+import ReservasSolicitadas from "../components/admin/ReservasSolicitadas";
 import ClienteLoginPage from "../pages/cliente/ClienteLoginPage";
 import ClienteRegistroGooglePage from "../pages/cliente/ClienteRegistroGooglePage";
 import ClienteRegistroPage from "../pages/cliente/ClienteRegistroPage";
@@ -67,6 +68,7 @@ const router = createBrowserRouter([
               { index: true, element: <PerfilAdmin /> },
               { path: "perfil-adm", element: <PerfilAdmin /> },
               { path: "dashboard", element: <Dashboard /> },
+              { path: "reservas", element: <ReservasSolicitadas /> },
               { path: "estoque", element: <Estoque /> },
               { path: "promocoes", element: <Promocoes /> },
               { path: "relatorios", element: <Relatorio /> },

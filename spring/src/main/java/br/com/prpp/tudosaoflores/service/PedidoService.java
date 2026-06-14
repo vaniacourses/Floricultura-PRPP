@@ -24,6 +24,8 @@ import java.util.List;
 @Service
 public class PedidoService {
 
+    private static final int DIAS_MINIMOS_ANTECEDENCIA_RESERVA = 7;
+
     @Autowired
     private PedidoRepository pedidoRepository;
 
@@ -45,6 +47,11 @@ public class PedidoService {
 
     public List<PedidoDto> recuperarPedidos(Long idUsuario){
         List<Pedido> pedidos = pedidoRepository.findByUsuarioUsuarioId(idUsuario);
+        return pedidoMapper.toPedidosDto(pedidos);
+    }
+
+    public List<PedidoDto> recuperarReservasSolicitadas(){
+        List<Pedido> pedidos = pedidoRepository.findReservasByStatus("RESERVA_SOLICITADA");
         return pedidoMapper.toPedidosDto(pedidos);
     }
 
@@ -94,15 +101,8 @@ public class PedidoService {
 
     @Transactional
     public PedidoDto cadastrarReserva(ReservaCreate request) {
-        return criarReserva(request, false);
-    }
+        validarAntecedenciaReserva(request.dataEvento());
 
-    @Transactional
-    public PedidoDto comprarReserva(ReservaCreate request) {
-        return criarReserva(request, true);
-    }
-
-    private PedidoDto criarReserva(ReservaCreate request, boolean compraDireta) {
         Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
         Usuario usuario = usuarioRepository.findById(clienteId)
                 .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
@@ -110,15 +110,15 @@ public class PedidoService {
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setData(LocalDateTime.now());
-        pedido.setDataReserva(request.dataReserva());
+        pedido.setDataReserva(request.dataEvento());
         pedido.setDataEvento(request.dataEvento());
         pedido.setTipoEvento(request.tipoEvento());
         pedido.setLocalEvento(request.localEvento());
         pedido.setFinalidadeReserva(request.finalidade());
         pedido.setObservacaoReserva(request.observacao());
         pedido.setOrigem("RESERVA");
-        pedido.setStatus(compraDireta ? "RESERVA_CONFIRMADA" : "RESERVA_SOLICITADA");
-        pedido.setDescricao(compraDireta ? "Compra direta de reserva para evento" : "Orçamento de reserva para evento");
+        pedido.setStatus("RESERVA_SOLICITADA");
+        pedido.setDescricao("Solicitação de reserva para evento");
         pedido.setItens(new ArrayList<>());
 
         BigDecimal totalAcumulado = BigDecimal.ZERO;
@@ -126,8 +126,6 @@ public class PedidoService {
         for (ItemPedidoCreate itemDto : request.itens()) {
             Produto produto = produtoRepository.findById(itemDto.idProduto())
                     .orElseThrow(() -> new RuntimeException("Produto não encontrado ID: " + itemDto.idProduto()));
-
-            validarEstoqueDisponivel(produto, itemDto.quantidade());
 
             ItemPedido novoItem = new ItemPedido(
                     pedido,
@@ -139,23 +137,10 @@ public class PedidoService {
             BigDecimal subtotalItem = produto.getPreco().multiply(BigDecimal.valueOf(itemDto.quantidade()));
             totalAcumulado = totalAcumulado.add(subtotalItem);
 
-            if (compraDireta) {
-                produto.setQuantidade(produto.getQuantidade() - itemDto.quantidade());
-            }
-
             pedido.getItens().add(novoItem);
         }
 
         pedido.setValorTotal(totalAcumulado);
-
-        if (compraDireta) {
-            pagamentoMockService.iniciarPagamento(pedido);
-            Pedido pedidoSalvo = pedidoRepository.save(pedido);
-            pagamentoMockService.aprovarPagamento(pedidoSalvo);
-            pedidoSalvo.setStatus("RESERVA_CONFIRMADA");
-            return pedidoMapper.toPedidoDto(pedidoRepository.save(pedidoSalvo));
-        }
-
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
         return pedidoMapper.toPedidoDto(pedidoSalvo);
@@ -163,16 +148,15 @@ public class PedidoService {
 
     @Transactional
     public PedidoDto confirmarReserva(Long idPedido) {
-        Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
         Pedido pedido = pedidoRepository.findById(idPedido)
                 .orElseThrow(() -> new RuntimeException("Pedido nao encontrado"));
 
-        if (pedido.getUsuario() == null || !clienteId.equals(pedido.getUsuario().getUsuarioId())) {
-            throw new RuntimeException("Você não tem permissão para confirmar esta reserva");
-        }
-
         if (!"RESERVA".equalsIgnoreCase(pedido.getOrigem())) {
             throw new RuntimeException("Pedido informado não é uma reserva");
+        }
+
+        if (!"RESERVA_SOLICITADA".equalsIgnoreCase(pedido.getStatus())) {
+            throw new RuntimeException("Apenas reservas solicitadas podem ser aprovadas");
         }
 
         for (ItemPedido item : pedido.getItens()) {
@@ -189,6 +173,25 @@ public class PedidoService {
         pedidoSalvo = pedidoRepository.save(pedidoSalvo);
 
         return pedidoMapper.toPedidoDto(pedidoSalvo);
+    }
+
+    @Transactional
+    public PedidoDto recusarReserva(Long idPedido) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new RuntimeException("Pedido nao encontrado"));
+
+        if (!"RESERVA".equalsIgnoreCase(pedido.getOrigem())) {
+            throw new RuntimeException("Pedido informado não é uma reserva");
+        }
+
+        if (!"RESERVA_SOLICITADA".equalsIgnoreCase(pedido.getStatus())) {
+            throw new RuntimeException("Apenas reservas solicitadas podem ser recusadas");
+        }
+
+        pedido.setStatus("RESERVA_RECUSADA");
+        pedido.setDescricao("Reserva recusada pelo administrador");
+
+        return pedidoMapper.toPedidoDto(pedidoRepository.save(pedido));
     }
 
     @Transactional
@@ -239,6 +242,15 @@ public class PedidoService {
         Integer quantidadeDisponivel = produto.getQuantidade();
         if (quantidadeDisponivel == null || quantidadeDisponivel < quantidadeSolicitada) {
             throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome());
+        }
+    }
+
+    private void validarAntecedenciaReserva(LocalDateTime dataEvento) {
+        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime dataMinimaEvento = agora.plusDays(DIAS_MINIMOS_ANTECEDENCIA_RESERVA);
+
+        if (dataEvento.isBefore(dataMinimaEvento)) {
+            throw new RuntimeException("A reserva deve ser solicitada com pelo menos 7 dias de antecedência da data da entrega");
         }
     }
 
