@@ -5,7 +5,6 @@ import {
   PackageCheck,
   Flower2,
   Gift,
-  Sparkles,
   Truck,
   UserPlus,
   X,
@@ -260,10 +259,6 @@ const AssinaturasPage = () => {
           </div>
 
           <div className="mt-5 space-y-3 text-sm font-semibold">
-            <div className="flex items-center gap-3">
-              <Sparkles className="text-[#b63b6d]" size={18} />
-              Status inicial: Ativa
-            </div>
             {assinaturaAtiva && (
               <div className="rounded-lg border border-[#f3d7df] bg-[#fff7f8] px-3 py-2 text-[#6f4b5a]">
                 Você já tem uma assinatura ativa: {assinaturaAtiva.tipoPlano}.
@@ -271,7 +266,7 @@ const AssinaturasPage = () => {
             )}
             {isAdmin && (
               <div className="rounded-lg border border-[#f3d7df] bg-[#fff7f8] px-3 py-2 text-[#6f4b5a]">
-                Entre com uma conta de cliente para contratar uma assinatura.
+                Faça login para contratar um plano.
               </div>
             )}
           </div>

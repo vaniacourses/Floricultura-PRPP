@@ -44,6 +44,8 @@ public class Assinatura {
     private String coresPreferidas;
     private String observacao;
     private LocalDate createdAt;
+    
+    
 
     @OneToMany(mappedBy = "assinatura", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("dataTroca DESC")

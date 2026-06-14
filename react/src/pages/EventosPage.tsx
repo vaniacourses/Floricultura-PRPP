@@ -3,22 +3,40 @@ import { useNavigate } from "react-router-dom";
 import { CalendarDays, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import { api } from "../services/api";
 import type { Produto } from "../data/types";
+import { useAuth } from "../contexts/AuthContext";
 
 type ItemReserva = {
   produtoCodigo: number;
   quantidade: number;
 };
 
-const tiposEvento = ["Casamento", "Aniversário", "Formatura", "Corporativo", "Outro"];
-const finalidades = ["Decoração de mesas", "Buquê", "Lembrancinhas", "Palco", "Entrada/recepção", "Outro"];
+const tiposEvento = ["Casamento", "Aniversário", "Formatura", "Corporativo", "Outro (descreva)"];
+const finalidades = ["Decoração de mesas", "Buquê", "Lembrancinhas", "Palco", "Recepção", "Outro (descreva)"];
+const DIAS_MINIMOS_ANTECEDENCIA_RESERVA = 7;
+
+const formatarDataHoraInput = (data: Date) => {
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const dia = String(data.getDate()).padStart(2, "0");
+  const hora = String(data.getHours()).padStart(2, "0");
+  const minuto = String(data.getMinutes()).padStart(2, "0");
+
+  return `${ano}-${mes}-${dia}T${hora}:${minuto}`;
+};
+
+const adicionarDias = (data: Date, dias: number) => {
+  const novaData = new Date(data);
+  novaData.setDate(novaData.getDate() + dias);
+  return novaData;
+};
 
 const EventosPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, token } = useAuth();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [tipoEvento, setTipoEvento] = useState(tiposEvento[0]);
   const [localEvento, setLocalEvento] = useState("");
   const [dataEvento, setDataEvento] = useState("");
-  const [dataEntrega, setDataEntrega] = useState("");
   const [finalidade, setFinalidade] = useState(finalidades[0]);
   const [observacao, setObservacao] = useState("");
   const [itens, setItens] = useState<ItemReserva[]>([]);
@@ -26,9 +44,14 @@ const EventosPage = () => {
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
+  const dataMinimaEventoInput = useMemo(
+    () => formatarDataHoraInput(adicionarDias(new Date(), DIAS_MINIMOS_ANTECEDENCIA_RESERVA)),
+    []
+  );
+
   useEffect(() => {
     api.get<Produto[]>("/produtos")
-      .then((data) => setProdutos(data.filter((produto) => produto.quantidade > 0)))
+      .then((data) => setProdutos(data))
       .catch((e: any) => setErro(e.message || "Não foi possível carregar os produtos."))
       .finally(() => setCarregando(false));
   }, []);
@@ -58,9 +81,8 @@ const EventosPage = () => {
     setItens((prev) => prev.map((item, itemIndex) => {
       if (itemIndex !== index) return item;
       const produtoCodigo = dados.produtoCodigo ?? item.produtoCodigo;
-      const produto = produtosPorCodigo.get(produtoCodigo);
-      const limite = produto?.quantidade || 1;
-      const quantidade = Math.max(1, Math.min(dados.quantidade ?? item.quantidade, limite));
+      const quantidadeInformada = dados.quantidade ?? item.quantidade;
+      const quantidade = Number.isFinite(quantidadeInformada) ? Math.max(1, quantidadeInformada) : 1;
       return { produtoCodigo, quantidade };
     }));
   };
@@ -73,7 +95,6 @@ const EventosPage = () => {
     tipoEvento,
     localEvento,
     dataEvento,
-    dataReserva: dataEntrega,
     finalidade,
     observacao,
     itens: itens.map((item) => ({
@@ -82,9 +103,31 @@ const EventosPage = () => {
     })),
   });
 
-  const salvarReserva = async (compraDireta: boolean) => {
-    if (!tipoEvento || !localEvento || !dataEvento || !dataEntrega || !finalidade || itens.length === 0) {
-      setErro("Informe os dados do evento, a entrega e pelo menos um produto.");
+  const validarDatasReserva = () => {
+    const evento = new Date(dataEvento);
+    const dataMinimaEvento = adicionarDias(new Date(), DIAS_MINIMOS_ANTECEDENCIA_RESERVA);
+
+    if (evento < dataMinimaEvento) {
+      return "A reserva deve ser solicitada com pelo menos 7 dias de antecedência da data da entrega.";
+    }
+
+    return null;
+  };
+
+  const salvarReserva = async () => {
+    if (!isAuthenticated && !token && !localStorage.getItem("token")) {
+      setErro("É necessário fazer login para solicitar uma reserva.");
+      return;
+    }
+
+    if (!tipoEvento || !localEvento || !dataEvento || !finalidade || itens.length === 0) {
+      setErro("Informe os dados do evento e pelo menos um produto.");
+      return;
+    }
+
+    const erroDatas = validarDatasReserva();
+    if (erroDatas) {
+      setErro(erroDatas);
       return;
     }
 
@@ -92,10 +135,14 @@ const EventosPage = () => {
     setErro(null);
 
     try {
-      await api.post(compraDireta ? "/pedidos/reserva/comprar" : "/pedidos/reserva", montarPayload());
+      await api.post("/pedidos/reserva", montarPayload());
 
       navigate("/cliente/pedidos");
     } catch (e: any) {
+      if (e.status === 401 || e.status === 403) {
+        setErro("É necessário fazer login para solicitar uma reserva.");
+        return;
+      }
       setErro(e.message || "Não foi possível processar a reserva.");
     } finally {
       setSalvando(false);
@@ -123,35 +170,23 @@ const EventosPage = () => {
         <header className="mb-8">
           <h1 className="text-4xl font-bold text-black">Reservas para eventos</h1>
           <p className="mt-2 max-w-3xl text-sm font-medium text-[#6f4b5a]">
-            Transforme datas especiais com a nossa seleção de flores. Personalize o seu pedido, solicite um orçamento sob medida ou garanta as flores do seu evento agora mesmo.
+            Transforme datas especiais com a nossa seleção de flores. Personalize o seu pedido e envie uma solicitação para avaliação da equipe.
           </p>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_340px]">
           <section className="rounded-lg border border-rosa-pastel bg-white p-5 shadow-sm">
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="flex flex-col">
+              <label className="flex flex-col md:col-span-2">
                 <span className="mb-2 flex items-center gap-2 text-sm font-bold">
                   <CalendarDays size={18} className="text-rosa-choque" />
-                  Data do evento
+                  Data da entrega
                 </span>
                 <input
                   type="datetime-local"
                   value={dataEvento}
+                  min={dataMinimaEventoInput}
                   onChange={(event) => setDataEvento(event.target.value)}
-                  className="min-h-12 rounded-xl border-2 border-rosa-pastel px-4 font-semibold outline-none focus:border-rosa-choque"
-                />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="mb-2 flex items-center gap-2 text-sm font-bold">
-                  <CalendarDays size={18} className="text-rosa-choque" />
-                  Entrega desejada
-                </span>
-                <input
-                  type="datetime-local"
-                  value={dataEntrega}
-                  onChange={(event) => setDataEntrega(event.target.value)}
                   className="min-h-12 rounded-xl border-2 border-rosa-pastel px-4 font-semibold outline-none focus:border-rosa-choque"
                 />
               </label>
@@ -236,7 +271,7 @@ const EventosPage = () => {
                           >
                             {[produto, ...produtosDisponiveis].filter(Boolean).map((opcao) => (
                               <option key={opcao!.codigo} value={opcao!.codigo}>
-                                {opcao!.nome} - {opcao!.quantidade} un.
+                                {opcao!.nome}
                               </option>
                             ))}
                           </select>
@@ -255,7 +290,6 @@ const EventosPage = () => {
                             <input
                               type="number"
                               min={1}
-                              max={produto?.quantidade || 1}
                               value={item.quantidade}
                               onChange={(event) => atualizarItem(index, { quantidade: Number(event.target.value) })}
                               className="w-16 border-x border-rosa-pastel text-center font-bold outline-none"
@@ -318,22 +352,12 @@ const EventosPage = () => {
 
             <button
               type="button"
-              onClick={() => salvarReserva(false)}
+              onClick={salvarReserva}
               disabled={salvando || itens.length === 0}
               className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border-2 border-rosa-choque bg-white px-5 font-bold text-rosa-choque transition hover:bg-rosa-claro disabled:cursor-not-allowed disabled:opacity-60"
             >
               {salvando && <Loader2 className="animate-spin" size={18} />}
-              {salvando ? "Solicitando orçamento..." : "Solicitar orçamento"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => salvarReserva(true)}
-              disabled={salvando || itens.length === 0}
-              className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-rosa-choque px-5 font-bold text-white transition hover:bg-rosa-text disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {salvando && <Loader2 className="animate-spin" size={18} />}
-              {salvando ? "Processando compra..." : "Comprar direto"}
+              {salvando ? "Solicitando reserva..." : "Solicitar reserva"}
             </button>
           </aside>
         </div>

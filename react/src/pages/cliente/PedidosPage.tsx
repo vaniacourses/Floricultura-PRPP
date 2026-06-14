@@ -26,7 +26,6 @@ interface PedidoData {
   estiloAssinatura?: string;
   coresAssinatura?: string;
   observacaoAssinatura?: string;
-  dataReserva?: string;
   observacaoReserva?: string;
   tipoEvento?: string;
   localEvento?: string;
@@ -85,6 +84,18 @@ export default function PedidosPage() {
       hour: "2-digit",
       minute: "2-digit"
     }).format(date);
+  };
+
+  const formatStatusPedido = (pedido: PedidoData) => {
+    if (pedido.origem === "RESERVA") {
+      if (pedido.status === "RESERVA_SOLICITADA") return "Aguardando confirmação";
+      if (pedido.status === "RESERVA_CONFIRMADA") return "Reserva confirmada";
+      if (pedido.status === "RESERVA_RECUSADA") return "Reserva recusada";
+      return pedido.status || "Aguardando confirmação";
+    }
+
+    if (pedido.idAssinatura) return "ASSINATURA";
+    return pedido.status || "PROCESSANDO";
   };
 
   if (loading) {
@@ -147,7 +158,7 @@ export default function PedidosPage() {
                 </div>
                 <div>
                   <span className="inline-flex items-center rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-rosa-choque ring-1 ring-inset ring-pink-700/10">
-                    {pedido.origem === "RESERVA" ? pedido.status || "RESERVA_SOLICITADA" : pedido.idAssinatura ? "ASSINATURA" : pedido.status || "PROCESSANDO"}
+                    {formatStatusPedido(pedido)}
                   </span>
                 </div>
               </div>
@@ -165,12 +176,8 @@ export default function PedidosPage() {
                         {pedido.localEvento || "-"}
                       </p>
                       <p className="mt-1">
-                        <span className="font-bold text-slate-800">Data do evento:</span>{" "}
+                        <span className="font-bold text-slate-800">Data da entrega:</span>{" "}
                         {formatDate(pedido.dataEvento)}
-                      </p>
-                      <p className="mt-1">
-                        <span className="font-bold text-slate-800">Entrega desejada:</span>{" "}
-                        {formatDate(pedido.dataReserva)}
                       </p>
                       {pedido.observacaoReserva && (
                         <p className="mt-1">

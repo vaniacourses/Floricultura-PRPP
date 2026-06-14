@@ -8,6 +8,7 @@ public record ItemPedidoDto (
         Long codigo,
         String nomeProduto,
         Integer quantidade,
+        Integer estoqueAtual,
         BigDecimal valorUnitario,
         BigDecimal subtotal
 ){

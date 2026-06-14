@@ -1,5 +1,5 @@
 import React from "react";
-import { BarChart3, LogOut, Package, Tag, User, ShieldCheck, LayoutGrid } from "lucide-react";
+import { BarChart3, ClipboardList, LogOut, Package, Tag, User, ShieldCheck, LayoutGrid } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -31,6 +31,7 @@ const SidebarAdmin = () => {
   const menuItems = [
     { name: "Meu Perfil", path: "perfil-adm", icon: <User size={20} /> },
     { name: "Dashboard", path: "dashboard", icon: <LayoutGrid size={20} /> },
+    { name: "Reservas", path: "reservas", icon: <ClipboardList size={20} /> },
     { name: "Estoque", path: "estoque", icon: <Package size={20} /> },
     { name: "Promoções", path: "promocoes", icon: <Tag size={20} /> },
     { name: "Relatórios", path: "relatorios", icon: <BarChart3 size={20} /> },
