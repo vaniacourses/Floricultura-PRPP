@@ -2,6 +2,7 @@ package br.com.prpp.tudosaoflores.controller;
 
 import br.com.prpp.tudosaoflores.dto.AssinaturaCreate;
 import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
+import br.com.prpp.tudosaoflores.dto.FinalizarCompraRequest;
 import br.com.prpp.tudosaoflores.dto.ItemAtualizarQuantidade;
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
 import br.com.prpp.tudosaoflores.model.Carrinho;
@@ -57,9 +58,9 @@ public class CarrinhoController {
     }
 
     @PostMapping("/finalizar")
-    public ResponseEntity<Void> finalizarCompra() {
+    public ResponseEntity<Void> finalizarCompra(@RequestBody(required = false) FinalizarCompraRequest request) {
         Long clienteId = clienteService.obterClienteAutenticado().getUsuarioId();
-        carrinhoService.finalizarCompra(clienteId);
+        carrinhoService.finalizarCompra(clienteId, request);
         return ResponseEntity.noContent().build();
     }
 
