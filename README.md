@@ -10,13 +10,13 @@ O projeto foi desenvolvido aplicando conceitos de Arquitetura de Software, Proje
 
 ## Tecnologias Utilizadas
 
-# Backend
+### Backend
 
 * Java
 * Spring Boot
 * MySQL
 
-# Frontend
+### Frontend
 
 * React
 * TypeScript
@@ -41,14 +41,14 @@ Link dos slides (resumo da documentação): https://canva.link/eeql5q7ckd8zcpv
 
 ## Execução
 
-# Backend
+### Backend
 
 ```bash
 cd spring
 .\mvnw.cmd spring-boot:run
 ```
 
-# Frontend
+### Frontend
 
 ```bash
 cd react
