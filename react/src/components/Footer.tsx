@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="h-px w-24 bg-rosa-pastel/30" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-3 gap-10">
+      <div className="max-w-5xl mx-auto px-6 py-6 grid grid-cols-1 sm:grid-cols-3 gap-10">
         {/* Coluna 1 — Logo e descrição */}
         <div className="flex flex-col gap-3">
           <span className="font-logo text-4xl text-white">Tudo são flores</span>
@@ -52,6 +52,7 @@ const Footer = () => {
             { label: "Buquês", to: "/buques" },
             { label: "Kits", to: "/kits" },
             { label: "Acessórios", to: "/acessorios" },
+            { label: "Eventos", to: "/eventos" },
           ].map((item) => (
             <Link
               key={item.to}
@@ -65,7 +66,7 @@ const Footer = () => {
       </div>
 
       {/* Rodapé inferior */}
-      <div className="border-t border-rosa-pastel/20 py-4 text-center">
+      <div className="border-t border-rosa-pastel/20 py-3 text-center">
         <p className="text-rosa-pastel/60 text-xs">
           © 2026 Tudo são Flores · Projeto fictício desenvolvido na{" "}
           <a

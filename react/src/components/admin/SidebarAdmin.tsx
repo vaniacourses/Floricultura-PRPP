@@ -40,14 +40,14 @@ const SidebarAdmin = () => {
   ];
 
   return (
-    <aside className="w-72 h-full bg-rosa-claro border-r border-rosa-pastel flex flex-col">
+    <aside className="w-72 h-full max-h-screen bg-rosa-claro border-r border-rosa-pastel flex flex-col">
       <div className="p-8">
         <h2 className="text-sm font-bold uppercase tracking-widest text-rosa-choque font-menu">
           Menu Admin
         </h2>
       </div>
 
-      <nav className="flex-1 px-4 space-y-2">
+      <nav className="flex-1 px-4 space-y-2 pr-2 overflow-y-auto custom-scrollbar">
         {menuItems.map((item) => {
           if (item.path === "administradores" && role !== "SUPER_ADMIN") {
             return null;
