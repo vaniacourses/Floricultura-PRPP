@@ -34,6 +34,10 @@ public class Pedido {
     private String status;
     private String origem;
     private String descricao;
+    private String nomeCupom;
+    private BigDecimal descontoCupom;
+    private Long idEnderecoEntrega;
+    private String enderecoEntrega;
     private String idAssinatura;
     private String estiloAssinatura;
     private String coresAssinatura;

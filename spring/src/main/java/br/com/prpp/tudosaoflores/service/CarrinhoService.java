@@ -1,9 +1,11 @@
 package br.com.prpp.tudosaoflores.service;
 
 import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
+import br.com.prpp.tudosaoflores.dto.FinalizarCompraRequest;
 import br.com.prpp.tudosaoflores.dto.ItemAtualizarQuantidade;
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
 import br.com.prpp.tudosaoflores.dto.AssinaturaCreate;
+import br.com.prpp.tudosaoflores.config.CupomSeed;
 import br.com.prpp.tudosaoflores.mapper.CarrinhoMapper;
 import br.com.prpp.tudosaoflores.model.*;
 import br.com.prpp.tudosaoflores.repository.CarrinhoRepository;
@@ -11,12 +13,18 @@ import br.com.prpp.tudosaoflores.repository.ClienteRepository;
 import br.com.prpp.tudosaoflores.repository.PedidoRepository;
 import br.com.prpp.tudosaoflores.repository.ProdutoRepository;
 import br.com.prpp.tudosaoflores.repository.AssinaturaRepository;
+import br.com.prpp.tudosaoflores.repository.CupomRepository;
+import br.com.prpp.tudosaoflores.repository.EnderecoRepository;
 import br.com.prpp.tudosaoflores.strategy.PrecificacaoAssinaturaResolver;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -42,6 +50,12 @@ public class CarrinhoService {
 
     @Autowired
     private AssinaturaRepository assinaturaRepository;
+
+    @Autowired
+    private CupomRepository cupomRepository;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     @Autowired
     private PrecificacaoAssinaturaResolver precificacaoAssinaturaResolver;
@@ -169,7 +183,7 @@ public class CarrinhoService {
     };
 
     @Transactional
-    public void finalizarCompra(Long clienteId){
+    public void finalizarCompra(Long clienteId, FinalizarCompraRequest request){
 
         Carrinho carrinho = carrinhoRepository.findByUsuarioUsuarioId(clienteId)
                 .orElseThrow(() -> new RuntimeException("Carrinho nao encontrado"));
@@ -203,6 +217,9 @@ public class CarrinhoService {
         pedido.setUsuario(carrinho.getCliente());
         pedido.setData(java.time.LocalDateTime.now());
         pedido.setItens(new ArrayList<>());
+        Endereco enderecoEntrega = recuperarEnderecoEntrega(clienteId, request);
+        pedido.setIdEnderecoEntrega(enderecoEntrega.getId());
+        pedido.setEnderecoEntrega(formatarEndereco(enderecoEntrega));
 
         BigDecimal valorProdutos = temItens
                 ? carrinho.getItens().stream()
@@ -210,6 +227,24 @@ public class CarrinhoService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add)
                 : BigDecimal.ZERO;
         BigDecimal valorTotal = valorProdutos.add(temAssinatura ? carrinho.getValorAssinatura() : BigDecimal.ZERO);
+        Cupom cupomAplicado = recuperarCupomValido(request);
+
+        if (cupomAplicado != null) {
+            BigDecimal valorDesconto = valorTotal
+                    .multiply(cupomAplicado.getDesconto())
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            valorTotal = valorTotal.subtract(valorDesconto);
+            if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+                valorTotal = BigDecimal.ZERO;
+            }
+
+            pedido.setNomeCupom(cupomAplicado.getNomeCupom());
+            pedido.setDescontoCupom(valorDesconto);
+            cupomAplicado.setLimiteDeUso(cupomAplicado.getLimiteDeUso() - 1);
+            cupomRepository.save(cupomAplicado);
+        }
+
         pedido.setValorTotal(valorTotal);
 
         if (temAssinatura) {
@@ -252,6 +287,71 @@ public class CarrinhoService {
         carrinho.setCoresPreferidasAssinatura(null);
         carrinho.setObservacaoAssinatura(null);
         carrinhoRepository.save(carrinho);
+    }
+
+    private Cupom recuperarCupomValido(FinalizarCompraRequest request) {
+        if (request == null || request.nomeCupom() == null || request.nomeCupom().isBlank()) {
+            return null;
+        }
+
+        String nomeCupom = request.nomeCupom().trim();
+        if (!CupomSeed.CUPOM_PRIMEIRA_COMPRA.equalsIgnoreCase(nomeCupom)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cupom não encontrado");
+        }
+
+        Cupom cupom = cupomRepository.findByNomeCupomIgnoreCase(nomeCupom)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cupom não encontrado"));
+
+        LocalDate hoje = LocalDate.now();
+        if (cupom.getDataInicio() != null && cupom.getDataInicio().isAfter(hoje)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cupom ainda não está vigente");
+        }
+
+        if (cupom.getDataFim() != null && cupom.getDataFim().isBefore(hoje)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cupom expirado");
+        }
+
+        if (cupom.getLimiteDeUso() == null || cupom.getLimiteDeUso() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cupom sem usos disponíveis");
+        }
+
+        if (cupom.getDesconto() == null || cupom.getDesconto().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cupom sem desconto válido");
+        }
+
+        return cupom;
+    }
+
+    private Endereco recuperarEnderecoEntrega(Long clienteId, FinalizarCompraRequest request) {
+        if (request == null || request.idEndereco() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe um endereço de entrega");
+        }
+
+        Endereco endereco = enderecoRepository.findById(request.idEndereco())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Endereço de entrega não encontrado"));
+
+        if (endereco.getCliente() == null || !endereco.getCliente().getUsuarioId().equals(clienteId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Endereço de entrega não pertence ao cliente autenticado");
+        }
+
+        return endereco;
+    }
+
+    private String formatarEndereco(Endereco endereco) {
+        String complemento = endereco.getComplemento() == null || endereco.getComplemento().isBlank()
+                ? ""
+                : ", " + endereco.getComplemento().trim();
+
+        return String.format(
+                "%s, %s%s - %s, %s/%s - CEP %s",
+                endereco.getRua(),
+                endereco.getNumero(),
+                complemento,
+                endereco.getBairro(),
+                endereco.getCidade(),
+                endereco.getUf(),
+                endereco.getCep()
+        );
     }
 
 }

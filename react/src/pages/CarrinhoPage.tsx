@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type ChangeEvent, type FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
@@ -29,6 +29,39 @@ interface CarrinhoData {
   itens: ItemCarrinho[];
 }
 
+interface Cupom {
+  idCupom: number;
+  nomeCupom: string;
+  desconto: number;
+  limiteDeUso: number;
+  dataInicio: string;
+  dataFim: string;
+}
+
+interface Endereco {
+  id: number;
+  cep: string;
+  rua: string;
+  numero: string;
+  bairro: string;
+  cidade: string;
+  uf: string;
+  complemento?: string;
+}
+
+type EnderecoForm = Omit<Endereco, "id">;
+
+const CUPOM_DISPONIVEL = "PRIMEIRACOMPRA10";
+const enderecoInicial: EnderecoForm = {
+  cep: "",
+  rua: "",
+  numero: "",
+  bairro: "",
+  cidade: "",
+  uf: "",
+  complemento: "",
+};
+
 export default function CarrinhoPage() {
   const navigate = useNavigate();
   const { token } = useAuth();
@@ -36,9 +69,23 @@ export default function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processandoPagamento, setProcessandoPagamento] = useState(false);
+  const [nomeCupom, setNomeCupom] = useState("");
+  const [cupomAplicado, setCupomAplicado] = useState<Cupom | null>(null);
+  const [enderecos, setEnderecos] = useState<Endereco[]>([]);
+  const [idEnderecoSelecionado, setIdEnderecoSelecionado] = useState<number | null>(null);
+  const [mostrarNovoEndereco, setMostrarNovoEndereco] = useState(false);
+  const [salvandoEndereco, setSalvandoEndereco] = useState(false);
+  const [novoEndereco, setNovoEndereco] = useState<EnderecoForm>(enderecoInicial);
 
   const possuiItens = !!carrinho?.itens?.length;
   const possuiAssinatura = !!carrinho?.tipoPlanoAssinatura && !!carrinho?.valorAssinatura;
+  const subtotal = carrinho?.valorTotal || 0;
+  const valorDesconto = cupomAplicado ? Number((subtotal * Number(cupomAplicado.desconto)).toFixed(2)) : 0;
+  const valorTotalComDesconto = Math.max(subtotal - valorDesconto, 0);
+  const formatarEndereco = (endereco: Endereco) => {
+    const complemento = endereco.complemento ? `, ${endereco.complemento}` : "";
+    return `${endereco.rua}, ${endereco.numero}${complemento} - ${endereco.bairro}, ${endereco.cidade}/${endereco.uf} - CEP ${endereco.cep}`;
+  };
 
   // Procure estas três funções na sua CarrinhoPage.tsx e aplique a MODIFICAÇÃO:
 
@@ -111,6 +158,57 @@ export default function CarrinhoPage() {
       setLoading(false);
     }
   };
+
+  const handleAplicarCupom = async () => {
+    const codigo = nomeCupom.trim();
+    if (!codigo) {
+      setCupomAplicado(null);
+      alert("Informe o nome do cupom.");
+      return;
+    }
+
+    if (codigo.toUpperCase() !== CUPOM_DISPONIVEL) {
+      setCupomAplicado(null);
+      alert("Cupom não encontrado.");
+      return;
+    }
+
+    try {
+      const response = await axios.get<Cupom[]>("http://localhost:8080/cupons");
+      const cupom = response.data.find((item) => item.nomeCupom?.toLowerCase() === codigo.toLowerCase());
+      const hoje = new Date().toISOString().split("T")[0];
+
+      if (!cupom) {
+        setCupomAplicado(null);
+        alert("Cupom não encontrado.");
+        return;
+      }
+
+      if (cupom.dataInicio && cupom.dataInicio > hoje) {
+        setCupomAplicado(null);
+        alert("Este cupom ainda não está vigente.");
+        return;
+      }
+
+      if (cupom.dataFim && cupom.dataFim < hoje) {
+        setCupomAplicado(null);
+        alert("Este cupom está expirado.");
+        return;
+      }
+
+      if (!cupom.limiteDeUso || cupom.limiteDeUso <= 0) {
+        setCupomAplicado(null);
+        alert("Este cupom não possui usos disponíveis.");
+        return;
+      }
+
+      setCupomAplicado(cupom);
+    } catch (error) {
+      console.error("Erro ao validar cupom:", error);
+      alert("Não foi possível validar o cupom. Tente novamente.");
+    }
+  };
+
   const handleFinalizarCompra = async () => {
     const tokenAtual = token || localStorage.getItem("token");
     if (!tokenAtual) {
@@ -119,10 +217,18 @@ export default function CarrinhoPage() {
       return;
     }
 
+    if (!idEnderecoSelecionado) {
+      alert("Informe um endereço de entrega para finalizar a compra.");
+      return;
+    }
+
     try {
       setLoading(true);
       setProcessandoPagamento(true);
-      await axios.post("http://localhost:8080/carrinho/finalizar", {}, {
+      await axios.post("http://localhost:8080/carrinho/finalizar", {
+        nomeCupom: nomeCupom.trim() || null,
+        idEndereco: idEnderecoSelecionado,
+      }, {
         headers: { Authorization: `Bearer ${tokenAtual}` }
       });
 
@@ -130,10 +236,71 @@ export default function CarrinhoPage() {
       carregarCarrinho();
     } catch (error) {
       console.error("Erro ao finalizar compra:", error);
-      alert("Houve um erro técnico ao processar seu pedido. Tente novamente.");
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert("Houve um erro técnico ao processar seu pedido. Tente novamente.");
+      }
     } finally {
       setProcessandoPagamento(false);
       setLoading(false);
+    }
+  };
+
+  const carregarEnderecos = async () => {
+    const tokenAtual = token || localStorage.getItem("token");
+    if (!tokenAtual) return;
+
+    try {
+      const response = await axios.get<Endereco[]>("http://localhost:8080/clientes/me/enderecos", {
+        headers: { Authorization: `Bearer ${tokenAtual}` },
+      });
+      setEnderecos(response.data);
+      setIdEnderecoSelecionado((atual) => atual || response.data[0]?.id || null);
+    } catch (error) {
+      console.error("Erro ao carregar endereços:", error);
+    }
+  };
+
+  const handleNovoEnderecoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setNovoEndereco((atual) => ({ ...atual, [name]: value }));
+  };
+
+  const handleSalvarNovoEndereco = async (event: FormEvent) => {
+    event.preventDefault();
+    const tokenAtual = token || localStorage.getItem("token");
+    if (!tokenAtual) return;
+
+    if (novoEndereco.cep.trim().length !== 8) {
+      alert("CEP deve ter 8 dígitos.");
+      return;
+    }
+
+    if (novoEndereco.uf.trim().length !== 2) {
+      alert("UF deve ter 2 caracteres.");
+      return;
+    }
+
+    try {
+      setSalvandoEndereco(true);
+      const response = await axios.post<Endereco>("http://localhost:8080/clientes/me/enderecos", {
+        ...novoEndereco,
+        cep: novoEndereco.cep.trim(),
+        uf: novoEndereco.uf.trim().toUpperCase(),
+      }, {
+        headers: { Authorization: `Bearer ${tokenAtual}` },
+      });
+
+      setEnderecos((atuais) => [...atuais, response.data]);
+      setIdEnderecoSelecionado(response.data.id);
+      setNovoEndereco(enderecoInicial);
+      setMostrarNovoEndereco(false);
+    } catch (error) {
+      console.error("Erro ao salvar endereço:", error);
+      alert("Não foi possível salvar o endereço. Tente novamente.");
+    } finally {
+      setSalvandoEndereco(false);
     }
   };
 
@@ -162,6 +329,7 @@ export default function CarrinhoPage() {
 
   useEffect(() => {
     carregarCarrinho();
+    carregarEnderecos();
   }, [token]);
 
   if (loading) {
@@ -333,18 +501,118 @@ export default function CarrinhoPage() {
                 <div className="space-y-2 border-b border-slate-200/60 pb-4 text-sm">
                   <div className="flex justify-between text-slate-600">
                     <span>Subtotal:</span>
-                    <span>R$ {(carrinho.valorTotal || 0).toFixed(2)}</span>
+                    <span>R$ {subtotal.toFixed(2)}</span>
                   </div>
+                  {cupomAplicado && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>Cupom {cupomAplicado.nomeCupom}:</span>
+                      <span>- R$ {valorDesconto.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-slate-600">
                     <span>Entrega:</span>
                     <span className="text-emerald-600 font-medium">Grátis</span>
                   </div>
                 </div>
 
+                <div className="py-4 border-b border-slate-200/60">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h4 className="text-sm font-semibold text-slate-700">Endereço de entrega</h4>
+                    <button
+                      type="button"
+                      className="text-xs font-medium text-rosa-choque hover:text-rosa-text"
+                      onClick={() => setMostrarNovoEndereco((atual) => !atual)}
+                    >
+                      {mostrarNovoEndereco ? "Escolher cadastrado" : "Novo endereço"}
+                    </button>
+                  </div>
+
+                  {!mostrarNovoEndereco && (
+                    <div className="space-y-2">
+                      {enderecos.length === 0 ? (
+                        <p className="text-sm text-slate-500">Nenhum endereço cadastrado.</p>
+                      ) : (
+                        enderecos.map((endereco) => (
+                          <label
+                            key={endereco.id}
+                            className={`block cursor-pointer rounded-xl border p-3 text-sm transition ${
+                              idEnderecoSelecionado === endereco.id
+                                ? "border-rosa-choque bg-rosa-claro/40"
+                                : "border-slate-200 bg-white hover:border-rosa-pastel"
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="enderecoEntrega"
+                              className="mr-2 accent-rosa-choque"
+                              checked={idEnderecoSelecionado === endereco.id}
+                              onChange={() => setIdEnderecoSelecionado(endereco.id)}
+                            />
+                            <span className="font-medium text-slate-800">
+                              {endereco.rua}, {endereco.numero}
+                            </span>
+                            <span className="mt-1 block text-xs text-slate-500">
+                              {formatarEndereco(endereco)}
+                            </span>
+                          </label>
+                        ))
+                      )}
+                    </div>
+                  )}
+
+                  {mostrarNovoEndereco && (
+                    <form onSubmit={handleSalvarNovoEndereco} className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <input name="cep" value={novoEndereco.cep} onChange={handleNovoEnderecoChange} maxLength={8} required className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rosa-choque" placeholder="CEP" />
+                        <input name="uf" value={novoEndereco.uf} onChange={handleNovoEnderecoChange} maxLength={2} required className="rounded-xl border border-slate-200 px-3 py-2 text-sm uppercase outline-none focus:border-rosa-choque" placeholder="UF" />
+                      </div>
+                      <input name="rua" value={novoEndereco.rua} onChange={handleNovoEnderecoChange} required className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rosa-choque" placeholder="Rua" />
+                      <div className="grid grid-cols-2 gap-2">
+                        <input name="numero" value={novoEndereco.numero} onChange={handleNovoEnderecoChange} required className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rosa-choque" placeholder="Número" />
+                        <input name="bairro" value={novoEndereco.bairro} onChange={handleNovoEnderecoChange} required className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rosa-choque" placeholder="Bairro" />
+                      </div>
+                      <input name="cidade" value={novoEndereco.cidade} onChange={handleNovoEnderecoChange} required className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rosa-choque" placeholder="Cidade" />
+                      <input name="complemento" value={novoEndereco.complemento} onChange={handleNovoEnderecoChange} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-rosa-choque" placeholder="Complemento (opcional)" />
+                      <button
+                        type="submit"
+                        className="w-full rounded-full border border-rosa-pastel bg-white py-2 text-sm font-medium text-rosa-text transition hover:bg-rosa-claro disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={salvandoEndereco}
+                      >
+                        {salvandoEndereco ? "Salvando..." : "Salvar e usar endereço"}
+                      </button>
+                    </form>
+                  )}
+                </div>
+
+                <div className="py-4 border-b border-slate-200/60">
+                  <label className="text-sm font-semibold text-slate-700" htmlFor="cupom">
+                    Cupom de desconto
+                  </label>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      id="cupom"
+                      value={nomeCupom}
+                      onChange={(event) => {
+                        setNomeCupom(event.target.value);
+                        setCupomAplicado(null);
+                      }}
+                      className="min-w-0 flex-1 rounded-full border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-rosa-choque"
+                      placeholder="Digite o cupom"
+                    />
+                    <button
+                      type="button"
+                      className="rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm font-medium text-rosa-text transition hover:bg-rosa-claro"
+                      onClick={handleAplicarCupom}
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                </div>
+
                 <div className="pt-4 flex items-center justify-between mb-6">
                   <span className="text-md font-semibold text-slate-900">Valor Total:</span>
                   <span className="text-xl font-bold text-rosa-text">
-                    R$ {(carrinho.valorTotal || 0).toFixed(2)}
+                    R$ {valorTotalComDesconto.toFixed(2)}
                   </span>
                 </div>
 
