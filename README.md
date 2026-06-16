@@ -46,7 +46,9 @@ Para acessar administrador -> entrar com o email id/ic.uff.br
 ### Banco de dados (Mysql)
 
 Atualizar password em:
+
 spring\src\main\resources\application.properties
+
 spring\out\production\tudo-sao-flores\application.properties
 
 ```bash
