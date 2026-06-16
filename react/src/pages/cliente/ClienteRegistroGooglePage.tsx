@@ -17,7 +17,7 @@ const ClienteRegistroGooglePage = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      // Envia o tipo escolhido para o back‑end
+
       const response = await api.post<{ token: string }>("/auth/register", {
         uid: user.uid,
         email: user.email,
@@ -31,7 +31,7 @@ const ClienteRegistroGooglePage = () => {
       console.error("Erro no registro:", error);
 
       if (error.status === 409) {
-        // Conta já registrada
+ 
         alert("Você já possui uma conta registrada. Por favor, faça login.");
         navigate("/cliente-login");
       } else {
@@ -50,7 +50,6 @@ const ClienteRegistroGooglePage = () => {
           </p>
         </header>
 
-        {/* Seletor de tipo */}
         <div className="flex bg-rosa-claro/50 p-1.5 rounded-2xl mb-8 border border-rosa-pastel">
           <button
             type="button"
@@ -76,7 +75,6 @@ const ClienteRegistroGooglePage = () => {
           </button>
         </div>
 
-        {/* Botão Google (só aparece se um tipo estiver selecionado) */}
         {tipoSelecionado ? (
           <button
             onClick={handleGoogleAuth}

@@ -21,7 +21,6 @@ public class CupomService {
     @Autowired
     private CupomMapper cupomMapper;
 
-    //GETTERS
 
     public List<CupomDto> recuperarCupons(){
         List<Cupom> cupons= cupomRepository.findAll();

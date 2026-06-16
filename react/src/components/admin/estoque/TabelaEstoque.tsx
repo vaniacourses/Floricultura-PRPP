@@ -1,8 +1,6 @@
 import React from "react";
 
-// Recebemos categoriaAtiva via props junto com as funções de ação
 const TabelaEstoque = ({ produtos, categoriaAtiva, onEditar, onExcluir }) => {
-  // Função para renderizar os CABEÇALHOS (<th>) dinâmicos
   const renderCabecalhosEspecificos = () => {
     switch (categoriaAtiva) {
       case "FLORES":
@@ -44,11 +42,10 @@ const TabelaEstoque = ({ produtos, categoriaAtiva, onEditar, onExcluir }) => {
       case "KITS":
         return <th className="p-5 text-left font-black">Tema</th>;
       default:
-        return null; // "Todos" não mostra colunas extras
+        return null; 
     }
   };
 
-  // Função para renderizar as CÉLULAS (<td>) dinâmicas
   const renderCelulasEspecificas = (produto) => {
     if (!categoriaAtiva) return null;
 
@@ -110,10 +107,8 @@ const TabelaEstoque = ({ produtos, categoriaAtiva, onEditar, onExcluir }) => {
               <th className="p-5">Preço</th>
               <th className="p-5">Qtd</th>
               
-              {/* Só mostra a coluna genérica de Categoria se estiver na aba "Todos" */}
               {!categoriaAtiva && <th className="p-5">Categoria</th>}
               
-              {/* Colunas dinâmicas injetadas aqui */}
               {renderCabecalhosEspecificos()}
               
               <th className="p-5 text-center">Ações</th>
@@ -132,7 +127,6 @@ const TabelaEstoque = ({ produtos, categoriaAtiva, onEditar, onExcluir }) => {
                   key={produto.codigo}
                   className="hover:bg-rosa-claro/30 transition-colors group"
                 >
-                  {/* COLUNA PRODUTO: Imagem e Nome agrupados */}
                   <td className="p-5">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-rosa-claro flex-shrink-0 border border-rosa-pastel">
@@ -154,7 +148,6 @@ const TabelaEstoque = ({ produtos, categoriaAtiva, onEditar, onExcluir }) => {
                     </div>
                   </td>
 
-                  {/* PREÇO E QUANTIDADE */}
                   <td className="p-5 font-bold text-rosa-choque">
                     R$ {Number(produto.preco).toFixed(2)}
                   </td>
@@ -162,7 +155,6 @@ const TabelaEstoque = ({ produtos, categoriaAtiva, onEditar, onExcluir }) => {
                     {produto.quantidade}
                   </td>
 
-                  {/* CATEGORIA GENÉRICA (quando não tem filtro ativo) */}
                   {!categoriaAtiva && (
                     <td className="p-5">
                       <span className="px-3 py-1 bg-rosa-pastel text-rosa-choque text-xs font-bold rounded-full">
@@ -171,10 +163,8 @@ const TabelaEstoque = ({ produtos, categoriaAtiva, onEditar, onExcluir }) => {
                     </td>
                   )}
 
-                  {/* CÉLULAS DINÂMICAS INJETADAS AQUI */}
                   {renderCelulasEspecificas(produto)}
 
-                  {/* AÇÕES: Botões com os SVGs originais */}
                   <td className="p-5">
                     <div className="flex justify-center gap-2">
                       <button

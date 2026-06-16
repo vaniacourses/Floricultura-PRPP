@@ -39,7 +39,7 @@ export default function DetalhesPage() {
 
   useEffect(() => {
   if (codigo) {
-    // REPETINDO A SUA LÓGICA QUE JÁ FUNCIONA:
+  
     const token = localStorage.getItem("token");
     if (token) {
       try {
@@ -111,10 +111,10 @@ export default function DetalhesPage() {
   const { token } = useAuth();
 
   const handleAdicionarAoCarrinho = async (produto: Produto) => {
-    // 1. Log para ver o que o React e o navegador têm gravado
-    console.log("--- INÍCIO DO FLUXO DE COMPRA ---");
-    console.log("Token vindo do useAuth():", token);
-    console.log("Token vindo do localStorage:", localStorage.getItem("token"));
+    
+    //console.log("--- INÍCIO DO FLUXO DE COMPRA ---");
+    //console.log("Token vindo do useAuth():", token);
+    //console.log("Token vindo do localStorage:", localStorage.getItem("token"));
 
     const tokenAtual = token || localStorage.getItem("token");
 
@@ -152,8 +152,7 @@ export default function DetalhesPage() {
         console.error("Erro desconhecido:", error);
       }
 
-      // 2. Se o seu catch antigo tiver uma linha de navigate aqui dentro, 
-      // pode ser ela que está te expulsando da página!
+
       console.warn("Redirecionando para o login devido ao erro acima...");
       navigate("/cliente-login");
     }

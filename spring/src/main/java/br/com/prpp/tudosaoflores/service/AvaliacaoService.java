@@ -33,8 +33,6 @@ public class AvaliacaoService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    @Autowired
-    private ClienteService clienteService;
 
     public List<AvaliacaoDto> recuperarAvaliacoesPorProduto(Long codigo) {
         List<Avaliacao> avaliacoes = avaliacaoRepository.findByProduto_codigo(codigo);
@@ -44,7 +42,7 @@ public class AvaliacaoService {
                     a.getProduto() != null ? a.getProduto().getCodigo() : "NULL",
                     a.getUsuario() != null ? a.getUsuario().getUsuarioId() : "NULL");
         }
-        // Filtra avaliações com produto ou usuário nulo
+
         return avaliacoes.stream()
                 .filter(a -> a.getProduto() != null && a.getUsuario() != null)
                 .map(avaliacaoMapper::toAvaliacaoDto)
@@ -59,7 +57,7 @@ public class AvaliacaoService {
                     a.getProduto() != null ? a.getProduto().getCodigo() : "NULL",
                     a.getUsuario() != null ? a.getUsuario().getUsuarioId() : "NULL");
         }
-        // Filtra avaliações com produto nulo (órfãs) e mapeia as válidas
+
         return avaliacoes.stream()
                 .filter(a -> a.getProduto() != null && a.getUsuario() != null)
                 .map(avaliacaoMapper::toAvaliacaoDto)

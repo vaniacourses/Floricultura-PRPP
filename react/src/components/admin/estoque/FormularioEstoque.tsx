@@ -9,7 +9,7 @@ const FormularioEstoque = ({
   editandoCodigo,
   imagensPredefinidas,
 }) => {
-  // Filtra as imagens predefinidas para mostrar apenas as da categoria selecionada
+
   const imagensDaCategoria =
     imagensPredefinidas?.filter(
       (img) => img.categoria === formData.categoria,
@@ -226,7 +226,7 @@ const FormularioEstoque = ({
         onSubmit={onSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
-        {/* Lado Esquerdo: Atributos Universais */}
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-bold text-rosa-choque mb-1">
@@ -312,14 +312,11 @@ const FormularioEstoque = ({
           </div>
         </div>
 
-        {/* Lado Direito: Atributos Específicos & Imagem */}
         <div className="space-y-4">
-          {/* Caixa de campos dinâmicos da classe selecionada */}
           <div className="grid grid-cols-2 gap-4 mb-4 p-4 bg-rosa-claro/30 rounded-xl border border-rosa-pastel min-h-[100px]">
             {renderCamposEspecificos()}
           </div>
 
-          {/* Galeria de Seleção de Imagens */}
           <div>
             <label className="block text-sm font-bold text-rosa-choque mb-2">
               Selecione a Imagem *{" "}
@@ -329,7 +326,6 @@ const FormularioEstoque = ({
             </label>
 
             <div className="flex gap-4">
-              {/* Pré-visualização da imagem selecionada */}
               <div className="w-32 h-32 rounded-xl overflow-hidden bg-rosa-claro border border-rosa-pastel flex-shrink-0 flex items-center justify-center">
                 {formData.imagem ? (
                   <img
@@ -344,7 +340,6 @@ const FormularioEstoque = ({
                 )}
               </div>
 
-              {/* Grid rolável de opções */}
               <div className="flex-1 bg-gray-50 p-2 rounded-xl border border-rosa-pastel h-32 overflow-y-auto">
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                   {imagensDaCategoria.length > 0 ? (

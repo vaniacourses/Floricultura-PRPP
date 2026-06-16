@@ -13,7 +13,6 @@ const integrantes = [
 const ContatoPage = () => {
   return (
     <div className="min-h-screen bg-rosa-claro py-16 px-4">
-      {/* Cabeçalho decorativo */}
       <div className="text-center mb-12">
         <p className="font-logo text-6xl text-rosa-choque mb-2">contato</p>
         <div className="flex items-center justify-center gap-3">
@@ -46,7 +45,6 @@ const ContatoPage = () => {
           </p>
         </div>
 
-        {/* Card de créditos */}
         <div className="bg-white border border-rosa-pastel rounded-2xl px-8 py-6 shadow-sm">
           <h2 className="text-rosa-choque font-semibold text-lg mb-5 text-center tracking-wide uppercase text-sm">
             Equipe
@@ -58,7 +56,6 @@ const ContatoPage = () => {
                 key={p.nome}
                 className="flex items-center gap-4 py-2 border-b border-rosa-pastel/40 last:border-0"
               >
-                {/* Avatar */}
                 <div className="w-9 h-9 rounded-full bg-rosa-pastel flex items-center justify-center flex-shrink-0">
                   <span className="text-rosa-choque font-semibold text-xs">
                     {p.iniciais}
@@ -70,7 +67,6 @@ const ContatoPage = () => {
           </ul>
         </div>
 
-        {/* Card de repositório */}
         <div className="bg-rosa-choque rounded-2xl px-8 py-6 text-center shadow-sm">
           <p className="text-rosa-pastel text-sm mb-3">
             Para mais informações, acesse o repositório do projeto:
@@ -81,7 +77,6 @@ const ContatoPage = () => {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-white text-rosa-choque font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-rosa-claro transition-colors duration-200"
           >
-            {/* Ícone GitHub (SVG inline) */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

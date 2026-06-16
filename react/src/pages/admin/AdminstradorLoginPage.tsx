@@ -35,7 +35,6 @@ const AdminstradorLoginPage = () => {
 
   return (
     <main className="h-[calc(100vh-145px)] flex overflow-hidden bg-gradient-to-br from-[#FFEEF2] via-white to-[#FFC7DB]">
-      {/* LADO ESQUERDO */}
       <section className="flex flex-1 flex-col items-center justify-center px-6 md:px-12">
         <div className="w-full max-w-md rounded-3xl bg-white/80 backdrop-blur-md p-10 shadow-2xl border border-white/40">
           <div className="mb-10 text-center">
@@ -79,7 +78,6 @@ const AdminstradorLoginPage = () => {
         </div>
       </section>
 
-      {/* LADO DIREITO */}
       <section className="hidden md:block flex-1 h-full bg-gray-50">
         <img
           src="/assets/flor-login.jpg"

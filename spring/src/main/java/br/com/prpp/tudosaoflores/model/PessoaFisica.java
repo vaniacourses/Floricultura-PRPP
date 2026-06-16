@@ -9,7 +9,6 @@ public class PessoaFisica extends Cliente {
 
     private String cpf;
     private LocalDate dataNascimento;
-    private String cidade;
 
     public PessoaFisica() {
         super();

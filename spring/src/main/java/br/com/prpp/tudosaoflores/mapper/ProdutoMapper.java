@@ -6,7 +6,7 @@ import br.com.prpp.tudosaoflores.model.Produto;
 import br.com.prpp.tudosaoflores.model.produtos.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.SubclassMapping;
+
 
 import java.util.List;
 import java.util.stream.Collectors;

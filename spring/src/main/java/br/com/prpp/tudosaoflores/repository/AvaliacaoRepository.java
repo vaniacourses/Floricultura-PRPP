@@ -1,10 +1,6 @@
 package br.com.prpp.tudosaoflores.repository;
 
-import br.com.prpp.tudosaoflores.dto.AvaliacaoDto;
 import br.com.prpp.tudosaoflores.model.Avaliacao;
-import br.com.prpp.tudosaoflores.model.Produto;
-import br.com.prpp.tudosaoflores.model.Cliente;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

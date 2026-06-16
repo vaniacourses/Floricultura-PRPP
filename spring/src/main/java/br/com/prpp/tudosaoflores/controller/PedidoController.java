@@ -6,7 +6,6 @@ import br.com.prpp.tudosaoflores.dto.PedidoResumoDto;
 import br.com.prpp.tudosaoflores.dto.ReservaCreate;
 import br.com.prpp.tudosaoflores.service.ClienteService;
 import br.com.prpp.tudosaoflores.service.PedidoService;
-import br.com.prpp.tudosaoflores.service.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

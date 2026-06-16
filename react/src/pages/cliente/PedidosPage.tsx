@@ -52,7 +52,6 @@ export default function PedidosPage() {
 
     try {
       setLoading(true);
-      // MODIFICAÇÃO: Batendo estritamente na rota de histórico de pedidos do Java
       const response = await axios.get<PedidoData[]>("http://localhost:8080/pedidos", {
         headers: {
           Authorization: `Bearer ${tokenAtual}`,
@@ -106,7 +105,6 @@ export default function PedidosPage() {
     <div className="min-h-screen bg-slate-50 py-8">
       <div className="container mx-auto max-w-5xl bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
         
-        {/* Cabeçalho da Página */}
         <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Meus Pedidos</h2>
@@ -121,7 +119,6 @@ export default function PedidosPage() {
           </button>
         </div>
 
-        {/* Verificação de Histórico Vazio */}
         {!pedidos || pedidos.length === 0 ? (
           <div className="text-center py-12 space-y-4">
             <p className="text-sm text-muted-foreground">Você ainda não realizou nenhum pedido no nosso sistema.</p>
@@ -133,14 +130,14 @@ export default function PedidosPage() {
             </button>
           </div>
         ) : (
-          /* Listagem dos Cards de Pedidos */
+
           <div className="space-y-6">
             {pedidos.map((pedido) => (
               <div 
                 key={pedido.idPedido} 
                 className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden"
               >
-               {/* Topo do Card com Metadados do Pedido */}
+
               <div className="bg-slate-50 p-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-4">
                 <div className="flex gap-6 text-xs text-slate-600">
                   <div>
@@ -163,7 +160,6 @@ export default function PedidosPage() {
                 </div>
               </div>
 
-                {/* Listagem dos Itens de Dentro Desse Pedido */}
                 <div className="p-4 divide-y divide-slate-100">
                   {pedido.origem === "RESERVA" && (
                     <div className="pb-4 text-sm text-slate-600">

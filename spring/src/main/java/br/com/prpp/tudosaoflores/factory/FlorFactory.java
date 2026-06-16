@@ -3,7 +3,6 @@ package br.com.prpp.tudosaoflores.factory;
 import br.com.prpp.tudosaoflores.model.Produto;
 import br.com.prpp.tudosaoflores.model.produtos.Flor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -24,6 +23,6 @@ public class FlorFactory implements ProdutoFactory {
 
     @Override
     public String getCategoria() {
-        return "FLORES"; // Deve ser exatamente o que o Frontend envia
+        return "FLORES";
     }
 }

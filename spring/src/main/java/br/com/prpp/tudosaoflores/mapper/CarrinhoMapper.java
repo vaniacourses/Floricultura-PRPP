@@ -1,13 +1,11 @@
 package br.com.prpp.tudosaoflores.mapper;
 
 import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
-import br.com.prpp.tudosaoflores.dto.ItemCarrinhoDto;
 import br.com.prpp.tudosaoflores.model.Carrinho;
-import br.com.prpp.tudosaoflores.model.ItemCarrinho;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @Mapper(componentModel = "spring", uses = {ItemCarrinhoMapper.class})
 public interface CarrinhoMapper {

@@ -2,8 +2,6 @@ import { type ChangeEvent, type FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
-// ADIÇÃO: Importação de ícones simples para a lixeira e botões (opcional, ou use texto/SVG se preferir)
-// Se não usar lucide-react, os SVGs nativos já foram incluídos no código abaixo.
 
 interface ItemCarrinho {
   id: number;
@@ -87,7 +85,7 @@ export default function CarrinhoPage() {
     return `${endereco.rua}, ${endereco.numero}${complemento} - ${endereco.bairro}, ${endereco.cidade}/${endereco.uf} - CEP ${endereco.cep}`;
   };
 
-  // Procure estas três funções na sua CarrinhoPage.tsx e aplique a MODIFICAÇÃO:
+
 
   const handleAlterarQuantidade = async (itemId: number, quantidadeAtual: number, mudanca: number) => {
     const tokenAtual = token || localStorage.getItem("token");
@@ -95,14 +93,14 @@ export default function CarrinhoPage() {
 
     const novaQuantidade = quantidadeAtual + mudanca;
 
-    // Se a quantidade nova for zero ou menos, deletamos o item
+  
     if (novaQuantidade <= 0) {
       handleRemoverItem(itemId);
       return;
     }
 
     try {
-      // MODIFICAÇÃO: Batendo em /item/ e enviando os params que o @RequestParam do Java espera
+
       await axios.put(`http://localhost:8080/carrinho/item/${itemId}`, null, {
         params: { 
           novaQuantidade: novaQuantidade 
@@ -123,7 +121,7 @@ export default function CarrinhoPage() {
     if (!tokenAtual) return;
 
     try {
-      // MODIFICAÇÃO: Rota ajustada para /carrinho/item/{id}
+
       await axios.delete(`http://localhost:8080/carrinho/item/${itemId}`, {
         headers: { 
           Authorization: `Bearer ${tokenAtual}` 
@@ -144,7 +142,7 @@ export default function CarrinhoPage() {
 
     try {
       setLoading(true);
-      // MODIFICAÇÃO: DELETE cru na raiz do /carrinho para esvaziar a lista
+
       await axios.delete("http://localhost:8080/carrinho", {
         headers: { 
           Authorization: `Bearer ${tokenAtual}` 
@@ -344,7 +342,7 @@ export default function CarrinhoPage() {
     <div className="min-h-screen bg-slate-50 py-8">
       <div className="container mx-auto max-w-5xl bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
         
-        {/* Cabeçalho da Página */}
+    
         <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
           <div>
             <h2 className="text-2xl font-semibold">Seu Carrinho</h2>
@@ -353,7 +351,6 @@ export default function CarrinhoPage() {
             )}
           </div>
           <div className="flex gap-2">
-            {/* ADIÇÃO: Botão Limpar Carrinho no cabeçalho se houver itens */}
             {carrinho && carrinho.itens && carrinho.itens.length > 0 && (
               <button
                 type="button"
@@ -366,7 +363,6 @@ export default function CarrinhoPage() {
           </div>
         </div>
 
-        {/* Verificação de Carrinho Vazio */}
         {!carrinho || (!possuiItens && !possuiAssinatura) ? (
           <div className="text-center py-12 space-y-4">
             <p className="text-sm text-muted-foreground">Não há nenhum produto no seu carrinho no momento.</p>
@@ -378,10 +374,8 @@ export default function CarrinhoPage() {
             </button>
           </div>
         ) : (
-          /* Grid Principal */
           <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
             
-            {/* Seção dos Itens Cadastrados */}
             <div className="space-y-4">
               {possuiAssinatura && (
                 <div className="rounded-2xl bg-[#fff7f8] p-4 border border-[#f3d7df] flex flex-col sm:flex-row items-center gap-4 justify-between">
@@ -444,10 +438,8 @@ export default function CarrinhoPage() {
                     </div>
                   </div>
 
-                  {/* MODIFICAÇÃO: Seção de controles de quantidade e exclusão individual */}
                   <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/60">
                     
-                    {/* Botões de - / Qtd / + */}
                     <div className="flex items-center border border-slate-200 bg-white rounded-lg p-1 shadow-sm">
                       <button
                         type="button"
@@ -474,7 +466,6 @@ export default function CarrinhoPage() {
                       </span>
                     </div>
 
-                    {/* ADIÇÃO: Ícone de lixeira individual */}
                     <button
                       type="button"
                       onClick={() => handleRemoverItem(item.id)}
@@ -490,7 +481,6 @@ export default function CarrinhoPage() {
               ))}
             </div>
 
-            {/* Seção Lateral de Fechamento do Pedido */}
             <aside className="space-y-4">
               <section className="bg-white rounded-3xl p-6 border border-rosa-pastel shadow-sm bg-slate-50/50">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">

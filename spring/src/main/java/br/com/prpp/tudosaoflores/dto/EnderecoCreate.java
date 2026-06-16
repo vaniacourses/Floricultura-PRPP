@@ -9,7 +9,7 @@ public class EnderecoCreate {
     private String uf;
     private String complemento;
 
-    // Getters e Setters manuais
+
     public String getCep() { return cep; }
     public void setCep(String cep) { this.cep = cep; }
     public String getRua() { return rua; }

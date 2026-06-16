@@ -206,8 +206,7 @@ export default function HistoricoPedidosPage() {
           </div>
         </div>
 
-        {/* FILTROS */}
-        <div className="bg-white rounded-2xl border border-rosa-pastel/50 shadow-sm p-6">
+         <div className="bg-white rounded-2xl border border-rosa-pastel/50 shadow-sm p-6">
           <h2 className="font-bold text-lg text-rosa-text mb-5">
             Filtros
           </h2>
@@ -279,8 +278,7 @@ export default function HistoricoPedidosPage() {
           </div>
         </div>
 
-        {/* TABELA */}
-        <div className="bg-white rounded-2xl border border-rosa-pastel/50 shadow-sm overflow-hidden">
+         <div className="bg-white rounded-2xl border border-rosa-pastel/50 shadow-sm overflow-hidden">
 
           <div className="p-6 border-b border-rosa-claro flex items-center justify-between">
             <h2 className="text-lg font-bold text-rosa-text">

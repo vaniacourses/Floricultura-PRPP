@@ -151,7 +151,6 @@ const EnderecosPage = () => {
           </button>
         </div>
 
-        {/* Lista de endereços */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {enderecos.length === 0 ? (
             <p className="col-span-2 text-center text-rosa-text opacity-60">Nenhum endereço cadastrado.</p>
@@ -183,7 +182,6 @@ const EnderecosPage = () => {
           )}
         </div>
 
-        {/* Modal/Formulário */}
         {formVisivel && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">            
           <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border border-rosa-pastel">

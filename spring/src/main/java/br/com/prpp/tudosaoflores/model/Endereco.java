@@ -23,7 +23,7 @@ public class Endereco {
 
     public Endereco() {}
 
-    // Getters e Setters manuais
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

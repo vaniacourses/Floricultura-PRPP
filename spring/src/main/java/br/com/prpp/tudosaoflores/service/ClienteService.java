@@ -62,7 +62,7 @@ public class ClienteService {
         return clienteMapper.toDto(cliente);
     }
 
-    // Cadastro manual, sem mappers específicos
+
     public ClienteDto cadastrarCliente(ClienteCreate request) {
         Cliente cliente;
         if ("PF".equalsIgnoreCase(request.getTipo())) {
@@ -72,7 +72,7 @@ public class ClienteService {
             pf.setTelefone(request.getTelefone());
             pf.setGoogleId(request.getGoogleId());
             pf.setCpf(request.getCpf());
-            pf.setDataNascimento(request.getNascimento()); // ajuste se o campo for dataNascimento
+            pf.setDataNascimento(request.getNascimento()); 
             cliente = clienteRepository.save(pf);
         } else if ("PJ".equalsIgnoreCase(request.getTipo())) {
             PessoaJuridica pj = new PessoaJuridica();
@@ -115,7 +115,7 @@ public class ClienteService {
         clienteRepository.deleteById(idCliente);
     }
 
-    // Obtém o cliente autenticado a partir do token JWT
+
     public Cliente obterClienteAutenticado() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
@@ -126,18 +126,17 @@ public class ClienteService {
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
     }
 
-    // Retorna o DTO do cliente logado
+
     public ClienteDto obterPerfil() {
         Cliente cliente = obterClienteAutenticado();
         return clienteMapper.toDto(cliente);
     }
 
-    // Atualiza o perfil do cliente logado
+
     public ClienteDto atualizarPerfil(ClienteCreate request) {
         Cliente cliente = obterClienteAutenticado();
         return alterarCliente(cliente.getUsuarioId(), request);
     }
-
 
 
     public void removerMinhaConta() {

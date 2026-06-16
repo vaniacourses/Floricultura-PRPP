@@ -5,7 +5,6 @@ import br.com.prpp.tudosaoflores.model.ItemPedido;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper(componentModel = "spring")

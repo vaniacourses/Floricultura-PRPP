@@ -93,14 +93,14 @@ const ClienteRegistroPage: React.FC = () => {
 
     setLoading(true);
     try {
-      // Atualiza perfil com os campos do tipo real
+
       const payloadPerfil = tipoCliente === "PF"
         ? { tipo: "PF", nome: formData.nome, email: formData.email, telefone: formData.telefone, cpf: formData.cpf, nascimento: formData.dataNascimento}
         : { tipo: "PJ", nome: formData.nome, email: formData.email, telefone: formData.telefone, razaoSocial: formData.nome, cnpj: formData.cnpj };
 
       await api.put("/clientes/me", payloadPerfil);
 
-      // Cria o endereço principal
+
       const enderecoPayload = {
         cep: formData.cep,
         rua: formData.rua,
@@ -182,7 +182,6 @@ const ClienteRegistroPage: React.FC = () => {
           )}
           <hr className="border-rosa-pastel/30 my-2" />
           <h3 className="text-rosa-choque font-bold text-sm uppercase ml-1">Endereço Principal</h3>
-          {/* ... (campos de endereço permanecem iguais) ... */}
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col">
               <label className="text-rosa-text font-black text-[12px] mb-1">CEP</label>

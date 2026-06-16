@@ -37,7 +37,6 @@ public class EnderecoMapper {
         entity.setCidade(create.getCidade());
         entity.setUf(create.getUf());
         entity.setComplemento(create.getComplemento());
-        // O cliente será definido no service
         return entity;
     }
 

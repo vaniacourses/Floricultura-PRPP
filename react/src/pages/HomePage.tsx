@@ -73,7 +73,6 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-rosa-claro font-menu text-rosa-text">
-      {/* HERO SECTION */}
       <section className="relative bg-gradient-to-br from-[#490829] via-[#B03A61] to-rosa-choque text-white overflow-hidden">
         <div
           className="absolute inset-0 opacity-20 bg-cover bg-center"
@@ -124,7 +123,7 @@ const HomePage = () => {
         </svg>
       </section>
 
-      {/* SERVIÇOS / DIFERENCIAIS */}
+ 
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
           <h2 className="font-logo text-5xl md:text-6xl text-rosa-choque mb-4">

@@ -46,7 +46,7 @@ const SearchPage = () => {
     return (
         <div className="min-h-screen bg-rosa-claro font-menu text-rosa-text p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
-            {/* Cabeçalho */}
+          
             <div className="flex items-center gap-4 mb-10">
             <Link to="/" className="text-rosa-choque hover:opacity-80">
                 <ArrowLeft size={28} />
@@ -56,7 +56,6 @@ const SearchPage = () => {
             </h1>
             </div>
 
-            {/* Conteúdo */}
             {loading ? (
             <div className="flex justify-center items-center h-64">
                 <Loader2 className="animate-spin text-rosa-choque" size={48} />

@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @ToString
 @Entity
-@DiscriminatorColumn(name = "tipo_produto", discriminatorType = DiscriminatorType.STRING) // Adicione isso
+@DiscriminatorColumn(name = "tipo_produto", discriminatorType = DiscriminatorType.STRING) 
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Produto {
     @Id
@@ -26,7 +26,7 @@ public abstract class Produto {
     private String nome;
     private String descricao;
     @Min(value = 0, message = "A quantidade não pode ser negativa")
-    private Integer quantidade; // Quantidade em estoque
+    private Integer quantidade; 
     private String imagem;
 
     public Produto(Long codigo, BigDecimal preco,String nome, String descricao, Integer quantidade, String imagem) {

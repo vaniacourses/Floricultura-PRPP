@@ -9,7 +9,7 @@ const mensagemErroHttp = (status: number, body: string) => {
       if (typeof data.message === "string" && data.message.trim()) return data.message;
       if (typeof data.error === "string" && data.error.trim()) return data.error;
     } catch {
-      // Respostas HTML/texto do Spring nao devem vazar para a interface.
+    
     }
   }
 

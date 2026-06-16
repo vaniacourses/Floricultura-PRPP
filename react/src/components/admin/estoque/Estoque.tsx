@@ -17,7 +17,7 @@ const Estoque = () => {
     descricao: "",
     quantidade: "",
     imagem: "",
-    // Campos Específicos
+
     validade: "",
     unidadeMedida: "",
     processoSecagem: "",
@@ -25,7 +25,7 @@ const Estoque = () => {
     tamanho: "",
     tema: "",
     dimensoes: "",
-    produtosIds: "", // Para a classe Kit
+    produtosIds: "", 
   });
 
   const [editandoCodigo, setEditandoCodigo] = useState(null);
@@ -48,7 +48,7 @@ const Estoque = () => {
     const { name, value } = e.target;
 
     setFormData((prevData) => {
-      // Limpa os campos específicos ao trocar a categoria
+
       if (name === "categoria") {
         return {
           ...prevData,
@@ -86,7 +86,7 @@ const Estoque = () => {
   const prepararEdicao = (produto) => {
     setEditandoCodigo(produto.codigo);
 
-    // Converte a lista de produtos do Kit para uma string de IDs separados por vírgula
+   
     const idsDoKit = produto.produtos
       ? produto.produtos.map((p) => p.codigo).join(", ")
       : "";
@@ -147,15 +147,14 @@ const Estoque = () => {
 
     const categoriaRota = mapearCategoriaParaRota(formData.categoria);
 
-    // Remove campos de controle da submissão bruta
+
     const { categoria, produtosIds, ...dadosBrutos } = formData;
 
-    // Remove os campos nulos ou vazios para não enviar atributos não reconhecidos pelo Spring
     const dadosEnvio = Object.fromEntries(
       Object.entries(dadosBrutos).filter(([_, v]) => v !== "" && v !== null),
     );
 
-    // Tratamento para o relacionamento ManyToMany do Kit
+
     if (categoria === "KITS" && produtosIds) {
       dadosEnvio.produtos = produtosIds
         .split(",")

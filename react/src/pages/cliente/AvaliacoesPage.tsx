@@ -33,8 +33,7 @@ const AvaliacoesPage = () => {
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const payload = JSON.parse(window.atob(base64));
       const usuarioId = payload.usuarioId;
-      // guarda usuário logado para permitir ações (ex: excluir)
-      // (aqui não sobrescrevemos o nome da variável)
+
       
       if (!usuarioId || isNaN(usuarioId)) {
         setErro("Não foi possível identificar seu usuário. Faça login novamente.");

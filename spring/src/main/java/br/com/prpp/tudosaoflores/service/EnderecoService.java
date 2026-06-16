@@ -8,7 +8,6 @@ import br.com.prpp.tudosaoflores.model.Endereco;
 import br.com.prpp.tudosaoflores.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ public class EnderecoService {
     private EnderecoMapper enderecoMapper;
 
     @Autowired
-    private ClienteService clienteService; // para obter o cliente autenticado
+    private ClienteService clienteService;
 
     public List<EnderecoDto> listarEnderecos() {
         Cliente cliente = clienteService.obterClienteAutenticado();
@@ -42,7 +41,7 @@ public class EnderecoService {
     public EnderecoDto atualizarEndereco(Long id, EnderecoCreate create) {
         Endereco endereco = enderecoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
-        // Verificar se o endereço pertence ao cliente autenticado
+
         Cliente cliente = clienteService.obterClienteAutenticado();
         if (!endereco.getCliente().getUsuarioId().equals(cliente.getUsuarioId())) {
             throw new RuntimeException("Acesso negado");

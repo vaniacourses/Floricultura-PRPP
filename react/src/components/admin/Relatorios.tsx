@@ -85,7 +85,6 @@ const Relatorio: React.FC = () => {
   return (
     <div className="min-h-screen bg-rosa-claro p-4 md:p-8 font-menu text-rosa-text">
       <div className="max-w-6xl mx-auto">
-        {/* CABEÇALHO */}
         <div className="text-center mb-8">
           <h1 className="font-logo text-5xl md:text-7xl text-rosa-choque">tudo são flores</h1>
           <p className="uppercase tracking-widest text-sm opacity-80 mt-2">
@@ -114,7 +113,6 @@ const Relatorio: React.FC = () => {
           </div>
         </div>
 
-        {/* MÉTRICAS PRINCIPAIS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <CardMetrica
             icon={<Users size={24} />}
@@ -154,7 +152,6 @@ const Relatorio: React.FC = () => {
           />
         </div>
 
-        {/* CARDS DE DESTAQUES */}
         <div className="mt-10 space-y-6">
           <div className="bg-white rounded-2xl p-6 shadow">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
@@ -174,7 +171,6 @@ const Relatorio: React.FC = () => {
                 </p>
               </div>
 
-              {/* Categoria mais vendida */}
               <div className="bg-rosa-claro/30 rounded-xl p-5 flex flex-col items-center text-center">
                 <Tag size={32} className="text-rosa-choque mb-2" />
                 <h3 className="font-semibold text-sm uppercase tracking-wider">Categoria Líder</h3>
@@ -184,7 +180,6 @@ const Relatorio: React.FC = () => {
                 <p className="text-sm opacity-75">Maior volume do período</p>
               </div>
 
-              {/* Assinatura líder */}
               <div className="bg-rosa-claro/30 rounded-xl p-5 flex flex-col items-center text-center">
                 <CreditCard size={32} className="text-rosa-choque mb-2" />
                 <h3 className="font-semibold text-sm uppercase tracking-wider">Assinatura Líder</h3>

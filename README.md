@@ -1,10 +1,8 @@
 # Floricultura-PRPP - Tudo São Flores 
 
-Sistema desenvolvido para a disciplina de Projeto de Software.
-
 **Tudo São Flores** é um site de floricultura que permite a compra de produtos, contratação de assinaturas recorrentes, solicitação de reservas para eventos e gerenciamento administrativo das operações da loja.
 
-O projeto foi desenvolvido aplicando conceitos de Arquitetura de Software, Projeto Orientado a Objetos, princípios SOLID, padrões GRASP e padrões GoF estudados na disciplina.
+O projeto foi desenvolvido aplicando conceitos de Arquitetura de Software, Projeto Orientado a Objetos, princípios SOLID, padrões GRASP e padrões GoF estudados na disciplina Projeto de Software.
 
 ## Tecnologias Utilizadas
 
@@ -43,6 +41,18 @@ Link dos slides (resumo da documentação): https://canva.link/eeql5q7ckd8zcpv
 
 ## Execução
 
+Para acessar administrador -> entrar com o email id/ic.uff.br
+
+### Banco de dados (Mysql)
+
+Atualizar password em:
+spring\src\main\resources\application.properties
+spring\out\production\tudo-sao-flores\application.properties
+
+```bash
+CREATE DATABASE prpp;
+USE prpp;
+```
 ### Backend
 
 ```bash

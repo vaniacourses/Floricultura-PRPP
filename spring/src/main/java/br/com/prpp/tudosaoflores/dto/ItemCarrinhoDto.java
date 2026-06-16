@@ -1,8 +1,8 @@
 package br.com.prpp.tudosaoflores.dto;
 
-import br.com.prpp.tudosaoflores.model.Carrinho;
+
 import br.com.prpp.tudosaoflores.model.ItemCarrinho;
-import br.com.prpp.tudosaoflores.model.Produto;
+
 
 import java.math.BigDecimal;
 

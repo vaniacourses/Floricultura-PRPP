@@ -3,7 +3,6 @@ package br.com.prpp.tudosaoflores.mapper;
 import br.com.prpp.tudosaoflores.dto.PedidoCreate;
 import br.com.prpp.tudosaoflores.dto.PedidoDto;
 import br.com.prpp.tudosaoflores.dto.PedidoResumoDto;
-import br.com.prpp.tudosaoflores.model.ItemPedido;
 import br.com.prpp.tudosaoflores.model.Pedido;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

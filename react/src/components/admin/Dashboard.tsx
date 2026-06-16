@@ -99,7 +99,6 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
-          {/* TABELA DE PEDIDOS DO DIA */}
           <div className="lg:col-span-2 bg-white rounded-2xl border border-rosa-pastel/50 shadow-sm overflow-hidden flex flex-col">
             <div className="p-6 border-b border-rosa-claro flex items-center justify-between bg-white z-10">
               <h2 className="text-lg font-bold flex items-center gap-2 text-rosa-text">
@@ -147,10 +146,8 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* COLUNA LATERAL */}
           <div className="space-y-6">
             
-            {/* CARD ESTOQUE CRÍTICO */}
             <div className="bg-white rounded-2xl border border-rosa-pastel/50 shadow-sm overflow-hidden flex flex-col">
               <div className="p-5 border-b border-rosa-claro bg-white">
                 <h2 className="text-md font-bold flex items-center gap-2 text-rosa-text">
@@ -164,7 +161,6 @@ export default function DashboardPage() {
                   ✓ Tudo abastecido por aqui!
                 </div>
               ) : (
-                /* max-h-[225px] ajustado para limitar a visão em exatamente 3 itens por vez */
                 <div className="divide-y divide-rosa-claro/30 max-h-[225px] overflow-y-auto custom-scrollbar">
                   {estoqueOrdenado.map((p: Produto) => (
                     <div key={p.codigo} className="p-4 h-[75px] flex items-center justify-between hover:bg-rosa-claro/10 transition-colors">
@@ -181,7 +177,6 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* CARD ENTREGAS FUTURAS */}
             <div className="bg-white rounded-2xl border border-rosa-pastel/50 shadow-sm p-5 relative overflow-hidden group">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-rosa-claro flex items-center justify-center text-rosa-choque transition-transform group-hover:scale-110">

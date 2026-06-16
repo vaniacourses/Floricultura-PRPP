@@ -13,33 +13,32 @@ import java.util.Map;
 @RestController
 @RequestMapping("/produtos")
 @CrossOrigin("*")
-@RequiredArgsConstructor // O Lombok também cria o construtor para injetar o ProdutoService aqui!
+@RequiredArgsConstructor
 public class ProdutoController {
 
     private final ProdutoService produtoService;
 
-    // GET - Listar todos os produtos do sistema (Retorna uma lista mista de FlorDto, KitDto, etc.)
+
     @GetMapping
     public ResponseEntity<List<ProdutoDto>> recuperarProdutos() {
         List<ProdutoDto> produtos = produtoService.recuperarProdutos();
         return ResponseEntity.ok(produtos);
     }
 
-    // GET - Filtrar produtos por categoria (Ex: /produtos/categoria/flores ou /produtos/categoria/cartoes)
+  
     @GetMapping("/categoria/{categoria}")
     public ResponseEntity<List<ProdutoDto>> recuperarProdutosPorCategoria(@PathVariable String categoria) {
         List<ProdutoDto> produtos = produtoService.recuperarProdutosPorCategoria(categoria);
         return ResponseEntity.ok(produtos);
     }
 
-    // GET - Buscar um único produto detalhado pelo código
     @GetMapping("/{codigo}")
     public ResponseEntity<ProdutoDto> recuperarProdutoPorCodigo(@PathVariable Long codigo) {
         ProdutoDto produto = produtoService.recuperarProdutoPorCodigo(codigo);
         return ResponseEntity.ok(produto);
     }
 
-    // POST - Cadastrar um novo produto dinamicamente baseado na categoria da URL
+
     @PostMapping("/categoria/{categoria}")
     public ResponseEntity<ProdutoDto> cadastrarProduto(
             @PathVariable String categoria,
@@ -49,7 +48,7 @@ public class ProdutoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 
-    // PUT - Atualizar dados de um produto existente de forma parcial/dinâmica
+
     @PutMapping("/{codigo}")
     public ResponseEntity<ProdutoDto> alterarProduto(
             @PathVariable Long codigo,
@@ -59,7 +58,7 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoAtualizado);
     }
 
-    // DELETE - Remover um produto do sistema
+
     @DeleteMapping("/{codigo}")
     public ResponseEntity<Void> removerProduto(@PathVariable Long codigo) {
         produtoService.removerProdutoPorCodigo(codigo);

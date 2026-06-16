@@ -23,10 +23,10 @@ const ClienteLoginPage = () => {
         nome: user.displayName,
       });
 
-      // Chama login do contexto (atualiza estado global)
+  
       login(response.token);
 
-      // Redireciona para o perfil (ou para registro se for novo)
+
       navigate("/cliente/perfil");
     } 
     catch (error: any) {
@@ -42,7 +42,6 @@ const ClienteLoginPage = () => {
 
   return (
     <main className="h-[calc(100vh-145px)] flex overflow-hidden bg-white">
-      {/* LADO ESQUERDO */}
       <section className="flex flex-1 flex-col items-center justify-center px-6 md:px-12">
         <h1 className="mb-10 text-3xl font-bold text-rosa-text">
           Tudo São Flores
@@ -83,7 +82,6 @@ const ClienteLoginPage = () => {
         </div>
       </section>
 
-      {/* LADO DIREITO */}
       <section className="hidden md:block flex-1 h-full bg-gray-50">
         <img
           src="/assets/flor-login.jpg"

@@ -42,7 +42,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
 
-  // Estados da busca instantânea
   const [termoBusca, setTermoBusca] = useState("");
   const [todosProdutos, setTodosProdutos] = useState<ProdutoApi[]>([]);
   const [resultados, setResultados] = useState<ProdutoApi[]>([]);
@@ -50,7 +49,6 @@ const Navbar = () => {
   const [carregandoCache, setCarregandoCache] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Estados das notificações
   const [notificacoes, setNotificacoes] = useState<any[]>([]);
   const [menuNotifAberto, setMenuNotifAberto] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -76,7 +74,6 @@ const Navbar = () => {
 
   const fecharMenu = () => setMenuAberto(false);
 
-  // Carrega todos os produtos uma única vez para filtrar localmente
   useEffect(() => {
     setCarregandoCache(true);
     api
@@ -86,7 +83,6 @@ const Navbar = () => {
       .finally(() => setCarregandoCache(false));
   }, []);
 
-  // Filtra produtos conforme o termo digitado (busca ao vivo)
   useEffect(() => {
     if (!termoBusca.trim()) {
       setResultados([]);
@@ -101,7 +97,6 @@ const Navbar = () => {
     setMostrarDropdown(filtrados.length > 0);
   }, [termoBusca, todosProdutos]);
 
-  // Busca as notificações enviando o Token de Segurança
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -179,7 +174,6 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 w-full bg-rosa-claro text-rosa-text shadow-lg">
       <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-        {/* LOGO */}
         <NavLink className="flex items-center gap-2 font-bold text-2xl" to="/" onClick={fecharMenu}>
           <Flower size={24} className="mt-2" />
           <span className="text-[38px] font-logo mt-2 hidden sm:inline">
@@ -187,7 +181,6 @@ const Navbar = () => {
           </span>
         </NavLink>
 
-        {/* BARRA DE PESQUISA (Desktop) */}
         <div className="hidden sm:flex flex-1 mx-6 max-w-2xl relative">
           <form onSubmit={handleSearchSubmit} className="w-full">
             <input
@@ -247,7 +240,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* LINKS PRINCIPAIS */}
         <div className="font-menu hidden md:flex items-center gap-6 font-medium shrink-0">
           <NavLink to="/home" className="flex items-center gap-1 hover:text-rosa-choque transition-colors">
             <Home size={20} />
@@ -276,7 +268,6 @@ const Navbar = () => {
             Carrinho
           </NavLink>
 
-          {/* SININHO DE NOTIFICAÇÕES */}
           {isAuthenticated && (
             <div className="relative" ref={dropdownRef}>
               <button 
@@ -327,7 +318,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* ÍCONES MOBILE */}
         <div className="flex items-center gap-3 md:hidden">
           <NavLink to="/carrinho" aria-label="Carrinho">
             <ShoppingCart size={22} className="hover:text-rosa-choque transition-colors" />
@@ -342,7 +332,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* PESQUISA MOBILE */}
       <div className="sm:hidden px-4 pb-3">
         <div className="relative">
           <form onSubmit={handleSearchSubmit}>
@@ -366,7 +355,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* LINKS CATEGORIAS (Desktop) */}
       <div className="hidden md:flex items-center justify-center gap-16 py-3 text-sm overflow-x-auto whitespace-nowrap px-6 font-menu border-t border-white/20 bg-rosa-medio/30">
         {categorias.map((item) => (
           <NavLink
@@ -380,7 +368,6 @@ const Navbar = () => {
         ))}
       </div>
 
-      {/* MENU RESPONSIVO MOBILE */}
       {menuAberto && (
         <div className="md:hidden border-t border-white/20 bg-rosa-claro font-menu">
           <div className="flex flex-col px-6 py-4 gap-4 border-b border-rosa-pastel/40">

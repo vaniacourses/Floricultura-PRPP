@@ -9,17 +9,16 @@ public class ClienteDto {
     private String email;
     private String telefone;
     private String googleId;
-    // PF
+
     private String cpf;
     private LocalDate nascimento;
-    // PJ
+
     private String razaoSocial;
     private String cnpj;
-    // status
+
     private String membroDesde;
     private boolean ativo;
 
-    // Getters e Setters manuais
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTipo() { return tipo; }

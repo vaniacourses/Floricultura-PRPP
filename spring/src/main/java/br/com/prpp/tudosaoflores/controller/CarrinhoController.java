@@ -3,10 +3,9 @@ package br.com.prpp.tudosaoflores.controller;
 import br.com.prpp.tudosaoflores.dto.AssinaturaCreate;
 import br.com.prpp.tudosaoflores.dto.CarrinhoDto;
 import br.com.prpp.tudosaoflores.dto.FinalizarCompraRequest;
-import br.com.prpp.tudosaoflores.dto.ItemAtualizarQuantidade;
+
 import br.com.prpp.tudosaoflores.dto.ItemCarrinhoCreate;
-import br.com.prpp.tudosaoflores.model.Carrinho;
-import br.com.prpp.tudosaoflores.model.Cliente;
+
 import br.com.prpp.tudosaoflores.service.CarrinhoService;
 import br.com.prpp.tudosaoflores.service.ClienteService;
 import br.com.prpp.tudosaoflores.service.ProdutoService;
@@ -14,8 +13,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")

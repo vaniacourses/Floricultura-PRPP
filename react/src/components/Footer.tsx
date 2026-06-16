@@ -11,7 +11,6 @@ const Footer = () => {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-6 grid grid-cols-1 sm:grid-cols-3 gap-10">
-        {/* Coluna 1 — Logo e descrição */}
         <div className="flex flex-col gap-3">
           <span className="font-logo text-4xl text-white">Tudo são flores</span>
           <p className="text-rosa-pastel/80 text-sm leading-relaxed">
@@ -20,7 +19,6 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Coluna 2 — Navegação */}
         <div className="flex flex-col gap-2">
           <h3 className="text-white font-semibold text-sm uppercase tracking-widest mb-1">
             Navegação
@@ -40,7 +38,6 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Coluna 3 — Categorias */}
         <div className="flex flex-col gap-2">
           <h3 className="text-white font-semibold text-sm uppercase tracking-widest mb-1">
             Produtos
@@ -65,7 +62,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Rodapé inferior */}
       <div className="border-t border-rosa-pastel/20 py-3 text-center">
         <p className="text-rosa-pastel/60 text-xs">
           © 2026 Tudo são Flores · Projeto fictício desenvolvido na{" "}

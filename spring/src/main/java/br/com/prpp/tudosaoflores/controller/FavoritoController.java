@@ -2,7 +2,6 @@ package br.com.prpp.tudosaoflores.controller;
 
 import br.com.prpp.tudosaoflores.model.Cliente;
 import br.com.prpp.tudosaoflores.model.Favorito;
-import br.com.prpp.tudosaoflores.model.PessoaFisica;
 import br.com.prpp.tudosaoflores.model.Produto;
 import br.com.prpp.tudosaoflores.repository.FavoritoRepository;
 import br.com.prpp.tudosaoflores.repository.ProdutoRepository;

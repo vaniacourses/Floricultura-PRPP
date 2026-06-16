@@ -16,7 +16,7 @@ public class ClienteCreate {
     private String razaoSocial;
     private String cnpj;
 
-    // Getters e Setters manuais
+
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
     public String getNome() { return nome; }

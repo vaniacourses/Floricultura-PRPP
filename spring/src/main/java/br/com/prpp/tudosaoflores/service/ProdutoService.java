@@ -9,7 +9,6 @@ import br.com.prpp.tudosaoflores.model.produtos.*;
 import br.com.prpp.tudosaoflores.observer.NotificacaoBancoObserver;
 import br.com.prpp.tudosaoflores.observer.ProdutoObserver;
 import br.com.prpp.tudosaoflores.observer.ProdutoPublisher;
-import br.com.prpp.tudosaoflores.repository.NotificacaoRepository;
 import br.com.prpp.tudosaoflores.repository.ProdutoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -32,26 +31,26 @@ public class ProdutoService implements ProdutoPublisher {
     private final NotificacaoBancoObserver notificacaoBanco;
     private final List<ProdutoObserver> observers = new ArrayList<>();
 
-    //Configura os ouvintes
+
     @PostConstruct
     public void inicializarSubscribers() {
         addObserver(notificacaoBanco);
     }
 
-    // GET - Recupera todos os produtos (retorna uma lista polimórfica de FlorDto, BuqueDto...)
+  
     public List<ProdutoDto> recuperarProdutos() {
         List<Produto> produtos = produtoRepository.findAll();
         return produtoMapper.toProdutosDto(produtos);
     }
 
-    // GET - Filtra produtos por uma categoria específica através do banco de dados
+
     public List<ProdutoDto> recuperarProdutosPorCategoria(String categoria) {
         Class<? extends Produto> classeCategoria = mapearCategoriaParaClasse(categoria);
         List<Produto> produtos = produtoRepository.findByCategoria(classeCategoria);
         return produtoMapper.toProdutosDto(produtos);
     }
 
-    // GET - Busca um produto específico pelo código
+
     public ProdutoDto recuperarProdutoPorCodigo(Long codigo) {
         Produto produto = produtoRepository.findById(codigo).orElseThrow(
                 () -> new EntidadeNaoEncontradaException("Produto com código " + codigo + " não encontrado")
@@ -84,10 +83,9 @@ public class ProdutoService implements ProdutoPublisher {
         return produtoMapper.toProdutoDto(produto);
     }
 
-    // PUT / PATCH - Atualiza uma entidade de forma reflexiva e dispara o Observer
     @Transactional
     public ProdutoDto alterarProduto(Long codigo, Map<String, Object> dados) {
-        // 1. Busca o produto atual antes de ser modificado
+
         Produto produtoExistente = produtoRepository.findById(codigo).orElseThrow(
                 () -> new EntidadeNaoEncontradaException("Produto com código " + codigo + " não encontrado")
         );
@@ -128,7 +126,7 @@ public class ProdutoService implements ProdutoPublisher {
         return produtoMapper.toProdutoDto(produtoSalvo);
     }
 
-    // DELETE - Remove o produto por código
+
     @Transactional
     public void removerProdutoPorCodigo(Long codigo) {
         if (!produtoRepository.existsById(codigo)) {

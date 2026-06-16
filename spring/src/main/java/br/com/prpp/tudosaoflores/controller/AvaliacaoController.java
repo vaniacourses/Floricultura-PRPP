@@ -17,16 +17,16 @@ import java.util.List;
 public class AvaliacaoController {
 
     @Autowired
-    private AvaliacaoService avaliacaoService; // Corrigido nomenclatura para minúscula
+    private AvaliacaoService avaliacaoService; 
 
-    // GET - Recuperar avaliações de um produto específico (/avaliacoes/produto?codigo=1)
+ 
     @GetMapping("/produto")
     public ResponseEntity<List<AvaliacaoDto>> recuperarAvaliacoesPorProduto(@RequestParam Long codigo){
         List<AvaliacaoDto> avaliacoesDto =  avaliacaoService.recuperarAvaliacoesPorProduto(codigo);
         return ResponseEntity.ok(avaliacoesDto);
     }
 
-    // GET - Recuperar avaliações de um usuário específico (/avaliacoes/usuario?usuarioId=1)
+
     @GetMapping("/usuario")
     public ResponseEntity<List<AvaliacaoDto>> recuperarAvaliacoesPorUsuario(@RequestParam Long usuarioId){
         List<AvaliacaoDto> avaliacoesDto =  avaliacaoService.recuperarAvaliacoesPorUsuario(usuarioId);

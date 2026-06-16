@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface CarrinhoRepository extends JpaRepository<Carrinho, Long> {
 
-    // MODIFICAÇÃO: Alterado de "JOIN FETCH" para "LEFT JOIN FETCH"
     @Query("SELECT c FROM Carrinho c LEFT JOIN FETCH c.itens WHERE c.cliente.usuarioId = :idUsuario")
     Optional<Carrinho> findByUsuarioUsuarioId(@Param("idUsuario") Long idUsuario);
 }
