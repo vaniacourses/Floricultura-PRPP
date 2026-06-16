@@ -25,6 +25,7 @@ public class AdminSeed implements CommandLineRunner {
             {"Amanda Lemos Ribas", "amandaribas@id.uff.br", "SUPER_ADMIN"},
             {"Maria Eduarda D'Angelo Quitete Vianna", "me_vianna@id.uff.br", "SUPER_ADMIN"},
             {"Lais Ferreira Nazareth", "laisfn@id.uff.br", "SUPER_ADMIN"},
+            {"Vânia de Oliveira Neves", "vania@ic.uff.br", "SUPER_ADMIN"},
            
         };
 
