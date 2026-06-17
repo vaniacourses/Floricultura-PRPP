@@ -18,6 +18,8 @@ O projeto foi desenvolvido aplicando conceitos de Arquitetura de Software, Proje
 * TypeScript
 * Tailwind CSS
 
+### Usamos Java 17
+
 ## Documentação
 
 A pasta diagrama contém os diagramas antes da apresentação.
